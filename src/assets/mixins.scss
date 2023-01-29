@@ -1,0 +1,5 @@
+@mixin borderRadiusOverflowHidden($radius) {
+  border-radius: $radius;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: -webkit-radial-gradient(white, black);
+}
