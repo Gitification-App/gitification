@@ -3,6 +3,7 @@ import './assets/main.scss'
 import { createPinia } from 'pinia'
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
+
 import { message } from '@tauri-apps/api/dialog'
 import App from './App.vue'
 

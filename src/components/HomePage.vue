@@ -11,9 +11,7 @@ const store = useStore()
     v-for="(notification, index) of store.notifications"
     :key="notification.id"
   >
-    <NotificationItem
-      :item="notification"
-    />
+    <NotificationItem :item="notification" />
 
     <Separator v-if="index !== store.notifications.length - 1" />
   </template>
