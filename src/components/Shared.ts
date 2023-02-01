@@ -1,8 +1,8 @@
 import { markRaw } from 'vue'
 
-import MoreIcon from 'virtual:icons/ph/dots-three-duotone'
-import GearIcon from 'virtual:icons/ph/gear-light'
-import HomeIcon from 'virtual:icons/ph/house-simple'
+import MoreIcon from 'virtual:icons/octicon/kebab-horizontal-24'
+import GearIcon from 'virtual:icons/octicon/gear-24'
+import HomeIcon from 'virtual:icons/octicon/home-24'
 
 export const Icons = {
   More: markRaw(MoreIcon),

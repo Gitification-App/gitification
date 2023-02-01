@@ -2,6 +2,10 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
+#![feature(decl_macro)]
+
+mod http;
+use http::apply_rocket_http;
 
 use tauri::{
     ActivationPolicy, App, AppHandle, GlobalWindowEvent, Manager, PhysicalPosition, SystemTray,
@@ -44,6 +48,8 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         Some(8.0),
     )
     .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+
+    apply_rocket_http(win);
 
     Ok(())
 }

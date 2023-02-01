@@ -21,6 +21,9 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "dialog": {
+        "message": true
       }
     },
     "bundle": {
@@ -38,7 +41,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "dev.gitification",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

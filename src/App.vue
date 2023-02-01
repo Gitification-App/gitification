@@ -2,7 +2,6 @@
 import AppContent from './components/AppContent.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import HomePage from './components/HomePage.vue'
-import NotificationItem from './components/NotificationItem.vue'
 import { Page } from './constants'
 import { useRouteStore } from './stores/routeStore'
 import { useStore } from './stores/store'
