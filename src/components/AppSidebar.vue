@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
 import { useRouteStore } from '../stores/routeStore'
 import { Icons } from './Shared'
 import SidebarButton from './SidebarButton.vue'

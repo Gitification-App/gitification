@@ -9,13 +9,10 @@
   padding: 8px;
   border-radius: 8px;
   color: var(--white-faded);
-
-  + .sidebar-button {
-    margin-top: 5px;
-  }
+  border: 1px solid transparent;
 
   &:hover {
-    background-color: rgba(22, 22, 22, .3);
+    background-color: rgba(55, 55, 55, 0.7);
 
     :deep(.icon) {
       color: var(--white);
@@ -24,6 +21,10 @@
 
   :deep(.icon) {
     font-size: 16px;
+    stroke: black;
+    stroke-width: 1px;
+    stroke-linejoin: round;
+    paint-order: stroke;
   }
 }
 </style>
