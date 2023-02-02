@@ -46,7 +46,7 @@ function handleNotificationClick() {
         </div>
 
         <div class="notification-children-content-subtitle">
-          • Review Requested - Updated 5 seconds ago
+          Review Requested - Updated 5 seconds ago
         </div>
       </div>
     </div>
