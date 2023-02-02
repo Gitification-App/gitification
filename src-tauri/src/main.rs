@@ -5,6 +5,7 @@
 #![feature(decl_macro)]
 
 mod http;
+
 use http::apply_rocket_http;
 
 use tauri::{
@@ -20,25 +21,35 @@ fn greet() -> () {
 
 fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     let win = app.get_window("main").unwrap();
-    let screen_width = win.current_monitor().unwrap().unwrap().size().width;
+    let screen_width = *win.current_monitor().unwrap().unwrap().size();
 
     if let SystemTrayEvent::LeftClick { position, .. } = event {
+        if win.is_visible().unwrap() {
+            let _ = win.hide();
+
+            return;
+        }
+
         let win_width = win.outer_size().expect("size").width;
-        win.show().expect("couldn't show windows");
-        win.set_focus().expect("couldn't focus to window");
+
         win.set_position(PhysicalPosition {
             x: f64::min(
                 position.x - win_width as f64 / 2.0,
-                screen_width as f64 - win_width as f64,
+                screen_width.width as f64 - win_width as f64,
             ),
             y: position.y,
         })
-        .expect("couldn't set position of widow")
+        .expect("couldn't set position of widow");
+
+        let _ = win.show();
+        let _ = win.set_focus();
     }
 }
 
 fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let win = app.get_window("main").expect("window not found");
+
+    let _ = win.set_always_on_top(true);
     app.set_activation_policy(ActivationPolicy::Accessory);
 
     apply_vibrancy(
