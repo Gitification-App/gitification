@@ -1,41 +1,43 @@
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
+  line-height: 20px;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --white-faded: rgb(190, 190, 190);
+  --white: rgb(255, 255, 255);
+  --content-bg: rgba(35, 35, 35, .8);
+  --sidebar-bg: rgba(44, 44, 44, .5);
+  --app-border: rgb(52, 52, 52);
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  user-select: none;
-  -webkit-user-select: none;
-  cursor: default;
+  cursor: inherit;
+
 }
 
 html {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: rgba(66, 66, 66, .25);
+  // background-color: var(--app-bg);
   @include borderRadiusOverflowHidden(8px);
   outline: none;
 }
 
 body {
-  border: 1px solid rgb(72, 72, 72);
+  // border: 1px solid var(--app-border);
   @include borderRadiusOverflowHidden(8px);
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(30, 30, 30, .5);
+  cursor: default;
 }
 
 #app {
@@ -53,3 +55,4 @@ button, a {
   background-color: unset;
   color: currentColor;
 }
+

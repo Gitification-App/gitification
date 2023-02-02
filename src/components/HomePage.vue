@@ -7,12 +7,9 @@ const store = useStore()
 </script>
 
 <template>
-  <template
-    v-for="(notification, index) of store.notifications"
-    :key="notification.id"
-  >
-    <NotificationItem :item="notification" />
-
-    <Separator v-if="index !== store.notifications.length - 1" />
-  </template>
+  <NotificationItem
+    v-for="notification of store.notifications"
+    :key="notification.repoFullName"
+    :data="notification"
+  />
 </template>

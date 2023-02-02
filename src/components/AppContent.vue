@@ -9,6 +9,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  padding: 5px 5px 5px 0px;
+  padding: 5px;
+  background-color: var(--content-bg);
 }
 </style>

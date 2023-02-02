@@ -16,6 +16,10 @@ const routeStore = useRouteStore()
     </div>
     <div class="lower">
       <SidebarButton @click="routeStore.goToSettings">
+        <Icons.Sync />
+      </SidebarButton>
+
+      <SidebarButton @click="routeStore.goToSettings">
         <Icons.Gear />
       </SidebarButton>
     </div>
@@ -30,7 +34,7 @@ const routeStore = useRouteStore()
   flex-direction: column;
   flex-wrap: nowrap;
   padding: 10px;
-  border-radius: 0px 8px 8px 0px;
+  background-color: var(--sidebar-bg);
 
   .upper,
   .lower {

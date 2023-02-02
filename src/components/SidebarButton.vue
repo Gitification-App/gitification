@@ -8,13 +8,17 @@
 .sidebar-button {
   padding: 8px;
   border-radius: 8px;
-  color: rgb(165, 165 ,165);
+  color: var(--white-faded);
+
+  + .sidebar-button {
+    margin-top: 5px;
+  }
 
   &:hover {
     background-color: rgba(22, 22, 22, .3);
 
     :deep(.icon) {
-      color: rgba(255, 255, 255);
+      color: var(--white);
     }
   }
 
