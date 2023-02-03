@@ -11,7 +11,7 @@ const routeStore = useRouteStore()
   <nav class="nav">
     <div class="upper">
       <SidebarButton @click="routeStore.currentPage = Page.Home">
-        <Icons.Home />
+        <Icons.Bell />
       </SidebarButton>
     </div>
     <div class="lower">

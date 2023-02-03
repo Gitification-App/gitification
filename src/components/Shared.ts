@@ -11,6 +11,7 @@ import PullRequestIcon from 'virtual:icons/octicon/git-pull-request-24'
 import CheckIcon from 'virtual:icons/octicon/check-24'
 import CheckFillIcon from 'virtual:icons/octicon/check-circle-fill-12'
 import XIcon from 'virtual:icons/octicon/x-24'
+import BellIcon from 'virtual:icons/octicon/bell-24'
 
 export const Icons = {
   More: markRaw(MoreIcon),
@@ -24,4 +25,5 @@ export const Icons = {
   Check: markRaw(CheckIcon),
   X: markRaw(XIcon),
   CheckFill: markRaw(CheckFillIcon),
+  Bell: markRaw(BellIcon),
 }
