@@ -1,26 +1,20 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { exit } from '@tauri-apps/api/process'
-import { Howl } from 'howler'
+import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
-import { Icons } from '../components/Shared'
 import { Page } from '../constants'
 import { useRouteStore } from '../stores/routeStore'
-import NotificationSoundURL from '../assets/sounds/mee-too.mp3'
 const routeStore = useRouteStore()
-
-const notificationSound = new Howl({
-  src: NotificationSoundURL,
-})
 
 const soundsEnabled = ref(true)
 const autoStartEnabled = ref(true)
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
-    notificationSound.play()
+    invoke('play_notification_sound')
 })
 </script>
 

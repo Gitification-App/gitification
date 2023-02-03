@@ -55,7 +55,7 @@ const emit = defineEmits<Emits>()
     position: absolute;
     border-radius: 100%;
     color: var(--white);
-    font-size: 12px;
+    font-size: 10px;
   }
 
   &-enabled {

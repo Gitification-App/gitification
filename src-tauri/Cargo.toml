@@ -21,6 +21,7 @@ window-vibrancy = "0.3.2"
 tiny_http = "0.12.0"
 typed-html = { git = "https://github.com/bodil/typed-html", rev = "4c13ecca" }
 ascii = "1.1.0"
+rodio = "0.16.0"
 
 [features]
 # by default Tauri runs in production mode
