@@ -19,6 +19,12 @@ const dummyNotificationData: NotificationList[] = [
         type: NotificationTypes.Author,
         url: 'https://github.com/antfu/unplugin-icons',
       },
+      {
+        id: '122334',
+        title: 'It does not work',
+        type: NotificationTypes.Author,
+        url: 'https://github.com/antfu/unplugin-icons',
+      },
     ],
   },
   {

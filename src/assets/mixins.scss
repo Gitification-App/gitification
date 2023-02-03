@@ -3,3 +3,11 @@
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   mask-image: -webkit-radial-gradient(white, black);
 }
+
+@mixin focus-visible {
+  transition: box-shadow .15s;
+
+  &:focus-visible {
+    box-shadow: 0px 0px 0px 1px var(--white-faded);
+  }
+}

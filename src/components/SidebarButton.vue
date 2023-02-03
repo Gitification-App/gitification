@@ -10,10 +10,13 @@
   border-radius: 8px;
   color: var(--white-faded);
   border: 1px solid transparent;
+  @include focus-visible;
+
+  &:active {
+    background-color: var(--item-hover-bg);
+  }
 
   &:hover {
-    background-color: rgba(55, 55, 55, 0.7);
-
     :deep(.icon) {
       color: var(--white);
     }

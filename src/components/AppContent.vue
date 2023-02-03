@@ -9,7 +9,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  padding: 5px;
   background-color: var(--content-bg);
+  position: relative;
 }
 </style>

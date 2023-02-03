@@ -17,6 +17,9 @@
       "menuOnLeftClick": false
     },
     "allowlist": {
+      "process": {
+        "exit": true
+      },
       "all": false,
       "shell": {
         "all": false,

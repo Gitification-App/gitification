@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Page } from '../constants'
 import { useRouteStore } from '../stores/routeStore'
 import { Icons } from './Shared'
 import SidebarButton from './SidebarButton.vue'
@@ -9,16 +10,16 @@ const routeStore = useRouteStore()
 <template>
   <nav class="nav">
     <div class="upper">
-      <SidebarButton @click="routeStore.goToHome">
+      <SidebarButton @click="routeStore.currentPage = Page.Home">
         <Icons.Home />
       </SidebarButton>
     </div>
     <div class="lower">
-      <SidebarButton @click="routeStore.goToSettings">
+      <SidebarButton>
         <Icons.Sync />
       </SidebarButton>
 
-      <SidebarButton @click="routeStore.goToSettings">
+      <SidebarButton @click="routeStore.currentPage = Page.Settings">
         <Icons.Gear />
       </SidebarButton>
     </div>

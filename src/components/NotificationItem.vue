@@ -33,23 +33,23 @@ function handleNotificationClick() {
         {{ props.data.repoFullName }}
       </span>
     </div>
-    <div
+    <button
       v-for="item of props.data.children"
       :key="item.id"
-      class="notification-children"
+      class="notification-item"
     >
-      <Icons.PullRequest class="notification-children-icon" />
+      <Icons.PullRequest class="notification-item-icon" />
 
-      <div class="notification-children-content">
-        <div class="notification-children-content-title">
+      <div class="notification-item-content">
+        <div class="notification-item-content-title">
           {{ item.title }}
         </div>
 
-        <div class="notification-children-content-subtitle">
+        <div class="notification-item-content-subtitle">
           Review Requested - Updated 5 seconds ago
         </div>
       </div>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -90,9 +90,9 @@ function handleNotificationClick() {
     }
   }
 
-  &-children {
+  &-item {
     margin-top: 5px;
-    background-color: rgba(80, 80, 80, .3);
+    background-color: var(--item-bg);
     display: flex;
     width: 100%;
     flex-flow: row nowrap;
@@ -100,10 +100,13 @@ function handleNotificationClick() {
     align-items: center;
     border-radius: 8px;
     color: var(--white);
-    border: 1px solid rgb(22, 22, 22, .3);
+    border: 1px solid var(--item-border-color);
+    text-align: left;
+    line-height: 20px;
+    @include focus-visible;
 
     &:hover {
-      background-color: rgba(100, 100, 100, .6);
+      background-color: var(--item-hover-bg)
     }
 
     &-icon {
