@@ -55,9 +55,6 @@ function handleNotificationClick() {
 
 <style lang="scss" scoped>
 .notification {
-  user-select: none;
-  -webkit-user-select: none;
-
   + .notification {
     padding-top: 5px;
   }
