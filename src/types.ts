@@ -1,9 +1,9 @@
-import type { NotificationTypes } from './constants'
+import type { NotificationReason } from './constants'
 
 export interface NotificationList {
   repoFullName: string
   children: Array<{
-    type: NotificationTypes
+    reason: NotificationReason
     title: string
     url: string
     id: string

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { NotificationList } from '../types'
-import { Icons } from './Shared'
+import { Icons } from './Icons'
 
 interface Emits {
   (e: 'click'): void

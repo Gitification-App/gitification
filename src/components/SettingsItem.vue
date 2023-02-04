@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Icons } from './Shared'
+import { Icons } from './Icons'
 
 interface Props {
   enabled?: boolean

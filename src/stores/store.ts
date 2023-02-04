@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { NotificationTypes } from '../constants'
+import { NotificationReason } from '../constants'
 import type { NotificationList } from '../types'
 
 const dummyNotificationData: NotificationList[] = [
@@ -10,19 +10,19 @@ const dummyNotificationData: NotificationList[] = [
       {
         id: '12',
         title: 'feat: Add typing test',
-        type: NotificationTypes.Mention,
+        reason: NotificationReason.Mention,
         url: 'https://github.com/antfu/unplugin-icons',
       },
       {
         id: '122334',
         title: 'It does not work',
-        type: NotificationTypes.Author,
+        reason: NotificationReason.Author,
         url: 'https://github.com/antfu/unplugin-icons',
       },
       {
         id: '122334',
         title: 'It does not work',
-        type: NotificationTypes.Author,
+        reason: NotificationReason.Author,
         url: 'https://github.com/antfu/unplugin-icons',
       },
     ],
@@ -33,13 +33,13 @@ const dummyNotificationData: NotificationList[] = [
       {
         id: '12',
         title: 'feat: Add typing test',
-        type: NotificationTypes.Mention,
+        reason: NotificationReason.Mention,
         url: 'https://github.com/antfu/unplugin-icons',
       },
       {
         id: '122334',
         title: 'It does not work',
-        type: NotificationTypes.Author,
+        reason: NotificationReason.Author,
         url: 'https://github.com/antfu/unplugin-icons',
       },
     ],

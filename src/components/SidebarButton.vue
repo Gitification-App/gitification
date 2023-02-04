@@ -14,6 +14,10 @@
 
   &:active {
     background-color: var(--item-hover-bg);
+
+    :deep(.icon) {
+      color: var(--white);
+    }
   }
 
   &:hover {

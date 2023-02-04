@@ -12,6 +12,13 @@ import CheckIcon from 'virtual:icons/octicon/check-24'
 import CheckFillIcon from 'virtual:icons/octicon/check-circle-fill-12'
 import XIcon from 'virtual:icons/octicon/x-24'
 import BellIcon from 'virtual:icons/octicon/bell-24'
+import CommitIcon from 'virtual:icons/octicon/git-commit-24'
+import CommentDiscussionsIcon from 'virtual:icons/octicon/comment-discussion-24'
+import IssueOpenedIcon from 'virtual:icons/octicon/issue-opened-24'
+import TagIcon from 'virtual:icons/octicon/tag-24'
+import AlertIcon from 'virtual:icons/octicon/alert-24'
+import QuestionIcon from 'virtual:icons/octicon/question-24'
+import MailIcon from 'virtual:icons/octicon/mail-24'
 
 export const Icons = {
   More: markRaw(MoreIcon),
@@ -26,4 +33,11 @@ export const Icons = {
   X: markRaw(XIcon),
   CheckFill: markRaw(CheckFillIcon),
   Bell: markRaw(BellIcon),
+  Commit: markRaw(CommitIcon),
+  CommentDiscussions: markRaw(CommentDiscussionsIcon),
+  IssueOpened: markRaw(IssueOpenedIcon),
+  Tag: markRaw(TagIcon),
+  Alert: markRaw(AlertIcon),
+  Question: markRaw(QuestionIcon),
+  Mail: markRaw(MailIcon),
 }

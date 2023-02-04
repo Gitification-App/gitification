@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Page } from '../constants'
 import { useRouteStore } from '../stores/routeStore'
-import { Icons } from './Shared'
+import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 
 const routeStore = useRouteStore()
