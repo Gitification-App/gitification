@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { onScopeDispose, ref, watch } from 'vue'
 import { exit } from '@tauri-apps/api/process'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
-import { Page } from '../constants'
-import { useRouteStore } from '../stores/routeStore'
-const routeStore = useRouteStore()
+import { Page, StorageKey } from '../constants'
+import { useStore } from '../stores/store'
+import { useStorageRef } from '../composables/useStorageRef'
 
-const soundsEnabled = ref(true)
-const autoStartEnabled = ref(true)
+const store = useStore()
+
+const [
+  soundsEnabled,
+  autoStartEnabled,
+] = await Promise.all([
+  await useStorageRef(StorageKey.Sounds, false),
+  await useStorageRef(StorageKey.OpenAtStartup, false),
+])
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
@@ -45,7 +52,7 @@ watch(soundsEnabled, (enabled) => {
     </div>
 
     <div class="settings-footer">
-      <AppButton @click="routeStore.currentPage = Page.Landing">
+      <AppButton @click="store.currentPage = Page.Landing">
         Log out
       </AppButton>
 

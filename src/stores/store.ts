@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { NotificationReason } from '../constants'
+import { NotificationReason, Page } from '../constants'
 import type { NotificationList } from '../types'
 
 const dummyNotificationData: NotificationList[] = [
@@ -48,8 +48,12 @@ const dummyNotificationData: NotificationList[] = [
 
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationList[]>(dummyNotificationData.slice(0))
+  const accessToken = ref('')
+  const currentPage = ref(Page.Landing)
 
   return {
     notifications,
+    accessToken,
+    currentPage,
   }
 })

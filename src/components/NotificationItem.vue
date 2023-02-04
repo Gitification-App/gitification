@@ -3,7 +3,7 @@ import type { NotificationList } from '../types'
 import { Icons } from './Icons'
 
 interface Emits {
-  (e: 'click'): void
+  (e: 'click', id: string): void
 }
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-function handleNotificationClick() {
-  emit('click')
+function handleNotificationClick(id: string) {
+  emit('click', id)
 }
 </script>
 
@@ -37,6 +37,7 @@ function handleNotificationClick() {
       v-for="item of props.data.children"
       :key="item.id"
       class="notification-item"
+      @click="handleNotificationClick(item.id)"
     >
       <Icons.PullRequest class="notification-item-icon" />
 
@@ -118,6 +119,7 @@ function handleNotificationClick() {
       height: 100%;
       padding-right: 15px;
       color: var(--white);
+      width: 100%;
 
       &-title {
         width: 100%;

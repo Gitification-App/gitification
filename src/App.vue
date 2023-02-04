@@ -4,21 +4,21 @@ import AppSidebar from './components/AppSidebar.vue'
 import HomePage from './pages/HomePage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
 import { Page } from './constants'
-import { useRouteStore } from './stores/routeStore'
 import { useStore } from './stores/store'
 import LandingPage from './pages/LandingPage.vue'
 
-const routeStore = useRouteStore()
 const store = useStore()
 </script>
 
 <template>
-  <AppSidebar v-if="routeStore.currentPage !== Page.Landing" />
+  <AppSidebar v-if="store.currentPage !== Page.Landing" />
 
   <AppContent>
-    <HomePage v-if="routeStore.currentPage === Page.Home" />
-    <SettingsPage v-else-if="routeStore.currentPage === Page.Settings" />
-    <LandingPage v-else-if="routeStore.currentPage === Page.Landing" />
+    <Suspense>
+      <HomePage v-if="store.currentPage === Page.Home" />
+      <SettingsPage v-else-if="store.currentPage === Page.Settings" />
+      <LandingPage v-else-if="store.currentPage === Page.Landing" />
+    </Suspense>
   </AppContent>
 </template>
 

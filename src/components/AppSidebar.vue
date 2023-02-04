@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { Page } from '../constants'
-import { useRouteStore } from '../stores/routeStore'
+import { useStore } from '../stores/store'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 
-const routeStore = useRouteStore()
+const store = useStore()
 </script>
 
 <template>
   <nav class="nav">
     <div class="upper">
-      <SidebarButton @click="routeStore.currentPage = Page.Home">
+      <SidebarButton @click="store.currentPage = Page.Home">
         <Icons.Bell />
       </SidebarButton>
     </div>
@@ -19,7 +19,7 @@ const routeStore = useRouteStore()
         <Icons.Sync />
       </SidebarButton>
 
-      <SidebarButton @click="routeStore.currentPage = Page.Settings">
+      <SidebarButton @click="store.currentPage = Page.Settings">
         <Icons.Gear />
       </SidebarButton>
     </div>

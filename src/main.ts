@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import type { Event } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
 import App from './App.vue'
+import { storage } from './composables/useStorageRef'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -17,4 +18,6 @@ listen('code', ({ payload }: Event<string>) => {
   console.log(payload)
 })
 
-console.log(import.meta.env)
+storage.onChange(async () => {
+  console.log(Object.fromEntries(await storage.entries()))
+})

@@ -1,5 +1,7 @@
 import type { NotificationReason } from './constants'
 
+export type Option<T> = T | null
+
 export interface NotificationList {
   repoFullName: string
   children: Array<{

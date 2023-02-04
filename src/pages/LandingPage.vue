@@ -4,12 +4,12 @@ import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { Icons } from '../components/Icons'
 import { Page } from '../constants'
-import { useRouteStore } from '../stores/routeStore'
+import { useStore } from '../stores/store'
 
-const routeStore = useRouteStore()
+const store = useStore()
 
 function handleLogin() {
-  routeStore.currentPage = Page.Home
+  store.currentPage = Page.Home
 }
 </script>
 

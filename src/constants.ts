@@ -58,3 +58,8 @@ export const subjectIconMap = {
   [NotificationSubject.RepositoryInvitation]: Icons.Mail,
   [NotificationSubject.RepositoryVulnerabilityAlert]: Icons.Alert,
 }
+
+export enum StorageKey {
+  Sounds = 'settings:sounds',
+  OpenAtStartup = 'settings:open-at-startup',
+}
