@@ -48,14 +48,6 @@ watch(soundsEnabled, (enabled) => {
         v-model:enabled="markReadOnClickEnabled"
         title="Mark as read on click"
       />
-
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
-      <div class="settings-grid-item" />
     </div>
 
     <div class="settings-footer">
