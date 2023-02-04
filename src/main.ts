@@ -16,3 +16,5 @@ app.mount('#app')
 listen('code', ({ payload }: Event<string>) => {
   console.log(payload)
 })
+
+console.log(import.meta.env)
