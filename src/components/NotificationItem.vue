@@ -57,7 +57,7 @@ function handleNotificationClick(id: string) {
 <style lang="scss" scoped>
 .notification {
   + .notification {
-    padding-top: 5px;
+    margin-top: 5px;
   }
 
   &-title {
