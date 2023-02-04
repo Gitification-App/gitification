@@ -1,32 +1,86 @@
-use std::str::FromStr;
+use std::{io::Cursor, str::FromStr};
 
 use ::ascii::AsciiString;
 use tauri::Window;
 use tiny_http::{Header, HeaderField, Method, Request, Response, Server};
-use typed_html::{dom::DOMTree, html};
+
+const STYLE: &str = r#"
+    :root {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 20px;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    html, body {
+        position: fixed;
+        left: 0;
+        top: 0;
+        background-color: rgb(44, 44, 44);
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        display: flex;
+        padding: 15px;
+        margin: 0;
+    }
+
+    .content {
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        max-width: 500px;
+        max-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: rgb(255, 255, 255);
+        background-color: rgb(22, 22, 22);
+        border-radius: 8px;
+    }
+"#;
+
+fn create_html(title: String, description: String) -> String {
+    format!(
+        r#"
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>{title}</title>
+                <style>{STYLE}</style>
+            </head>
+            <body>
+                <div class="content">
+                    {description}
+                </div>
+            </body>
+        </html>
+    "#
+    )
+}
+
+fn set_content_type_html(response: &mut Response<Cursor<Vec<u8>>>) {
+    response.add_header(Header {
+        field: HeaderField::from_str("Content-Type").unwrap(),
+        value: AsciiString::from_str("text/html").unwrap(),
+    });
+}
 
 fn handle_code_request(request: Request, window: &Window) {
     if *request.method() != Method::Get || !request.url().starts_with("/callback?code=") {
-        let content: DOMTree<String> = html! {
-            <html>
-                <head>
-                    <title>"Unknown Route - Gitification"</title>
-                </head>
-                <body>
-                    <h2 style="text-align: center;">"NOT FOUND"</h2>
-                </body>
-            </html>
-        };
+        let mut response = Response::from_string(create_html(
+            "Not Found - Gitification".to_owned(),
+            "NOT FOUND".to_owned(),
+        ));
 
-        let mut response =
-            Response::from_string(format!("<!DOCTYPE HTML>\n{}", content.to_string()));
-
-        response.add_header(Header {
-            field: HeaderField::from_str("Content-Type").unwrap(),
-            value: AsciiString::from_str("text/html").unwrap(),
-        });
-
-        let _ = request.respond(response);
+        set_content_type_html(&mut response);
+        request.respond(response).unwrap();
 
         return;
     }
@@ -35,27 +89,15 @@ fn handle_code_request(request: Request, window: &Window) {
     let code_query = url.split("?code=").collect::<Vec<&str>>()[1];
     let code = code_query.split("&").collect::<Vec<&str>>()[0];
 
-    let _ = window.emit("code", code);
+    window.emit("code", code).unwrap();
 
-    let content: DOMTree<String> = html! {
-        <html>
-            <head>
-                <title>"Code - Gitification"</title>
-            </head>
-            <body>
-                <h2 style="text-align: center;">"You can close this window now"</h2>
-            </body>
-        </html>
-    };
+    let mut response = Response::from_string(create_html(
+        "Code - Gitification".to_owned(),
+        "You can close this window now.".to_owned(),
+    ));
 
-    let mut response = Response::from_string(format!("<!DOCTYPE HTML>\n{}", content.to_string()));
-
-    response.add_header(Header {
-        field: HeaderField::from_str("Content-Type").unwrap(),
-        value: AsciiString::from_str("text/html").unwrap(),
-    });
-
-    let _ = request.respond(response);
+    set_content_type_html(&mut response);
+    request.respond(response).unwrap();
 }
 
 pub fn apply_http(window: Window) {
