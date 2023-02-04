@@ -38,7 +38,7 @@ const emit = defineEmits<Emits>()
   flex-direction: column;
   background-color: var(--item-bg);
   border: 1px solid var(--item-border-color);
-  padding: 8px;
+  padding: 4px;
   color: var(--white-faded);
   border-radius: 8px;
   @include focus-visible;

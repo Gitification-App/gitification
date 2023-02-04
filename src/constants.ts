@@ -62,4 +62,5 @@ export const subjectIconMap = {
 export enum StorageKey {
   Sounds = 'settings:sounds',
   OpenAtStartup = 'settings:open-at-startup',
+  MarkReadOnClick = 'settings:mark-read-on-click',
 }

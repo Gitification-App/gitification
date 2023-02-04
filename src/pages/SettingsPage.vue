@@ -14,9 +14,11 @@ const store = useStore()
 const [
   soundsEnabled,
   autoStartEnabled,
+  markReadOnClickEnabled,
 ] = await Promise.all([
   await useStorageRef(StorageKey.Sounds, false),
   await useStorageRef(StorageKey.OpenAtStartup, false),
+  await useStorageRef(StorageKey.MarkReadOnClick, false),
 ])
 
 watch(soundsEnabled, (enabled) => {
@@ -40,6 +42,11 @@ watch(soundsEnabled, (enabled) => {
       <SettingsItem
         v-model:enabled="autoStartEnabled"
         title="Open at startup"
+      />
+
+      <SettingsItem
+        v-model:enabled="markReadOnClickEnabled"
+        title="Mark as read on click"
       />
 
       <div class="settings-grid-item" />
