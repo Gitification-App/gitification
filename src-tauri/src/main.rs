@@ -83,6 +83,7 @@ fn main() {
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![play_notification_sound])
+        .plugin(tauri_plugin_store::Builder::default().build())
         .system_tray(tray)
         .on_system_tray_event(handle_system_tray_event)
         .setup(handle_setup)

@@ -10,6 +10,7 @@ specifiers:
   eslint: ^8.32.0
   pinia: ^2.0.29
   sass: ^1.57.1
+  tauri-plugin-store-api: github:tauri-apps/tauri-plugin-store
   typescript: ^4.6.4
   unplugin-icons: ^0.15.2
   vite: ^4.0.0
@@ -20,6 +21,7 @@ specifiers:
 dependencies:
   '@tauri-apps/api': 1.2.0
   pinia: 2.0.29_prq2uz4lho2pwp6irk4cfkrxwu
+  tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/c71665bf5dcf48ae70a88d622eb38b2548b60a5d
   vue: 3.2.45
 
 devDependencies:
@@ -3324,3 +3326,11 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  github.com/tauri-apps/tauri-plugin-store/c71665bf5dcf48ae70a88d622eb38b2548b60a5d:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/c71665bf5dcf48ae70a88d622eb38b2548b60a5d}
+    name: tauri-plugin-store-api
+    version: 0.0.0
+    dependencies:
+      '@tauri-apps/api': 1.2.0
+    dev: false
