@@ -48,6 +48,13 @@ export const AppStorage = {
       },
     })
   },
+
+  /**
+   * Reactive read to data of key
+   */
+  asComputed<T extends keyof AppStorageContext>(key: T): WritableComputedRef<AppStorageContext[T]> {
+    return computed(() => AppStorage.get(key))
+  },
 }
 
 /**
