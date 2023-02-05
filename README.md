@@ -15,6 +15,7 @@ A gitify clone. The reason why I develop this is, gitify uses 500mb of my disk b
 
 ## Video of the app (Updated at: 6 February 2023)
 
-<div align="center">
-  <video  src="./videos/app.mp4">
-</div>
+
+https://user-images.githubusercontent.com/47540799/216849462-b2a5eb37-661b-492c-9662-7dacd473d218.mp4
+
+
