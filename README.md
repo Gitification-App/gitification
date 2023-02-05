@@ -13,8 +13,8 @@ A gitify clone. The reason why I develop this is, gitify uses 500mb of my disk b
 <br>
 <br>
 
-## Image of the app
+## Video of the app (Updated at: 6 February 2023)
 
 <div align="center">
-  <img width="600px" src="./images/app.png">
+  <video  src="./videos/app.mp4">
 </div>
