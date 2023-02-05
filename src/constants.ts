@@ -1,5 +1,7 @@
 import { Icons } from './components/Icons'
 
+export const SERVER_PORT = 23846
+
 export enum Page {
   Settings,
   Home,
@@ -57,10 +59,4 @@ export const subjectIconMap = {
   [NotificationSubject.Release]: Icons.Tag,
   [NotificationSubject.RepositoryInvitation]: Icons.Mail,
   [NotificationSubject.RepositoryVulnerabilityAlert]: Icons.Alert,
-}
-
-export enum StorageKey {
-  Sounds = 'settings:sounds',
-  OpenAtStartup = 'settings:open-at-startup',
-  MarkReadOnClick = 'settings:mark-read-on-click',
 }

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { NotificationReason, Page } from '../constants'
+import { AppStorage } from '../storage'
 import type { NotificationList } from '../types'
 
 const dummyNotificationData: NotificationList[] = [
@@ -48,12 +49,17 @@ const dummyNotificationData: NotificationList[] = [
 
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationList[]>(dummyNotificationData.slice(0))
-  const accessToken = ref('')
   const currentPage = ref(Page.Landing)
+
+  function logout() {
+    AppStorage.set('accessToken', null)
+    notifications.value = []
+    currentPage.value = Page.Landing
+  }
 
   return {
     notifications,
-    accessToken,
     currentPage,
+    logout,
   }
 })

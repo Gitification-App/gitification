@@ -14,11 +14,9 @@ const store = useStore()
   <AppSidebar v-if="store.currentPage !== Page.Landing" />
 
   <AppContent>
-    <Suspense>
-      <HomePage v-if="store.currentPage === Page.Home" />
-      <SettingsPage v-else-if="store.currentPage === Page.Settings" />
-      <LandingPage v-else-if="store.currentPage === Page.Landing" />
-    </Suspense>
+    <HomePage v-if="store.currentPage === Page.Home" />
+    <SettingsPage v-else-if="store.currentPage === Page.Settings" />
+    <LandingPage v-else-if="store.currentPage === Page.Landing" />
   </AppContent>
 </template>
 

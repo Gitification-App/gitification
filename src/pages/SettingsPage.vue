@@ -5,21 +5,15 @@ import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
-import { Page, StorageKey } from '../constants'
+import { Page } from '../constants'
 import { useStore } from '../stores/store'
-import { useStorageRef } from '../composables/useStorageRef'
+import { AppStorage } from '../storage'
 
 const store = useStore()
 
-const [
-  soundsEnabled,
-  autoStartEnabled,
-  markReadOnClickEnabled,
-] = await Promise.all([
-  await useStorageRef(StorageKey.Sounds, false),
-  await useStorageRef(StorageKey.OpenAtStartup, false),
-  await useStorageRef(StorageKey.MarkReadOnClick, false),
-])
+const soundsEnabled = AppStorage.asRef('soundsEnabled')
+const openAtStartup = AppStorage.asRef('openAtStartup')
+const markAsReadOnClick = AppStorage.asRef('markAsReadOnClick')
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
@@ -40,18 +34,18 @@ watch(soundsEnabled, (enabled) => {
       />
 
       <SettingsItem
-        v-model:enabled="autoStartEnabled"
+        v-model:enabled="openAtStartup"
         title="Open at startup"
       />
 
       <SettingsItem
-        v-model:enabled="markReadOnClickEnabled"
+        v-model:enabled="markAsReadOnClick"
         title="Mark as read on click"
       />
     </div>
 
     <div class="settings-footer">
-      <AppButton @click="store.currentPage = Page.Landing">
+      <AppButton @click="store.logout">
         Log out
       </AppButton>
 

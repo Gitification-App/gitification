@@ -17,16 +17,15 @@
       "menuOnLeftClick": false
     },
     "allowlist": {
+      "http": {
+        "request": true,
+        "scope": ["https://github.com/*"]
+      },
       "process": {
         "exit": true
       },
-      "all": false,
       "shell": {
-        "all": false,
         "open": true
-      },
-      "dialog": {
-        "message": true
       }
     },
     "bundle": {

@@ -11,3 +11,10 @@ export interface NotificationList {
     id: string
   }>
 }
+
+export interface AppStorageContext {
+  accessToken: Option<string>
+  openAtStartup: boolean
+  soundsEnabled: boolean
+  markAsReadOnClick: boolean
+}

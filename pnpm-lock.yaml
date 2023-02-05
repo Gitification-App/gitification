@@ -7,8 +7,10 @@ specifiers:
   '@tauri-apps/cli': ^1.2.2
   '@types/node': ^18.7.10
   '@vitejs/plugin-vue': ^4.0.0
+  async-mutex: ^0.4.0
   eslint: ^8.32.0
   pinia: ^2.0.29
+  redaxios: ^0.5.1
   sass: ^1.57.1
   tauri-plugin-store-api: github:tauri-apps/tauri-plugin-store
   typescript: ^4.6.4
@@ -21,6 +23,7 @@ specifiers:
 dependencies:
   '@tauri-apps/api': 1.2.0
   pinia: 2.0.29_prq2uz4lho2pwp6irk4cfkrxwu
+  redaxios: 0.5.1
   tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/c71665bf5dcf48ae70a88d622eb38b2548b60a5d
   vue: 3.2.45
 
@@ -30,6 +33,7 @@ devDependencies:
   '@tauri-apps/cli': 1.2.3
   '@types/node': 18.11.18
   '@vitejs/plugin-vue': 4.0.0_vite@4.0.4+vue@3.2.45
+  async-mutex: 0.4.0
   eslint: 8.32.0
   sass: 1.57.1
   typescript: 4.9.4
@@ -955,6 +959,12 @@ packages:
       define-properties: 1.1.4
       es-abstract: 1.21.1
       es-shim-unscopables: 1.0.0
+    dev: true
+
+  /async-mutex/0.4.0:
+    resolution: {integrity: sha512-eJFZ1YhRR8UN8eBLoNzcDPcy/jqjsg6I1AP+KvWQX80BqOSW1oJPJXDylPUEeMr2ZQvHgnQ//Lp6f3RQ1zI7HA==}
+    dependencies:
+      tslib: 2.5.0
     dev: true
 
   /available-typed-arrays/1.0.5:
@@ -2672,6 +2682,10 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /redaxios/0.5.1:
+    resolution: {integrity: sha512-FSD2AmfdbkYwl7KDExYQlVvIrFz6Yd83pGfaGjBzM9F6rpq8g652Q4Yq5QD4c+nf4g2AgeElv1y+8ajUPiOYMg==}
+    dev: false
+
   /regexp-tree/0.1.24:
     resolution: {integrity: sha512-s2aEVuLhvnVJW6s/iPgEGK6R+/xngd2jNQ+xy4bXNDKxZKJH6jpPHY6kVeVv1IeLCHgswRj+Kl3ELaDjG6V1iw==}
     hasBin: true
@@ -2937,6 +2951,10 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+    dev: true
+
+  /tslib/2.5.0:
+    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
     dev: true
 
   /tsutils/3.21.0_typescript@4.9.4:

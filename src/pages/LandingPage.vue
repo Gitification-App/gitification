@@ -1,15 +1,47 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { open } from '@tauri-apps/api/shell'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { Icons } from '../components/Icons'
 import { Page } from '../constants'
 import { useStore } from '../stores/store'
+import { useTauriEvent } from '../composables/useTauriEvent'
+import { getAccessToken } from '../api/token'
+import { GITHUB_AUTH_URL } from '../api/constants'
+import { AppStorage } from '../storage'
 
 const store = useStore()
 
+let processing = false
+
+useTauriEvent<string>('code', async ({ payload }) => {
+  if (processing)
+    return
+
+  processing = true
+
+  try {
+    const { data, ok } = await getAccessToken({
+      clientId: import.meta.env.VITE_CLIENT_ID,
+      clientSecret: import.meta.env.VITE_CLIENT_SECRET,
+      code: payload,
+    })
+
+    if (!ok) {
+      processing = false
+      return
+    }
+
+    AppStorage.set('accessToken', data.access_token)
+    store.currentPage = Page.Home
+  }
+  finally {
+    processing = false
+  }
+})
+
 function handleLogin() {
-  store.currentPage = Page.Home
+  open(GITHUB_AUTH_URL)
 }
 </script>
 
