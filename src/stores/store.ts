@@ -53,7 +53,7 @@ export const useStore = defineStore('store', () => {
 
   function logout() {
     AppStorage.set('accessToken', null)
-    notifications.value = []
+    // notifications.value = []
     currentPage.value = Page.Landing
   }
 
