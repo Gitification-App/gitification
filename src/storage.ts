@@ -28,6 +28,9 @@ export const AppStorage = {
    * Writes to storage and in next event loop, caches to disk
    */
   set<T extends keyof AppStorageContext>(key: T, value: AppStorageContext[T]) {
+    if (value === storage[key])
+      return
+
     storage[key] = value
 
     store.set(key, value).then(() => writeStorageToDisk())
