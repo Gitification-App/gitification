@@ -39,8 +39,8 @@ export const AppStorage = {
 
   /**
    * Same as calling AppStorage.get/AppStorage.set but as vue ref and reactive.
-   * Settings `.value` calls AppStorage.set
-   * Getting `.value` calls AppStorage.get
+   * Mutating `.value` calls AppStorage.set
+   * Accessing `.value` calls AppStorage.get
    */
   asRef<T extends keyof AppStorageContext>(key: T): WritableComputedRef<AppStorageContext[T]> {
     return computed({
