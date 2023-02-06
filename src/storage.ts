@@ -38,7 +38,7 @@ export const AppStorage = {
   },
 
   /**
-   * Same as calling AppStorage.get/AppStorage.set but as vue ref and reactive.
+   * Same as calling AppStorage.get/AppStorage.set but as reactive reference.
    * Mutating `.value` calls AppStorage.set
    * Accessing `.value` calls AppStorage.get
    */
