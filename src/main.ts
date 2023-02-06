@@ -26,5 +26,10 @@ app.use(pinia)
   app.mount('#app')
 })()
 
-if (import.meta.env.DEV)
+if (import.meta.env.DEV) {
   initDevtools()
+  window.addEventListener('keydown', (event) => {
+    if ((event.key === 'r' || event.key === 'r') && event.metaKey)
+      location.reload()
+  })
+}
