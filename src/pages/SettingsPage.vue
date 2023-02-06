@@ -14,6 +14,7 @@ const store = useStore()
 const soundsEnabled = AppStorage.asRef('soundsEnabled')
 const openAtStartup = AppStorage.asRef('openAtStartup')
 const markAsReadOnClick = AppStorage.asRef('markAsReadOnClick')
+const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
@@ -41,6 +42,11 @@ watch(soundsEnabled, (enabled) => {
       <SettingsItem
         v-model:enabled="markAsReadOnClick"
         title="Mark as read on click"
+      />
+
+      <SettingsItem
+        v-model:enabled="showOnlyParticipating"
+        title="Show only participating"
       />
     </div>
 
@@ -74,8 +80,8 @@ watch(soundsEnabled, (enabled) => {
 
     &-grid {
       display: grid;
-      grid-template-columns: 85px 85px 85px 85px;
-      grid-template-rows: 85px 85px;
+      grid-template-columns: 115px 115px 115px;
+      grid-template-rows: 75px 75px;
       grid-gap: 5px;
     }
 

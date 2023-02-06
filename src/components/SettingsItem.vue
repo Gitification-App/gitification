@@ -20,9 +20,7 @@ const emit = defineEmits<Emits>()
     :class="{ 'settings-item-enabled': props.enabled }"
     @click="emit('update:enabled', !props.enabled)"
   >
-    <div class="settings-item-status">
-      <Icons.CheckFill />
-    </div>
+    <div class="settings-item-status" />
 
     <div class="settings-item-title">
       {{ props.title }}
@@ -38,7 +36,7 @@ const emit = defineEmits<Emits>()
   flex-direction: column;
   background-color: var(--item-bg);
   border: 1px solid var(--item-border-color);
-  padding: 4px;
+  padding: 8px;
   color: var(--white-faded);
   border-radius: 8px;
   @include focus-visible;
@@ -52,10 +50,11 @@ const emit = defineEmits<Emits>()
     display: none;
     top: 5px;
     right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--white);
     position: absolute;
-    border-radius: 100%;
-    color: var(--white);
-    font-size: 10px;
   }
 
   &-enabled {
