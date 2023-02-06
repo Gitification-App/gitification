@@ -9,6 +9,7 @@ import { useTauriEvent } from '../composables/useTauriEvent'
 import { getAccessToken } from '../api/token'
 import { GITHUB_AUTH_URL } from '../api/constants'
 import { AppStorage } from '../storage'
+import { getUser } from '../api/user'
 
 const store = useStore()
 
@@ -21,13 +22,16 @@ useTauriEvent<string>('code', async ({ payload }) => {
   processing = true
 
   try {
-    const { data } = await getAccessToken({
+    const { data: { access_token } } = await getAccessToken({
       clientId: import.meta.env.VITE_CLIENT_ID,
       clientSecret: import.meta.env.VITE_CLIENT_SECRET,
       code: payload,
     })
 
-    AppStorage.set('accessToken', data.access_token)
+    const { data: user } = await getUser(access_token)
+
+    AppStorage.set('accessToken', access_token)
+    AppStorage.set('user', user)
     store.currentPage = Page.Home
   }
   finally {

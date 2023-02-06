@@ -19,8 +19,9 @@ app.use(pinia)
 
   const store = useStore(pinia)
   const token = AppStorage.get('accessToken')
+  const user = AppStorage.get('user')
 
-  if (token)
+  if (token && user)
     store.currentPage = Page.Home
 
   app.mount('#app')

@@ -1,4 +1,5 @@
 import redaxios from 'redaxios'
+import type { NotificationReason, NotificationSubject } from '../constants'
 import { createBaseGithubApiHeaders } from '../utils/api'
 
 export interface Thread {
@@ -8,9 +9,9 @@ export interface Thread {
     title: string
     url: string
     latest_comment_url: string
-    type: string
+    type: NotificationSubject
   }
-  reason: string
+  reason: NotificationReason
   unread: boolean
   updated_at: string
   last_read_at: string | null

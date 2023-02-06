@@ -2,14 +2,13 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
-import type { NotificationReason, NotificationSubject } from '../constants'
 import { Page } from '../constants'
 import { AppStorage } from '../storage'
 import type { NotificationList } from '../types'
 
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationList[]>()
-  const fetchingNotifications = ref(false)
+  const loadingNotifications = ref(false)
   const currentPage = ref(Page.Landing)
 
   function logout() {
@@ -19,7 +18,7 @@ export const useStore = defineStore('store', () => {
   }
 
   async function fetchNotifications() {
-    if (fetchingNotifications.value)
+    if (loadingNotifications.value)
       return
 
     const accessToken = AppStorage.get('accessToken')
@@ -29,7 +28,6 @@ export const useStore = defineStore('store', () => {
 
     try {
       const { data } = await getNotifications({ accessToken, showOnlyParticipating: AppStorage.get('showOnlyParticipating') })
-
       notifications.value = []
       const notificationsByRepo = new Map<Thread['repository']['id'], Thread[]>()
 
@@ -44,16 +42,10 @@ export const useStore = defineStore('store', () => {
         thread.push(notification)
       })
 
-      for (const [, thread] of notificationsByRepo) {
+      for (const [, threads] of notificationsByRepo) {
         notifications.value.push({
-          repoFullName: thread[0].repository.full_name,
-          children: thread.map(item => ({
-            id: item.id,
-            title: item.subject.title,
-            url: item.subject.url,
-            reason: item.reason as NotificationReason,
-            subject: item.subject.type as NotificationSubject,
-          })),
+          repoFullName: threads[0].repository.full_name,
+          threads,
         })
       }
     }
@@ -65,7 +57,7 @@ export const useStore = defineStore('store', () => {
   return {
     notifications,
     currentPage,
-    fetchingNotifications,
+    loadingNotifications,
     fetchNotifications,
     logout,
   }

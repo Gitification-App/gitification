@@ -5,7 +5,6 @@ import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
-import { Page } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
 

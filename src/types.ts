@@ -1,21 +1,15 @@
-import type { NotificationReason, NotificationSubject } from './constants'
+import type { Thread } from './api/notifications'
+import type { User } from './api/user'
 
 export type Option<T> = T | null
 
-export interface NotificationListChild {
-  reason: NotificationReason
-  title: string
-  url: string
-  id: string
-  subject: NotificationSubject
-}
-
 export interface NotificationList {
   repoFullName: string
-  children: NotificationListChild[]
+  threads: Thread[]
 }
 
 export interface AppStorageContext {
+  user: Option<User>
   accessToken: Option<string>
   showOnlyParticipating: boolean
   openAtStartup: boolean

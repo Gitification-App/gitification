@@ -6,6 +6,7 @@ import { batchFn } from './utils/batch'
 
 const store = new Store('.storage.dat')
 const storage = shallowReactive<AppStorageContext>({
+  user: null,
   accessToken: null,
   showOnlyParticipating: false,
   markAsReadOnClick: false,

@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import type { NotificationList, NotificationListChild } from '../types'
+import type { Thread } from '../api/notifications'
+import type { NotificationList } from '../types'
 import { formatReason, notificationSubjectIcon } from '../utils/notification'
 
 interface Emits {
-  (e: 'click', id: string): void
+  (e: 'click:notification', notification: Thread): void
 }
 
 interface Props {
@@ -14,8 +15,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-function handleNotificationClick(child: NotificationListChild) {
-  open(child.url)
+function handleNotificationClick(notification: Thread) {
+  emit('click:notification', notification)
 }
 </script>
 
@@ -35,19 +36,19 @@ function handleNotificationClick(child: NotificationListChild) {
       </span>
     </div>
     <button
-      v-for="item of props.data.children"
+      v-for="item of props.data.threads"
       :key="item.id"
       class="notification-item"
       @click="handleNotificationClick(item)"
     >
       <Component
-        :is="notificationSubjectIcon(item.subject)"
+        :is="notificationSubjectIcon(item.subject.type)"
         class="notification-item-icon"
       />
 
       <div class="notification-item-content">
         <div class="notification-item-content-title">
-          {{ item.title }}
+          {{ item.subject.title }}
         </div>
 
         <div class="notification-item-content-subtitle">
