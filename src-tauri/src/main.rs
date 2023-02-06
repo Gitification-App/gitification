@@ -74,6 +74,13 @@ fn handle_window_event(event: GlobalWindowEvent) {
     let event_type = event.event();
 
     if let WindowEvent::Focused(false) = event_type {
+        let command = std::env::var("npm_lifecycle_script");
+        if let Ok(command) = command {
+            if command.contains("dev") {
+                return;
+            };
+        }
+
         event.window().hide().unwrap();
     }
 }

@@ -15,14 +15,14 @@ export interface GetAccessTokenResponse {
   token_type: string
 }
 
-export function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenArgs) {
+export async function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenArgs) {
   const body = Body.json({
     client_id: clientId,
     client_secret: clientSecret,
     code,
   })
 
-  return fetch<GetAccessTokenResponse>('https://github.com/login/oauth/access_token', {
+  const res = await fetch<GetAccessTokenResponse>('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -31,4 +31,9 @@ export function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenA
     responseType: ResponseType.JSON,
 
   })
+
+  if (!res.ok)
+    throw res
+
+  return res
 }

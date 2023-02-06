@@ -2,8 +2,12 @@
 import { useStore } from '../stores/store'
 import Separator from '../components/Separator.vue'
 import NotificationItem from '../components/NotificationItem.vue'
+import { useInterval } from '../composables/useInterval'
 
 const store = useStore()
+
+store.fetchNotifications()
+useInterval(store.fetchNotifications, 60000)
 </script>
 
 <template>

@@ -21,16 +21,11 @@ useTauriEvent<string>('code', async ({ payload }) => {
   processing = true
 
   try {
-    const { data, ok } = await getAccessToken({
+    const { data } = await getAccessToken({
       clientId: import.meta.env.VITE_CLIENT_ID,
       clientSecret: import.meta.env.VITE_CLIENT_SECRET,
       code: payload,
     })
-
-    if (!ok) {
-      processing = false
-      return
-    }
 
     AppStorage.set('accessToken', data.access_token)
     store.currentPage = Page.Home

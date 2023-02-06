@@ -19,7 +19,7 @@
     "allowlist": {
       "http": {
         "request": true,
-        "scope": ["https://github.com/*"]
+        "scope": ["https://github.com/*", "https://api.github.com/*"]
       },
       "process": {
         "exit": true

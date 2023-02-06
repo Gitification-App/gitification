@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import type { NotificationList } from '../types'
-import { Icons } from './Icons'
+import { open } from '@tauri-apps/api/shell'
+import type { NotificationList, NotificationListChild } from '../types'
+import { formatReason, notificationSubjectIcon } from '../utils/notification'
 
 interface Emits {
   (e: 'click', id: string): void
@@ -13,8 +14,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-function handleNotificationClick(id: string) {
-  emit('click', id)
+function handleNotificationClick(child: NotificationListChild) {
+  open(child.url)
 }
 </script>
 
@@ -37,9 +38,12 @@ function handleNotificationClick(id: string) {
       v-for="item of props.data.children"
       :key="item.id"
       class="notification-item"
-      @click="handleNotificationClick(item.id)"
+      @click="handleNotificationClick(item)"
     >
-      <Icons.PullRequest class="notification-item-icon" />
+      <Component
+        :is="notificationSubjectIcon(item.subject)"
+        class="notification-item-icon"
+      />
 
       <div class="notification-item-content">
         <div class="notification-item-content-title">
@@ -47,7 +51,7 @@ function handleNotificationClick(id: string) {
         </div>
 
         <div class="notification-item-content-subtitle">
-          Review Requested - Updated 5 seconds ago
+          {{ formatReason(item.reason) }}
         </div>
       </div>
     </button>
@@ -120,6 +124,7 @@ function handleNotificationClick(id: string) {
       padding-right: 15px;
       color: var(--white);
       width: 100%;
+      overflow: hidden;
 
       &-title {
         width: 100%;

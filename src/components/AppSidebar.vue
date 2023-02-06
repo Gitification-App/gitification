@@ -15,7 +15,7 @@ const store = useStore()
       </SidebarButton>
     </div>
     <div class="lower">
-      <SidebarButton>
+      <SidebarButton @click="store.fetchNotifications">
         <Icons.Sync />
       </SidebarButton>
 
