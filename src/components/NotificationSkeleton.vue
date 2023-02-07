@@ -49,7 +49,7 @@ const skeletonProps = [
 }
 
 .skeleton-header {
-  height: 30px;
+  height: 32px;
   width: 100%;
   border-radius: 8px;
   background-color: rgba(14, 14, 14, .72);
