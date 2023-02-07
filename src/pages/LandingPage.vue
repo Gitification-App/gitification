@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
+import { ref } from 'vue'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { Icons } from '../components/Icons'
@@ -13,13 +14,13 @@ import { getUser } from '../api/user'
 
 const store = useStore()
 
-let processing = false
+const processing = ref(false)
 
 useTauriEvent<string>('code', async ({ payload }) => {
-  if (processing)
+  if (processing.value)
     return
 
-  processing = true
+  processing.value = true
 
   try {
     const { data: { access_token } } = await getAccessToken({
@@ -32,10 +33,10 @@ useTauriEvent<string>('code', async ({ payload }) => {
 
     AppStorage.set('accessToken', access_token)
     AppStorage.set('user', user)
-    store.currentPage = Page.Home
+    store.setPage(Page.Home)
   }
   finally {
-    processing = false
+    processing.value = false
   }
 })
 

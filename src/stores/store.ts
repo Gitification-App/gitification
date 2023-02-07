@@ -1,23 +1,17 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
 import { Page } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationList } from '../types'
+import type { NotificationList, Option } from '../types'
 
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationList[]>()
   const loadingNotifications = ref(false)
-  const currentPage = ref(Page.Landing)
+  const skeletonVisible = ref(false)
 
-  function logout() {
-    AppStorage.set('accessToken', null)
-    // notifications.value = []
-    currentPage.value = Page.Landing
-  }
-
-  async function fetchNotifications() {
+  async function fetchNotifications(withSkeletons = false) {
     if (loadingNotifications.value)
       return
 
@@ -25,6 +19,9 @@ export const useStore = defineStore('store', () => {
 
     if (accessToken == null)
       return
+
+    if (withSkeletons)
+      skeletonVisible.value = true
 
     try {
       const { data } = await getNotifications({ accessToken, showOnlyParticipating: AppStorage.get('showOnlyParticipating') })
@@ -48,16 +45,38 @@ export const useStore = defineStore('store', () => {
           threads,
         })
       }
+
+      skeletonVisible.value = false
     }
     catch (error) {
       console.error('NotificationError: ', error)
     }
   }
 
+  const currentPage = ref(Page.Landing)
+  const pageFrom = ref<Option<Page>>(null)
+
+  function logout() {
+    AppStorage.set('accessToken', null)
+    notifications.value = []
+    currentPage.value = Page.Landing
+  }
+
+  function setPage(to: Page) {
+    if (to === currentPage.value)
+      return
+
+    pageFrom.value = currentPage.value
+    currentPage.value = to
+  }
+
   return {
     notifications,
-    currentPage,
+    currentPage: readonly(currentPage),
+    setPage,
     loadingNotifications,
+    skeletonVisible,
+    pageFrom,
     fetchNotifications,
     logout,
   }

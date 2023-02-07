@@ -7,26 +7,37 @@ import { useInterval } from '../composables/useInterval'
 import type { Thread } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
+import NotificationSkeleton from '../components/NotificationSkeleton.vue'
+import { Page } from '../constants'
 
 const store = useStore()
 
-store.fetchNotifications()
+store.fetchNotifications(store.pageFrom === Page.Landing)
 useInterval(store.fetchNotifications, 60000)
 
 function handleNotificationClick(notification: Thread) {
   const url = toGithubWebURL({ notification, userId: AppStorage.get('user')!.id })
   open(url)
 }
+
+function handleRepoClick(repoFullName: string) {
+  open(`https://github.com/${repoFullName}`)
+}
 </script>
 
 <template>
   <div class="home">
-    <NotificationItem
-      v-for="notification of store.notifications"
-      :key="notification.repoFullName"
-      :data="notification"
-      @click:notification="handleNotificationClick"
-    />
+    <NotificationSkeleton v-if="store.skeletonVisible" />
+
+    <template v-else>
+      <NotificationItem
+        v-for="notification of store.notifications"
+        :key="notification.repoFullName"
+        :data="notification"
+        @click:notification="handleNotificationClick"
+        @click:repo="handleRepoClick"
+      />
+    </template>
   </div>
 </template>
 
@@ -39,5 +50,7 @@ function handleNotificationClick(notification: Thread) {
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    scroll-padding-top: 5px;
+    scroll-padding-bottom: 5px;
   }
 </style>

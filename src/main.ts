@@ -22,7 +22,7 @@ app.use(pinia)
   const user = AppStorage.get('user')
 
   if (token && user)
-    store.currentPage = Page.Home
+    store.setPage(Page.Home)
 
   app.mount('#app')
 })()

@@ -5,8 +5,6 @@
 }
 
 @mixin focus-visible {
-  transition: box-shadow .15s;
-
   &:focus-visible {
     box-shadow: 0px 0px 0px 1px var(--white-faded);
   }

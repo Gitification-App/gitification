@@ -3,9 +3,9 @@ import { Icons } from './components/Icons'
 export const SERVER_PORT = 23846
 
 export enum Page {
-  Settings,
-  Home,
-  Landing,
+  Settings = 'Settings',
+  Home = 'Home',
+  Landing = 'Landing',
 }
 
 export enum NotificationSubject {

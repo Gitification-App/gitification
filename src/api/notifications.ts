@@ -180,6 +180,7 @@ export function getNotifications({ accessToken, showOnlyParticipating }: GetNoti
     headers: createBaseGithubApiHeaders(accessToken),
     params: {
       participating: showOnlyParticipating,
+      all: true, // TODO: Remove when production ready, this is for just testing
       t: Date.now(),
     },
   })

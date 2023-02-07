@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
 import type { Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
 import { formatReason, notificationSubjectIcon } from '../utils/notification'
 
 interface Emits {
   (e: 'click:notification', notification: Thread): void
+  (e: 'click:repo', repoFullName: string): void
 }
 
 interface Props {
@@ -18,6 +18,10 @@ const emit = defineEmits<Emits>()
 function handleNotificationClick(notification: Thread) {
   emit('click:notification', notification)
 }
+
+function handleRepoClick() {
+  emit('click:repo', props.data.repoFullName)
+}
 </script>
 
 <template>
@@ -25,7 +29,10 @@ function handleNotificationClick(notification: Thread) {
     draggable="false"
     class="notification"
   >
-    <div class="notification-title">
+    <button
+      class="notification-title"
+      @click="handleRepoClick"
+    >
       <img
         class="notification-title-icon"
         src="https://avatars.githubusercontent.com/u/47540799?s=40&v=4"
@@ -34,7 +41,7 @@ function handleNotificationClick(notification: Thread) {
       <span class="notification-title-text">
         {{ props.data.repoFullName }}
       </span>
-    </div>
+    </button>
     <button
       v-for="item of props.data.threads"
       :key="item.id"
@@ -66,13 +73,25 @@ function handleNotificationClick(notification: Thread) {
   }
 
   &-title {
+    @include focus-visible;
     background-color: rgba(14, 14, 14, .72);
     border-radius: 8px;
     padding: 5px 16px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
+    border: 1px solid transparent;
+    line-height: inherit;
+
+    &:hover {
+      border-color: var(--item-hover-bg);
+    }
+
+    &:active {
+      background-color: var(--item-border-color);
+    }
 
     &-icon {
       flex-shrink: 0;

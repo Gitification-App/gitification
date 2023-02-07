@@ -10,16 +10,16 @@ const store = useStore()
 <template>
   <nav class="nav">
     <div class="upper">
-      <SidebarButton @click="store.currentPage = Page.Home">
+      <SidebarButton @click="store.setPage(Page.Home)">
         <Icons.Bell />
       </SidebarButton>
     </div>
     <div class="lower">
-      <SidebarButton @click="store.fetchNotifications">
+      <SidebarButton @click="store.fetchNotifications(true)">
         <Icons.Sync />
       </SidebarButton>
 
-      <SidebarButton @click="store.currentPage = Page.Settings">
+      <SidebarButton @click="store.setPage(Page.Settings)">
         <Icons.Gear />
       </SidebarButton>
     </div>

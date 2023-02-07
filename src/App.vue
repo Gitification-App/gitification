@@ -19,7 +19,3 @@ const store = useStore()
     <LandingPage v-else-if="store.currentPage === Page.Landing" />
   </AppContent>
 </template>
-
-<style scoped>
-
-</style>
