@@ -7,7 +7,7 @@ import { AppStorage } from '../storage'
 import type { NotificationList, Option } from '../types'
 
 export const useStore = defineStore('store', () => {
-  const notifications = ref<NotificationList[]>()
+  const notifications = ref<NotificationList[]>([])
   const loadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
@@ -24,7 +24,12 @@ export const useStore = defineStore('store', () => {
       skeletonVisible.value = true
 
     try {
-      const { data } = await getNotifications({ accessToken, showOnlyParticipating: AppStorage.get('showOnlyParticipating') })
+      const { data } = await getNotifications({
+        accessToken,
+        showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
+        showReadNotifications: AppStorage.get('showReadNotifications'),
+      })
+
       notifications.value = []
       const notificationsByRepo = new Map<Thread['repository']['id'], Thread[]>()
 

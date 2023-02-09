@@ -46,6 +46,7 @@ function handleRepoClick() {
       v-for="item of props.data.threads"
       :key="item.id"
       class="notification-item"
+      :class="{ 'notification-item-read': !item.unread }"
       @click="handleNotificationClick(item)"
     >
       <Component
@@ -74,7 +75,7 @@ function handleRepoClick() {
 
   &-title {
     @include focus-visible;
-    background-color: rgba(14, 14, 14, .72);
+    background-color: var(--notification-title-color);
     border-radius: 8px;
     padding: 5px 16px;
     width: 100%;
@@ -126,6 +127,11 @@ function handleRepoClick() {
     text-align: left;
     line-height: 20px;
     @include focus-visible;
+    @include text-outline($size: 1px);
+
+    &-read {
+      color: var(--white-faded) !important;
+    }
 
     &:hover {
       background-color: var(--item-hover-bg)
@@ -142,7 +148,6 @@ function handleRepoClick() {
     &-content {
       height: 100%;
       padding-right: 15px;
-      color: var(--white);
       width: 100%;
       overflow: hidden;
 

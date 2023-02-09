@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onScopeDispose, ref, watch } from 'vue'
+import { watch } from 'vue'
 import { exit } from '@tauri-apps/api/process'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
@@ -14,6 +14,7 @@ const soundsEnabled = AppStorage.asRef('soundsEnabled')
 const openAtStartup = AppStorage.asRef('openAtStartup')
 const markAsReadOnClick = AppStorage.asRef('markAsReadOnClick')
 const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
+const showReadNotifications = AppStorage.asRef('showReadNotifications')
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
@@ -32,20 +33,21 @@ watch(soundsEnabled, (enabled) => {
         v-model:enabled="soundsEnabled"
         title="Sounds"
       />
-
       <SettingsItem
         v-model:enabled="openAtStartup"
         title="Open at startup"
       />
-
       <SettingsItem
         v-model:enabled="markAsReadOnClick"
         title="Mark as read on click"
       />
-
       <SettingsItem
         v-model:enabled="showOnlyParticipating"
         title="Show only participating"
+      />
+      <SettingsItem
+        v-model:enabled="showReadNotifications"
+        title="Show read notifications"
       />
     </div>
 

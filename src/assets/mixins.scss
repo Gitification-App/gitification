@@ -9,3 +9,7 @@
     box-shadow: 0px 0px 0px 1px var(--white-faded);
   }
 }
+
+@mixin text-outline($size: 1px) {
+  text-shadow: 0 0 $size black, 0 0 $size black, 0 0 $size black, 0 0 $size black;
+}

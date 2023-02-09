@@ -15,4 +15,5 @@ export interface AppStorageContext {
   openAtStartup: boolean
   soundsEnabled: boolean
   markAsReadOnClick: boolean
+  showReadNotifications: boolean
 }

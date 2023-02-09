@@ -173,14 +173,19 @@ export interface CodeOfConduct {
 export interface GetNotificationsArgs {
   accessToken: string
   showOnlyParticipating: boolean
+  showReadNotifications: boolean
 }
 
-export function getNotifications({ accessToken, showOnlyParticipating }: GetNotificationsArgs) {
+export function getNotifications({
+  accessToken,
+  showOnlyParticipating,
+  showReadNotifications,
+}: GetNotificationsArgs) {
   return redaxios.get<Thread[]>('https://api.github.com/notifications', {
     headers: createBaseGithubApiHeaders(accessToken),
     params: {
       participating: showOnlyParticipating,
-      all: true, // TODO: Remove when production ready, this is for just testing
+      all: showReadNotifications,
       t: Date.now(),
     },
   })

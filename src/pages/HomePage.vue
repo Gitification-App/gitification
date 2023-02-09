@@ -12,7 +12,7 @@ import { Page } from '../constants'
 
 const store = useStore()
 
-store.fetchNotifications(store.pageFrom === Page.Landing)
+store.fetchNotifications(store.pageFrom === Page.Landing || store.notifications.length === 0)
 useInterval(store.fetchNotifications, 60000)
 
 function handleNotificationClick(notification: Thread) {
