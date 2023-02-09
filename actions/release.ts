@@ -1,13 +1,17 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs/promises'
+import child_process from 'child_process'
 import * as github from '@actions/github'
 
-const token = process.env.GITHUB_TOKEN
+const token = process.env.GITHUB_TOKEN!
 const dirname = path.dirname(fileURLToPath(import.meta.url))
+const dmgPath = path.join(dirname, '..', 'src-tauri', 'target', 'release', 'bundle', 'macos', 'rw.Gitification_0.0.0_aarch64.dmg')
 
 async function run() {
   const octokit = github.getOctokit(token)
+
+  child_process.execSync('pnpm tauri build', { stdio: 'inherit' })
 
   const release = await octokit.rest.repos.createRelease({
     owner: 'kadiryazici',
@@ -21,10 +25,10 @@ async function run() {
   octokit.rest.repos.uploadReleaseAsset({
     owner: 'kadiryazici',
     repo: 'gitification',
-    name: 'package.json',
+    name: 'Gitification.aarch64.dmg',
     release_id: release.data.id,
     // @ts-expect-error type
-    data: (await fs.readFile(path.join(dirname, '..', 'package.json'))).buffer,
+    data: (await fs.readFile(dmgPath)).buffer,
   })
 }
 
