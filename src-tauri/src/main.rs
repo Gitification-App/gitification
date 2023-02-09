@@ -21,13 +21,6 @@ fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     if let SystemTrayEvent::LeftClick { position, .. } = event {
         let win_width = window.outer_size().expect("size").width;
 
-        window
-            .set_position(PhysicalPosition {
-                x: position.x - win_width as f64 / 2.0,
-                y: position.y,
-            })
-            .expect("couldn't set position of widow");
-
         if window.is_visible().unwrap() {
             window.hide().unwrap();
         } else {
