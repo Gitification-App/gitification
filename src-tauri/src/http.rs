@@ -100,12 +100,14 @@ fn handle_code_request(request: Request, window: &Window) {
     request.respond(response).unwrap();
 }
 
-pub fn apply_http(window: Window) {
+pub fn apply_http(window: &Window) {
+    let win = window.clone();
+
     tauri::async_runtime::spawn(async move {
         let server = Server::http("0.0.0.0:23846").unwrap();
 
         for request in server.incoming_requests() {
-            handle_code_request(request, &window);
+            handle_code_request(request, &win);
         }
     });
 }

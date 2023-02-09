@@ -58,7 +58,7 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     )
     .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 
-    apply_http(win);
+    apply_http(&win);
 
     Ok(())
 }
