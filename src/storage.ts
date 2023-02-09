@@ -9,7 +9,6 @@ const storage = shallowReactive<AppStorageContext>({
   user: null,
   accessToken: null,
   showOnlyParticipating: false,
-  markAsReadOnClick: false,
   openAtStartup: false,
   soundsEnabled: true,
   showReadNotifications: false,

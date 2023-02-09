@@ -12,7 +12,6 @@ const store = useStore()
 
 const soundsEnabled = AppStorage.asRef('soundsEnabled')
 const openAtStartup = AppStorage.asRef('openAtStartup')
-const markAsReadOnClick = AppStorage.asRef('markAsReadOnClick')
 const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
 const showReadNotifications = AppStorage.asRef('showReadNotifications')
 
@@ -36,10 +35,6 @@ watch(soundsEnabled, (enabled) => {
       <SettingsItem
         v-model:enabled="openAtStartup"
         title="Open at startup"
-      />
-      <SettingsItem
-        v-model:enabled="markAsReadOnClick"
-        title="Mark as read on click"
       />
       <SettingsItem
         v-model:enabled="showOnlyParticipating"
