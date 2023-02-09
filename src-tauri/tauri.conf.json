@@ -43,8 +43,9 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
+      "publisher": "Gitification",
       "identifier": "dev.gitification",
-      "longDescription": "",
+      "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -53,7 +54,7 @@
         "signingIdentity": null
       },
       "resources": ["resources/*"],
-      "shortDescription": "",
+      "shortDescription": "Manage your Github notifications",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
