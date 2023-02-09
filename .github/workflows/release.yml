@@ -18,6 +18,8 @@ jobs:
           node-version: '16'
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: 1.67.0
       - name: Install pnpm
         run: npm install -g pnpm
       - name: Install dependencies
