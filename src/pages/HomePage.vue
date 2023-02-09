@@ -49,7 +49,7 @@ function handleRepoClick(repoFullName: string) {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    scroll-padding-top: 5px;
-    scroll-padding-bottom: 5px;
+    scroll-padding-top: 10px;
+    scroll-padding-bottom: 10px;
   }
 </style>
