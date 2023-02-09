@@ -1,11 +1,9 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs/promises'
-import child_process from 'child_process'
 import { promisify } from 'util'
 import * as github from '@actions/github'
-
-const exec = promisify(child_process.exec)
+import { execaCommand } from 'execa'
 
 declare global {
   namespace NodeJS {
@@ -32,7 +30,7 @@ VITE_CLIENT_ID=${id}
 
 async function run() {
   await fs.writeFile(envPath, envFileContent, 'utf-8')
-  await exec('pnpm tauri build --target universal-apple-darwin')
+  await execaCommand('pnpm tauri build --target universal-apple-darwin', { stdio: 'inherit' })
 
   const tauriConf = JSON.parse(
     await fs.readFile(tauriConfPath, 'utf-8'),
