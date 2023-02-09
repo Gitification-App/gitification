@@ -27,22 +27,15 @@ jobs:
         with:
           version: latest
       
-      - name: Create ENV
-        run: pnpx tsx .github/actions/env.ts
-        env:
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
 
-      - uses: tauri-apps/tauri-action@v0
+      - name: Run Release
+        run: pnpx tsx .github/actions/release.ts
         env:
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: gitification-v__VERSION__
-          releaseName: 'Gitification v__VERSION__'
-          prerelease: false
-          # args: --target universal-apple-darwin
+
