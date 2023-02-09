@@ -31,9 +31,8 @@ html {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  @include borderRadiusOverflowHidden(8px);
   outline: none;
-  border: 1px solid var(--app-border);
+  @include borderRadiusOverflowHidden(8px);
 }
 
 body {
@@ -59,3 +58,13 @@ button, a {
   color: currentColor;
 }
 
+#app-border {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--app-border);
+  @include borderRadiusOverflowHidden(8px);
+}
