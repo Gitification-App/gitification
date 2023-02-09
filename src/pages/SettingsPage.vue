@@ -15,6 +15,8 @@ const openAtStartup = AppStorage.asRef('openAtStartup')
 const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
 const showReadNotifications = AppStorage.asRef('showReadNotifications')
 
+const accessToken = AppStorage.asComputed('accessToken')
+
 watch(soundsEnabled, (enabled) => {
   if (enabled)
     invoke('play_notification_sound')
