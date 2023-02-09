@@ -29,9 +29,6 @@ VITE_CLIENT_ID=${id}
 `
 
 async function run() {
-  await fs.writeFile(envPath, envFileContent, 'utf-8')
-  await execaCommand('pnpm tauri build --target universal-apple-darwin', { stdio: 'inherit' })
-
   const tauriConf = JSON.parse(
     await fs.readFile(tauriConfPath, 'utf-8'),
   ) as typeof import('../../src-tauri/tauri.conf.json')
@@ -72,6 +69,9 @@ async function run() {
     }
   }
   catch { /* If endpoint throws, it means no release yet */ }
+
+  await fs.writeFile(envPath, envFileContent, 'utf-8')
+  await execaCommand('pnpm tauri build --target universal-apple-darwin', { stdio: 'inherit' })
 
   const release = await octokit.rest.repos.createRelease({
     owner: 'Gitification-App',
