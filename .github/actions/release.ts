@@ -62,15 +62,18 @@ async function run() {
 
   const octokit = github.getOctokit(token)
 
-  const remoteRelease = await octokit.rest.repos.getLatestRelease({
-    owner: 'Gitification-App',
-    repo: 'gitification',
-  })
+  try {
+    const remoteRelease = await octokit.rest.repos.getLatestRelease({
+      owner: 'Gitification-App',
+      repo: 'gitification',
+    })
 
-  if (remoteRelease.data.name === packageJSON.version.toString()) {
-    console.log('No version change detected, skipping build.')
-    return
+    if (remoteRelease.data.name === packageJSON.version.toString()) {
+      console.log('No version change detected, skipping build.')
+      return
+    }
   }
+  catch { /* If endpoint throws, it means no release yet */ }
 
   const release = await octokit.rest.repos.createRelease({
     owner: 'Gitification-App',
