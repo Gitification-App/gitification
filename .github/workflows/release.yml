@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: macos-latest
     permissions:
-      repository-projects: read|write
+      repository-projects: write
     name: Release
     steps:
       - name: Checkout repository
