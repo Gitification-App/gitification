@@ -27,7 +27,6 @@ jobs:
         id: check
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          static-checking: localIsNew
 
 
       - name: Setup | Rust
