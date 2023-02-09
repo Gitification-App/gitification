@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
 import { useStore } from '../stores/store'
-import Separator from '../components/Separator.vue'
-import NotificationItem from '../components/NotificationItem.vue'
+import NotificationList from '../components/NotificationList.vue'
 import { useInterval } from '../composables/useInterval'
 import type { Thread } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
@@ -30,7 +29,7 @@ function handleRepoClick(repoFullName: string) {
     <NotificationSkeleton v-if="store.skeletonVisible" />
 
     <template v-else>
-      <NotificationItem
+      <NotificationList
         v-for="notification of store.notifications"
         :key="notification.repoFullName"
         :data="notification"

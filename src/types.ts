@@ -1,11 +1,22 @@
+import type { Raw } from 'vue'
 import type { Thread } from './api/notifications'
 import type { User } from './api/user'
 
 export type Option<T> = T | null
 
-export interface NotificationList {
+export interface NotificationListData {
   repoFullName: string
-  threads: Thread[]
+  repoAvatarURL: string
+  items: NotificationListDataItem[]
+}
+
+export interface NotificationListDataItem {
+  id: Thread['id']
+  unread: Thread['unread']
+  title: Thread['subject']['title']
+  reason: Thread['reason']
+  type: Thread['subject']['type']
+  raw: Raw<Thread>
 }
 
 export interface AppStorageContext {
@@ -14,6 +25,5 @@ export interface AppStorageContext {
   showOnlyParticipating: boolean
   openAtStartup: boolean
   soundsEnabled: boolean
-  markAsReadOnClick: boolean
   showReadNotifications: boolean
 }

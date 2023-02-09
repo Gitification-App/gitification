@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { readonly, ref } from 'vue'
-import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
 import { Page } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationList, Option } from '../types'
+import type { NotificationListData, Option } from '../types'
+import { notificationListFromThreads } from '../utils/notification'
 
 export const useStore = defineStore('store', () => {
-  const notifications = ref<NotificationList[]>([])
+  const notifications = ref<NotificationListData[]>([])
   const loadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
@@ -30,31 +30,12 @@ export const useStore = defineStore('store', () => {
         showReadNotifications: AppStorage.get('showReadNotifications'),
       })
 
-      notifications.value = []
-      const notificationsByRepo = new Map<Thread['repository']['id'], Thread[]>()
-
-      data.forEach((notification) => {
-        const { repository } = notification
-
-        if (!(notificationsByRepo.has(repository.id)))
-          notificationsByRepo.set(repository.id, [])
-
-        const thread = notificationsByRepo.get(repository.id)!
-
-        thread.push(notification)
-      })
-
-      for (const [, threads] of notificationsByRepo) {
-        notifications.value.push({
-          repoFullName: threads[0].repository.full_name,
-          threads,
-        })
-      }
-
+      notifications.value = notificationListFromThreads(data)
       skeletonVisible.value = false
     }
     catch (error) {
       console.error('NotificationError: ', error)
+      notifications.value = []
     }
   }
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Thread } from '../api/notifications'
-import type { NotificationList } from '../types'
+import type { NotificationListData } from '../types'
 import { formatReason, notificationSubjectIcon } from '../utils/notification'
 
 interface Emits {
@@ -9,7 +9,7 @@ interface Emits {
 }
 
 interface Props {
-  data: NotificationList
+  data: NotificationListData
 }
 
 const props = defineProps<Props>()
@@ -43,20 +43,20 @@ function handleRepoClick() {
       </span>
     </button>
     <button
-      v-for="item of props.data.threads"
+      v-for="item of props.data.items"
       :key="item.id"
       class="notification-item"
       :class="{ 'notification-item-read': !item.unread }"
-      @click="handleNotificationClick(item)"
+      @click="handleNotificationClick(item.raw)"
     >
       <Component
-        :is="notificationSubjectIcon(item.subject.type)"
+        :is="notificationSubjectIcon(item.type)"
         class="notification-item-icon"
       />
 
       <div class="notification-item-content">
         <div class="notification-item-content-title">
-          {{ item.subject.title }}
+          {{ item.title }}
         </div>
 
         <div class="notification-item-content-subtitle">
