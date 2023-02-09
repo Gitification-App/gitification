@@ -21,10 +21,11 @@ jobs:
         uses: ATiltedTree/setup-rust@v1
         with:
           rust-version: 1.67.0
-      - name: Install pnpm
-        run: npm install -g pnpm
-      - name: Install dependencies
-        run: pnpm install
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
       - name: Install tsx
         run: pnpm install tsx
       - name: Run file

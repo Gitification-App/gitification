@@ -6,7 +6,7 @@ import * as github from '@actions/github'
 
 const token = process.env.GITHUB_TOKEN!
 const dirname = path.dirname(fileURLToPath(import.meta.url))
-const dmgPath = path.join(dirname, '..', 'src-tauri', 'target', 'release', 'bundle', 'macos', 'rw.Gitification_0.0.0_aarch64.dmg')
+const dmgPath = path.join(dirname, '..', 'src-tauri', 'target', 'release', 'bundle', 'macos', 'Gitification_0.0.0_x64.dmg')
 
 async function run() {
   const octokit = github.getOctokit(token)
