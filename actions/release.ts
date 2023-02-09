@@ -24,7 +24,7 @@ async function run() {
     name: 'package.json',
     release_id: release.data.id,
     // @ts-expect-error type
-    data: (await fs.readFile(path.join(dirname, 'package.json'))).buffer,
+    data: (await fs.readFile(path.join(dirname, '..', 'package.json'))).buffer,
   })
 }
 
