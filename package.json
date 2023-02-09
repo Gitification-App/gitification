@@ -19,6 +19,7 @@
     "vue": "^3.2.45"
   },
   "devDependencies": {
+    "@actions/github": "^5.1.1",
     "@antfu/eslint-config": "^0.34.1",
     "@iconify-json/octicon": "^1.1.30",
     "@tauri-apps/cli": "^1.2.2",

@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - custom-workflow
+
+jobs:
+  release:
+    runs-on: macos-latest
+    name: Release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Setup | Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: 1.67.0
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install tsx
+        run: pnpm install tsx
+      - name: Run file
+        run: pnpx tsx ./actions/release.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
