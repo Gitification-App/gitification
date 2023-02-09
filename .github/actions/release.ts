@@ -77,6 +77,7 @@ async function run() {
     repo: 'gitification',
     tag_name: packageJSON.version.toString(),
     name: packageJSON.version.toString(),
+    body: 'Click to view [CHANGELOG](https://github.com/Gitification-App/gitification/blob/main/CHANGELOG.md).',
   })
 
   octokit.rest.repos.uploadReleaseAsset({
