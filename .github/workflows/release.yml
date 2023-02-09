@@ -1,5 +1,8 @@
 name: Release
 
+# I use npm to store app version.
+# When a new version is created
+
 on:
   push:
     branches:
@@ -13,22 +16,45 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+
+      - name: Check version changes
+        uses: EndBug/version-check@v1
+        id: check
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          static-checking: localIsNew
+
+
       - name: Setup | Rust
+        if: steps.check.outputs.changed == 'true'
         uses: ATiltedTree/setup-rust@v1
         with:
           rust-version: 1.67.0
+
       - uses: pnpm/action-setup@v2
+        if: steps.check.outputs.changed == 'true'
         name: Install pnpm
         id: pnpm-install
         with:
           version: latest
+
       - name: Install tsx
+        if: steps.check.outputs.changed == 'true'
         run: pnpm install tsx
+
       - name: Run file
+        if: steps.check.outputs.changed == 'true'
         run: pnpx tsx ./actions/release.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish package to NPM
+        if: steps.check.outputs.changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

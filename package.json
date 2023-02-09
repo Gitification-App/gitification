@@ -1,6 +1,5 @@
 {
   "name": "gitification",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -18,6 +17,10 @@
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "vue": "^3.2.45"
   },
+  "files": [
+    "README.md",
+    "package.json"
+  ],
   "devDependencies": {
     "@actions/github": "^5.1.1",
     "@antfu/eslint-config": "^0.34.1",
