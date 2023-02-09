@@ -35,6 +35,8 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
 
       - uses: tauri-apps/tauri-action@v0
         env:
