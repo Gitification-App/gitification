@@ -43,4 +43,4 @@ jobs:
           tagName: gitification-v__VERSION__
           releaseName: 'Gitification v__VERSION__'
           prerelease: false
-          args: --target universal-apple-darwin
+          # args: --target universal-apple-darwin
