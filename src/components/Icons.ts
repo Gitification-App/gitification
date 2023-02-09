@@ -23,6 +23,7 @@ import AlertIcon from 'virtual:icons/octicon/alert-24'
 import QuestionIcon from 'virtual:icons/octicon/question-24'
 import MailIcon from 'virtual:icons/octicon/mail-24'
 import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
+import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
 
 export const Icons = {
   More: markRaw(MoreIcon),
@@ -48,4 +49,5 @@ export const Icons = {
   Bell16: markRaw(BellIcon16),
   Gear16: markRaw(GearIcon16),
   Sync16: markRaw(SyncIcon16),
+  ChevronLeft: markRaw(ChevronLeftIcon),
 }

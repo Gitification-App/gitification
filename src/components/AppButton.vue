@@ -14,6 +14,7 @@
   color: var(--white);
   border-radius: 8px;
   @include focus-visible;
+  @include text-outline();
 
   &:active {
     background-color: var(--item-hover-bg);

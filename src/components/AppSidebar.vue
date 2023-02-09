@@ -1,39 +1,45 @@
 <script lang="ts" setup>
 import { exit } from '@tauri-apps/api/process'
 import { Page } from '../constants'
+import { AppStorage } from '../storage'
 import { useStore } from '../stores/store'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 
 const store = useStore()
+
+const accessToken = AppStorage.asComputed('accessToken')
+
+function handleBack() {
+  let page = Page.Home
+
+  if (accessToken.value == null)
+    page = Page.Landing
+
+  store.setPage(page)
+}
 </script>
 
 <template>
   <nav class="nav">
-    <div
-      v-if="store.currentPage !== Page.Landing"
-      class="upper"
-    >
-      <SidebarButton @click="store.setPage(Page.Home)">
-        <Icons.Bell16 />
+    <div class="upper">
+      <SidebarButton
+        v-if="store.currentPage === Page.Settings"
+        @click="handleBack"
+      >
+        <Icons.ChevronLeft />
       </SidebarButton>
     </div>
     <div class="lower">
-      <template v-if="store.currentPage !== Page.Landing">
-        <SidebarButton @click="store.fetchNotifications(true)">
-          <Icons.Sync16 />
-        </SidebarButton>
-
-        <SidebarButton @click="store.setPage(Page.Settings)">
-          <Icons.Gear16 />
-        </SidebarButton>
-      </template>
-
       <SidebarButton
-        v-else
-        @click="exit(0)"
+        v-if="accessToken != null"
+        @click="store.fetchNotifications(true)"
       >
-        <Icons.SignOut16 />
+        <Icons.Sync16 />
+      </SidebarButton>
+
+      <SidebarButton @click="store.setPage(Page.Settings)">
+        <Icons.Gear16 />
       </SidebarButton>
     </div>
   </nav>
