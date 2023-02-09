@@ -47,7 +47,10 @@ watch(soundsEnabled, (enabled) => {
     </div>
 
     <div class="settings-footer">
-      <AppButton @click="store.logout">
+      <AppButton
+        v-if="accessToken"
+        @click="store.logout"
+      >
         Log out
       </AppButton>
 
