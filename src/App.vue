@@ -11,7 +11,7 @@ const store = useStore()
 </script>
 
 <template>
-  <AppSidebar v-if="store.currentPage !== Page.Landing" />
+  <AppSidebar />
 
   <AppContent>
     <HomePage v-if="store.currentPage === Page.Home" />

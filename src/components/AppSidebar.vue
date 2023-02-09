@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { exit } from '@tauri-apps/api/process'
 import { Page } from '../constants'
 import { useStore } from '../stores/store'
 import { Icons } from './Icons'
@@ -9,18 +10,30 @@ const store = useStore()
 
 <template>
   <nav class="nav">
-    <div class="upper">
+    <div
+      v-if="store.currentPage !== Page.Landing"
+      class="upper"
+    >
       <SidebarButton @click="store.setPage(Page.Home)">
-        <Icons.Bell />
+        <Icons.Bell16 />
       </SidebarButton>
     </div>
     <div class="lower">
-      <SidebarButton @click="store.fetchNotifications(true)">
-        <Icons.Sync />
-      </SidebarButton>
+      <template v-if="store.currentPage !== Page.Landing">
+        <SidebarButton @click="store.fetchNotifications(true)">
+          <Icons.Sync16 />
+        </SidebarButton>
 
-      <SidebarButton @click="store.setPage(Page.Settings)">
-        <Icons.Gear />
+        <SidebarButton @click="store.setPage(Page.Settings)">
+          <Icons.Gear16 />
+        </SidebarButton>
+      </template>
+
+      <SidebarButton
+        v-else
+        @click="exit(0)"
+      >
+        <Icons.SignOut16 />
       </SidebarButton>
     </div>
   </nav>
