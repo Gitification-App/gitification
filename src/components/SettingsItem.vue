@@ -74,6 +74,7 @@ const emit = defineEmits<Emits>()
     justify-content: center;
     font-size: 12px;
     color: currentColor;
+    @include text-outline();
   }
 
 }
