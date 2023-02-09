@@ -29,7 +29,9 @@ jobs:
       
       - name: Create ENV
         run: pnpx tsx .github/actions/env.ts
-        
+        env:
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
