@@ -1,7 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs/promises'
-import { promisify } from 'util'
 import * as github from '@actions/github'
 import { execaCommand } from 'execa'
 
