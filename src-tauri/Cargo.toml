@@ -23,6 +23,7 @@ typed-html = { git = "https://github.com/bodil/typed-html", rev = "4c13ecca" }
 ascii = "1.1.0"
 rodio = "0.16.0"
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 
 [features]
 # by default Tauri runs in production mode

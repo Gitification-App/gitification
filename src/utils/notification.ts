@@ -1,4 +1,3 @@
-import { invoke } from '@tauri-apps/api/tauri'
 import { markRaw } from 'vue'
 import type { Thread } from '../api/notifications'
 import { Icons } from '../components/Icons'
@@ -12,10 +11,6 @@ export function notificationSubjectIcon(subject: NotificationSubject) {
 
 export function formatReason(reason: NotificationReason) {
   return reasonFormatMap[reason] || 'Unknown reason'
-}
-
-export function playNotificationSound() {
-  invoke('play_notification_sound')
 }
 
 function notificationListItemFromThread(thread: Thread): NotificationListDataItem {

@@ -78,6 +78,8 @@ fn handle_window_event(event: GlobalWindowEvent) {
     }
 }
 
+use tauri_plugin_autostart::MacosLauncher;
+
 fn main() {
     let tray = SystemTray::new();
 
@@ -86,6 +88,10 @@ fn main() {
             play_notification_sound,
             set_icon_template
         ])
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            None,
+        ))
         .plugin(tauri_plugin_store::Builder::default().build())
         .system_tray(tray)
         .on_system_tray_event(handle_system_tray_event)
