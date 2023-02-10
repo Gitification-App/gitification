@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="256px" height="256px" src="src-tauri/icons/128x128%402.png" />
+  <img width="256px" height="256px" src="src-tauri/icons/128x128%402x.png" />
 </div>
 
 # Gitification

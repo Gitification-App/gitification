@@ -1,5 +1,7 @@
+import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { readonly, ref } from 'vue'
+import { readonly, ref, watch } from 'vue'
+import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
 import { Page } from '../constants'
 import { AppStorage } from '../storage'
@@ -11,6 +13,9 @@ export const useStore = defineStore('store', () => {
   const loadingNotifications = ref(false)
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
+
+  let notificationsRaw: Thread[] = []
+  let notificationsRawPrevious: Thread[] = []
 
   async function fetchNotifications(withSkeletons = false) {
     if (loadingNotifications.value)
@@ -34,6 +39,8 @@ export const useStore = defineStore('store', () => {
         showReadNotifications: AppStorage.get('showReadNotifications'),
       })
 
+      notificationsRawPrevious = notificationsRaw
+      notificationsRaw = data
       notifications.value = notificationListFromThreads(data)
     }
     catch (error) {
@@ -63,6 +70,12 @@ export const useStore = defineStore('store', () => {
     pageFrom.value = currentPage.value
     currentPage.value = to
   }
+
+  watch(notifications, () => {
+    const hasUnread = notificationsRaw.some(n => n.unread)
+    console.log({ hasUnread })
+    invoke('set_icon_template', { isTemplate: !hasUnread })
+  }, { deep: true, immediate: true })
 
   return {
     notifications,

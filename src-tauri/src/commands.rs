@@ -22,3 +22,13 @@ pub fn play_notification_sound(app: AppHandle) {
         sink.sleep_until_end();
     });
 }
+
+#[tauri::command]
+pub fn set_icon_template(is_template: bool, app: AppHandle) {
+    app.tray_handle().set_icon_as_template(is_template).unwrap();
+    app.tray_handle()
+        .set_icon(tauri::Icon::Raw(
+            include_bytes!("../icons/tray/icon.png").to_vec(),
+        ))
+        .unwrap();
+}

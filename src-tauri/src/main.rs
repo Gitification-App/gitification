@@ -6,7 +6,7 @@
 mod commands;
 mod http;
 
-use commands::play_notification_sound;
+use commands::{play_notification_sound, set_icon_template};
 use http::apply_http;
 
 use tauri::{
@@ -82,7 +82,10 @@ fn main() {
     let tray = SystemTray::new();
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![play_notification_sound])
+        .invoke_handler(tauri::generate_handler![
+            play_notification_sound,
+            set_icon_template
+        ])
         .plugin(tauri_plugin_store::Builder::default().build())
         .system_tray(tray)
         .on_system_tray_event(handle_system_tray_event)
