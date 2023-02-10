@@ -1,8 +1,9 @@
-import type { Raw } from 'vue'
+import type { Raw, Ref } from 'vue'
 import type { Thread } from './api/notifications'
 import type { User } from './api/user'
 
 export type Option<T> = T | null
+export type MaybeRef<T> = T | Ref<T>
 
 export interface NotificationListData {
   repoFullName: string

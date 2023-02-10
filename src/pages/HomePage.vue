@@ -1,5 +1,9 @@
+<script lang="ts">
+</script>
+
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
+import { onMounted, onUpdated, ref, shallowRef } from 'vue'
 import { useStore } from '../stores/store'
 import NotificationList from '../components/NotificationList.vue'
 import { useInterval } from '../composables/useInterval'
@@ -8,6 +12,8 @@ import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
 import { Page } from '../constants'
+import type { Option } from '../types'
+import { useElementNavigation } from '../composables/useElementNavigation'
 
 const store = useStore()
 
@@ -22,10 +28,22 @@ function handleNotificationClick(notification: Thread) {
 function handleRepoClick(repoFullName: string) {
   open(`https://github.com/${repoFullName}`)
 }
+
+const home = ref<Option<HTMLElement>>(null)
+
+useElementNavigation({
+  target: home,
+  navigateNextHotkey: 'down',
+  navigatePreviousHotkey: 'up',
+  targetQuery: '.notification-item, .notification-title',
+})
 </script>
 
 <template>
-  <div class="home">
+  <div
+    ref="home"
+    class="home"
+  >
     <NotificationSkeleton v-if="store.skeletonVisible" />
 
     <template v-else>
