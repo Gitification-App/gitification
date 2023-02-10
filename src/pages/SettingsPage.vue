@@ -53,6 +53,7 @@ watch(soundsEnabled, (enabled) => {
 
     <div class="settings-footer">
       <AppButton
+        title="Open Gitification repository"
         class="github-button"
         @click="open(REPO_LINK)"
       >

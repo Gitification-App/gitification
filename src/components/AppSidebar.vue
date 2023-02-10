@@ -27,6 +27,7 @@ useKey('esc', handleBack, { source: () => store.currentPage === Page.Settings })
   <nav class="nav">
     <div class="upper">
       <SidebarButton
+        title="Back to home page"
         :disabled="store.currentPage !== Page.Settings"
         @click="handleBack"
       >
@@ -35,13 +36,17 @@ useKey('esc', handleBack, { source: () => store.currentPage === Page.Settings })
     </div>
     <div class="lower">
       <SidebarButton
-        v-if="accessToken != null"
+        v-if="store.currentPage === Page.Home"
+        title="Reload notifications"
         @click="store.fetchNotifications(true)"
       >
         <Icons.Sync16 :class="{ 'sync-icon-spin': store.loadingNotifications }" />
       </SidebarButton>
 
-      <SidebarButton @click="store.setPage(Page.Settings)">
+      <SidebarButton
+        title="Go to settings"
+        @click="store.setPage(Page.Settings)"
+      >
         <Icons.Gear16 />
       </SidebarButton>
     </div>
