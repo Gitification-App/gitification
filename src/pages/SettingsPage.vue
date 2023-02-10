@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { watch } from 'vue'
 import { exit } from '@tauri-apps/api/process'
+import { open } from '@tauri-apps/api/shell'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
+import { Icons } from '../components/Icons'
+import { REPO_LINK } from '../constants'
 
 const store = useStore()
 
@@ -50,6 +53,13 @@ watch(soundsEnabled, (enabled) => {
 
     <div class="settings-footer">
       <AppButton
+        class="github-button"
+        @click="open(REPO_LINK)"
+      >
+        <Icons.Github />
+      </AppButton>
+
+      <AppButton
         v-if="accessToken"
         @click="store.logout"
       >
@@ -65,6 +75,7 @@ watch(soundsEnabled, (enabled) => {
 
 <style lang="scss" scoped>
   .settings {
+    outline: none;
     position: absolute;
     left: 0;
     top: 0;
@@ -94,8 +105,12 @@ watch(soundsEnabled, (enabled) => {
       justify-content: flex-end;
 
       > .button + .button {
-        margin-left: 10px;
+        margin-left: 5px;
       }
     }
+  }
+
+  .github-button {
+    margin-right: auto;
   }
 </style>
