@@ -24,7 +24,7 @@ const store = useStore()
     </div>
     <div class="lower">
       <SidebarButton
-        v-if="store.currentPage === Page.Home"
+        :disabled="store.currentPage !== Page.Home"
         title="Reload notifications"
         @click="store.fetchNotifications(true)"
       >
@@ -32,6 +32,7 @@ const store = useStore()
       </SidebarButton>
 
       <SidebarButton
+        :disabled="store.currentPage === Page.Settings"
         title="Go to settings"
         @click="store.setPage(Page.Settings)"
       >
