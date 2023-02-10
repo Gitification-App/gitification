@@ -1,5 +1,19 @@
+<script lang="ts" setup>
+interface Props {
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+})
+</script>
+
 <template>
-  <button class="sidebar-button">
+  <button
+    class="sidebar-button"
+    :disabled="disabled || undefined"
+    :class="{ disabled }"
+  >
     <slot />
   </button>
 </template>
@@ -12,17 +26,23 @@
   border: 1px solid transparent;
   @include focus-visible;
 
-  &:active {
-    background-color: var(--item-hover-bg);
-
-    :deep(.icon) {
-      color: var(--white);
-    }
+  &.disabled {
+    opacity: .3;
   }
 
-  &:hover {
-    :deep(.icon) {
-      color: var(--white);
+  &:not(.disabled) {
+    &:active {
+      background-color: var(--item-hover-bg);
+
+      :deep(.icon) {
+        color: var(--white);
+      }
+    }
+
+    &:hover {
+      :deep(.icon) {
+        color: var(--white);
+      }
     }
   }
 

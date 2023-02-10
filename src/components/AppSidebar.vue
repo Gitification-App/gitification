@@ -24,7 +24,7 @@ function handleBack() {
   <nav class="nav">
     <div class="upper">
       <SidebarButton
-        v-if="store.currentPage === Page.Settings"
+        :disabled="store.currentPage !== Page.Settings"
         @click="handleBack"
       >
         <Icons.ChevronLeft />
