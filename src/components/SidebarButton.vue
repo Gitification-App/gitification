@@ -21,9 +21,15 @@ const props = withDefaults(defineProps<Props>(), {
 <style lang="scss" scoped>
 .sidebar-button {
   padding: 8px;
+  width: 35px;
   border-radius: 8px;
   color: var(--white-faded);
   border: 1px solid transparent;
+  width: 35px;
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   @include focus-visible;
 
   &.disabled {

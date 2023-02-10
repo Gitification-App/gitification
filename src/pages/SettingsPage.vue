@@ -106,7 +106,7 @@ useKey('esc', handleBack, { prevent: true })
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    padding: 25px 45px;
+    padding: 20px 45px;
     display: flex;
     flex-flow: column nowrap;
 

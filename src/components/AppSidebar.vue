@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { useKey } from '../composables/useKey'
 import { Page, REPO_LINK } from '../constants'
-import { AppStorage } from '../storage'
 import { useStore } from '../stores/store'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
@@ -19,6 +17,7 @@ const store = useStore()
       >
         <img
           style="width: 100%"
+          draggable="false"
           src="/src/assets/img/icon.png"
         >
       </SidebarButton>
@@ -57,9 +56,8 @@ const store = useStore()
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  padding: 10px;
+  padding: 20px 10px;
   background-color: var(--sidebar-bg);
-  width: 57px;
 
   .sync-icon-spin {
     animation: 1s spin linear infinite;
