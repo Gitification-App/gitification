@@ -1,37 +1,26 @@
 <script lang="ts" setup>
-import { exit } from '@tauri-apps/api/process'
+import { open } from '@tauri-apps/api/shell'
 import { useKey } from '../composables/useKey'
-import { Page } from '../constants'
+import { Page, REPO_LINK } from '../constants'
 import { AppStorage } from '../storage'
 import { useStore } from '../stores/store'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 
 const store = useStore()
-
-const accessToken = AppStorage.asComputed('accessToken')
-
-function handleBack() {
-  let page = Page.Home
-
-  if (accessToken.value == null)
-    page = Page.Landing
-
-  store.setPage(page)
-}
-
-useKey('esc', handleBack, { source: () => store.currentPage === Page.Settings })
 </script>
 
 <template>
   <nav class="nav">
     <div class="upper">
       <SidebarButton
-        title="Back to home page"
-        :disabled="store.currentPage !== Page.Settings"
-        @click="handleBack"
+        title="Go to Gitification repository"
+        @click="open(REPO_LINK)"
       >
-        <Icons.ChevronLeft />
+        <img
+          style="width: 100%"
+          src="/src/assets/img/icon.png"
+        >
       </SidebarButton>
     </div>
     <div class="lower">
@@ -70,6 +59,7 @@ useKey('esc', handleBack, { source: () => store.currentPage === Page.Settings })
   flex-wrap: nowrap;
   padding: 10px;
   background-color: var(--sidebar-bg);
+  width: 57px;
 
   .sync-icon-spin {
     animation: 1s spin linear infinite;

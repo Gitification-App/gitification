@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 interface Props {
   loading?: boolean
+  paddingless?: boolean
+  square?: boolean
 }
 interface Emits {
   (name: 'click', event: MouseEvent): void
@@ -8,6 +10,8 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
+  paddingless: false,
+  square: false,
 })
 const emit = defineEmits<Emits>()
 
@@ -23,7 +27,11 @@ function handleClick(e: MouseEvent) {
   <button
     :disabled="loading || undefined"
     class="button"
-    :class="{ 'button-loading': loading }"
+    :class="{
+      'button-loading': loading,
+      'button-paddingless': paddingless,
+      'button-square': square,
+    }"
     @click="handleClick"
   >
     <div
@@ -53,6 +61,19 @@ function handleClick(e: MouseEvent) {
   color: var(--white);
   border-radius: 8px;
   @include text-outline();
+  vertical-align: middle;
+
+  &-paddingless, &-square {
+    padding: 0px;
+  }
+
+  &-square {
+    display: inline-flex;
+    height: 35px;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+  }
 
   &-loading {
     .button-content {

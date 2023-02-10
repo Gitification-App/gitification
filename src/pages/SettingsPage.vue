@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import { watch } from 'vue'
 import { exit } from '@tauri-apps/api/process'
-import { open } from '@tauri-apps/api/shell'
 import { invoke } from '@tauri-apps/api/tauri'
+import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
+import { watchDebounced } from '@vueuse/core'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
+import { InvokeCommand, Page } from '../constants'
 import { Icons } from '../components/Icons'
-import { REPO_LINK } from '../constants'
+import { useKey } from '../composables/useKey'
 
 const store = useStore()
 
@@ -22,15 +24,44 @@ const accessToken = AppStorage.asComputed('accessToken')
 
 watch(soundsEnabled, (enabled) => {
   if (enabled)
-    invoke('play_notification_sound')
+    invoke(InvokeCommand.PlayNotificationSound)
 })
+
+watchDebounced(openAtStartup, (enabled) => {
+  if (enabled)
+    enableAutostart()
+  else
+    disableAutostart()
+}, { debounce: 350 })
+
+function handleBack() {
+  let page = Page.Home
+
+  if (accessToken.value == null)
+    page = Page.Landing
+
+  store.setPage(page)
+}
+
+useKey('esc', handleBack, { prevent: true })
 </script>
 
 <template>
   <div class="settings">
-    <PageHeader class="settings-header">
-      Settings
-    </PageHeader>
+    <div class="settings-header">
+      <AppButton
+        class="settings-header-back-button"
+        square
+        title="Go back"
+        @click="handleBack"
+      >
+        <Icons.ChevronLeft />
+      </AppButton>
+
+      <PageHeader inline>
+        Settings
+      </PageHeader>
+    </div>
 
     <div class="settings-grid">
       <SettingsItem
@@ -52,14 +83,6 @@ watch(soundsEnabled, (enabled) => {
     </div>
 
     <div class="settings-footer">
-      <AppButton
-        title="Open Gitification repository"
-        class="github-button"
-        @click="open(REPO_LINK)"
-      >
-        <Icons.Github />
-      </AppButton>
-
       <AppButton
         v-if="accessToken"
         @click="store.logout"
@@ -89,6 +112,10 @@ watch(soundsEnabled, (enabled) => {
 
     &-header {
       margin-bottom: 25px;
+
+      &-back-button {
+        margin-right: 10px;
+      }
     }
 
     &-grid {
@@ -109,9 +136,5 @@ watch(soundsEnabled, (enabled) => {
         margin-left: 5px;
       }
     }
-  }
-
-  .github-button {
-    margin-right: auto;
   }
 </style>

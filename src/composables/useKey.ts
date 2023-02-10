@@ -1,5 +1,6 @@
+import { tryOnScopeDispose } from '@vueuse/core'
 import hotkeys, { type HotkeysEvent } from 'hotkeys-js'
-import { type Ref, onMounted, onUnmounted, unref, watch } from 'vue'
+import { type Ref, isRef, unref, watch } from 'vue'
 
 type MaybeRef<T> = T | Ref<T>
 
@@ -97,7 +98,7 @@ export function useKey(
     }
   }
 
-  if (source) {
+  if (isRef(source) || typeof source === 'function') {
     watch(
       source,
       (newSourceValue) => {
@@ -109,8 +110,10 @@ export function useKey(
     )
   }
   else {
-    onMounted(init)
+    init()
   }
 
-  onUnmounted(destroy)
+  tryOnScopeDispose(destroy)
+
+  return destroy
 }
