@@ -9,6 +9,7 @@ import { notificationListFromThreads } from '../utils/notification'
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationListData[]>([])
   const loadingNotifications = ref(false)
+  const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
   async function fetchNotifications(withSkeletons = false) {
@@ -24,6 +25,7 @@ export const useStore = defineStore('store', () => {
       skeletonVisible.value = true
 
     loadingNotifications.value = true
+    failedLoadingNotifications.value = false
 
     try {
       const { data } = await getNotifications({
@@ -37,6 +39,7 @@ export const useStore = defineStore('store', () => {
     catch (error) {
       console.error('NotificationError: ', error)
       notifications.value = []
+      failedLoadingNotifications.value = true
     }
     finally {
       loadingNotifications.value = false
@@ -68,6 +71,7 @@ export const useStore = defineStore('store', () => {
     loadingNotifications,
     skeletonVisible,
     pageFrom,
+    failedLoadingNotifications,
     fetchNotifications,
     logout,
   }

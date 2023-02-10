@@ -14,6 +14,9 @@ import NotificationSkeleton from '../components/NotificationSkeleton.vue'
 import { Page } from '../constants'
 import type { Option } from '../types'
 import { useElementNavigation } from '../composables/useElementNavigation'
+import EmptyState, { EmptyStateIconSize } from '../components/EmptyState.vue'
+import { Icons } from '../components/Icons'
+import AppButton from '../components/AppButton.vue'
 
 const store = useStore()
 
@@ -45,6 +48,26 @@ useElementNavigation({
     class="home"
   >
     <NotificationSkeleton v-if="store.skeletonVisible" />
+
+    <EmptyState
+      v-else-if="store.failedLoadingNotifications"
+      :iconSize="EmptyStateIconSize.Big"
+      :icon="Icons.X"
+      description="Oopsie! Couldn't load notifications."
+    >
+      <template #footer>
+        <AppButton @click="store.fetchNotifications(true)">
+          Refresh
+        </AppButton>
+      </template>
+    </EmptyState>
+
+    <EmptyState
+      v-else-if="store.notifications.length === 0"
+      :iconSize="EmptyStateIconSize.Big"
+      :icon="Icons.Check"
+      description="It's all clear sir!"
+    />
 
     <template v-else>
       <NotificationList

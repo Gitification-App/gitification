@@ -68,3 +68,10 @@ button, a {
   border: 1px solid var(--app-border);
   @include borderRadiusOverflowHidden(8px);
 }
+
+.icon {
+  stroke: black;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}

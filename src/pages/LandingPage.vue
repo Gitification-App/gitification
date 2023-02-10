@@ -11,6 +11,7 @@ import { getAccessToken } from '../api/token'
 import { GITHUB_AUTH_URL } from '../api/constants'
 import { AppStorage } from '../storage'
 import { getUser } from '../api/user'
+import EmptyState from '../components/EmptyState.vue'
 
 const store = useStore()
 
@@ -46,43 +47,14 @@ function handleLogin() {
 </script>
 
 <template>
-  <div class="landing">
-    <Icons.Github class="github-icon" />
-
-    <PageHeader class="landing-header">
-      Welcome to Gitification
-    </PageHeader>
-
-    <div class="landing-content">
+  <EmptyState
+    :icon="Icons.Github"
+    description="Welcome to Gitification"
+  >
+    <template #footer>
       <AppButton @click="handleLogin">
         Log in via Github
       </AppButton>
-    </div>
-  </div>
+    </template>
+  </EmptyState>
 </template>
-
-<style lang="scss" scoped>
-.landing {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  padding: 25px;
-  align-items: center;
-  justify-content: center;
-
-  &-header {
-    margin: 15px 0;
-  }
-
-  &-content {
-    width: 100%;
-    text-align: center;
-  }
-
-  .github-icon {
-    font-size: 30px;
-    color: var(--white);
-  }
-}
-</style>

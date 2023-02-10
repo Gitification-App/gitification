@@ -25,6 +25,8 @@ import MailIcon from 'virtual:icons/octicon/mail-24'
 import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
 import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
 
+export type IconComponent = typeof Icons[keyof typeof Icons]
+
 export const Icons = {
   More: markRaw(MoreIcon),
   Gear: markRaw(GearIcon),

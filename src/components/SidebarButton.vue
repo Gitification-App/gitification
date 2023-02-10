@@ -48,10 +48,6 @@ const props = withDefaults(defineProps<Props>(), {
 
   :deep(.icon) {
     font-size: 16px;
-    stroke: black;
-    stroke-width: 1px;
-    stroke-linejoin: round;
-    paint-order: stroke;
   }
 }
 </style>
