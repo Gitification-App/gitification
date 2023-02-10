@@ -3,10 +3,16 @@ import { defineStore } from 'pinia'
 import { readonly, ref, watch } from 'vue'
 import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
-import { Page } from '../constants'
+import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
 import type { NotificationListData, Option } from '../types'
 import { notificationListFromThreads } from '../utils/notification'
+
+function hasNewNotification(newThreads: Thread[], previousThreads: Thread[]) {
+  const newThreadsFiltered = newThreads.filter(t => t.unread)
+  const previousThreadsFiltered = previousThreads.filter(t => t.unread)
+  return !newThreadsFiltered.every(newT => previousThreadsFiltered.some(prevT => prevT.id === newT.id))
+}
 
 export const useStore = defineStore('store', () => {
   const notifications = ref<NotificationListData[]>([])
@@ -48,10 +54,15 @@ export const useStore = defineStore('store', () => {
       notifications.value = []
       failedLoadingNotifications.value = true
     }
-    finally {
-      loadingNotifications.value = false
-      skeletonVisible.value = false
-    }
+
+    loadingNotifications.value = false
+    skeletonVisible.value = false
+
+    if (
+      AppStorage.get('soundsEnabled')
+      && hasNewNotification(notificationsRaw, notificationsRawPrevious)
+    )
+      invoke(InvokeCommand.PlayNotificationSound)
   }
 
   const currentPage = ref(Page.Landing)
@@ -59,6 +70,7 @@ export const useStore = defineStore('store', () => {
 
   function logout() {
     AppStorage.set('accessToken', null)
+    AppStorage.set('user', null)
     notifications.value = []
     currentPage.value = Page.Landing
   }
@@ -73,8 +85,7 @@ export const useStore = defineStore('store', () => {
 
   watch(notifications, () => {
     const hasUnread = notificationsRaw.some(n => n.unread)
-    console.log({ hasUnread })
-    invoke('set_icon_template', { isTemplate: !hasUnread })
+    invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   }, { deep: true, immediate: true })
 
   return {

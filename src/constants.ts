@@ -9,6 +9,11 @@ export enum Page {
   Landing = 'Landing',
 }
 
+export enum InvokeCommand {
+  PlayNotificationSound = 'play_notification_sound',
+  SetIconTemplate = 'set_icon_template',
+}
+
 export enum NotificationSubject {
   CheckSuite = 'CheckSuite',
   Discussion = 'Discussion',
