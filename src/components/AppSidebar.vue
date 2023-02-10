@@ -35,7 +35,7 @@ function handleBack() {
         v-if="accessToken != null"
         @click="store.fetchNotifications(true)"
       >
-        <Icons.Sync16 />
+        <Icons.Sync16 :class="{ 'sync-icon-spin': store.loadingNotifications }" />
       </SidebarButton>
 
       <SidebarButton @click="store.setPage(Page.Settings)">
@@ -46,6 +46,14 @@ function handleBack() {
 </template>
 
 <style lang="scss" scoped>
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .nav {
   height: 100%;
   flex-shrink: 0;
@@ -54,6 +62,10 @@ function handleBack() {
   flex-wrap: nowrap;
   padding: 10px;
   background-color: var(--sidebar-bg);
+
+  .sync-icon-spin {
+    animation: 1s spin linear infinite;
+  }
 
   .upper,
   .lower {
@@ -70,6 +82,5 @@ function handleBack() {
   .lower {
     margin-top: auto;
   }
-
 }
 </style>

@@ -23,6 +23,8 @@ export const useStore = defineStore('store', () => {
     if (withSkeletons)
       skeletonVisible.value = true
 
+    loadingNotifications.value = true
+
     try {
       const { data } = await getNotifications({
         accessToken,
@@ -31,11 +33,14 @@ export const useStore = defineStore('store', () => {
       })
 
       notifications.value = notificationListFromThreads(data)
-      skeletonVisible.value = false
     }
     catch (error) {
       console.error('NotificationError: ', error)
       notifications.value = []
+    }
+    finally {
+      loadingNotifications.value = false
+      skeletonVisible.value = false
     }
   }
 
