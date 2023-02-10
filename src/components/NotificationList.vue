@@ -35,7 +35,7 @@ function handleRepoClick() {
     >
       <img
         class="notification-title-icon"
-        src="https://avatars.githubusercontent.com/u/47540799?s=40&v=4"
+        :src="props.data.repoAvatarURL"
         alt="repo logo"
       >
       <span class="notification-title-text">
