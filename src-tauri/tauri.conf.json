@@ -54,7 +54,7 @@
         "icons/StoreLogo.png"
       ],
       "publisher": "Gitification",
-      "identifier": "dev.gitification",
+      "identifier": "app.gitification",
       "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
       "macOS": {
         "entitlements": null,
