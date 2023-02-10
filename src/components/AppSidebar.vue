@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { exit } from '@tauri-apps/api/process'
+import { useKey } from '../composables/useKey'
 import { Page } from '../constants'
 import { AppStorage } from '../storage'
 import { useStore } from '../stores/store'
@@ -18,6 +19,8 @@ function handleBack() {
 
   store.setPage(page)
 }
+
+useKey('esc', handleBack, { source: () => store.currentPage === Page.Settings })
 </script>
 
 <template>
