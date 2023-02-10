@@ -5,5 +5,6 @@
 # Gitification
 An app to view your notifications easily on your menubar.
 
-- Gitify uses Tauri under the hood so the app is just under 5mb.
+- Gitify uses Tauri under the hood, so it does not ship a 200mb chrome browser. App size is just lower than 20 or 10mb.
+
 
