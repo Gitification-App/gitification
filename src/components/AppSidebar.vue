@@ -11,16 +11,15 @@ const store = useStore()
 <template>
   <nav class="nav">
     <div class="upper">
-      <SidebarButton
+      <img
+        role="button"
+        width="30"
+        height="30"
         title="Go to Gitification repository"
+        draggable="false"
+        src="/src/assets/img/icon.png"
         @click="open(REPO_LINK)"
       >
-        <img
-          style="width: 100%"
-          draggable="false"
-          src="/src/assets/img/icon.png"
-        >
-      </SidebarButton>
     </div>
     <div class="lower">
       <SidebarButton
