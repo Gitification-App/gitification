@@ -30,7 +30,6 @@ html {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  outline: none;
   @include borderRadiusOverflowHidden(8px);
 }
 
@@ -51,7 +50,6 @@ body {
 
 button, a {
   border: none;
-  outline: none;
   text-decoration: none;
   background-color: unset;
   color: currentColor;

@@ -112,7 +112,6 @@ useKey('esc', handleBack, { prevent: true })
 
 <style lang="scss" scoped>
   .settings {
-    outline: none;
     position: absolute;
     left: 0;
     top: 0;

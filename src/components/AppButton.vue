@@ -54,7 +54,6 @@ function handleClick(e: MouseEvent) {
   font-size: 14px;
   padding: 8px 12px;
   border: 1px solid var(--item-border-color);
-  outline: none;
   background-color: var(--item-bg);
   position: relative;
   overflow: hidden;
