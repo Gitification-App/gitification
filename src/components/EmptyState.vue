@@ -22,12 +22,19 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div class="empty-state">
-    <Component
-      :is="icon"
-      v-if="icon != null"
-      class="empty-state-icon"
-      :class="{ 'empty-state-icon-big': iconSize === EmptyStateIconSize.Big }"
-    />
+    <div
+      v-if="icon != null || $slots.icon != null"
+      class="empty-state-icon-wrapper"
+    >
+      <slot name="icon">
+        <Component
+          :is="icon"
+          v-if="icon != null"
+          class="empty-state-icon"
+          :class="{ 'empty-state-icon-big': iconSize === EmptyStateIconSize.Big }"
+        />
+      </slot>
+    </div>
 
     <PageHeader>
       {{ description }}
@@ -58,7 +65,10 @@ withDefaults(defineProps<Props>(), {
   &-icon {
     font-size: 30px;
     color: var(--white);
-    margin-bottom: 15px;
+
+    &-wrapper {
+      margin-bottom: 15px
+    }
 
     &-big {
       font-size: 50px;

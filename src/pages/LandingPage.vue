@@ -47,10 +47,15 @@ function handleLogin() {
 </script>
 
 <template>
-  <EmptyState
-    :icon="Icons.Github"
-    description="Welcome to Gitification"
-  >
+  <EmptyState description="Welcome to Gitification">
+    <template #icon>
+      <img
+        width="75"
+        height="75"
+        src="/src/assets/img/icon.png"
+      >
+    </template>
+
     <template #footer>
       <AppButton @click="handleLogin">
         Log in via Github
