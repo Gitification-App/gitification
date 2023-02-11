@@ -12,6 +12,7 @@ import { AppStorage } from '../storage'
 import { InvokeCommand, Page } from '../constants'
 import { Icons } from '../components/Icons'
 import { useKey } from '../composables/useKey'
+import { useTauriEvent } from '../composables/useTauriEvent'
 
 const store = useStore()
 
@@ -38,6 +39,10 @@ watchDebounced(openAtStartup, (enabled) => {
   else
     disableAutostart()
 }, { debounce: 350 })
+
+useTauriEvent('window:hidden', () => {
+  store.setPage(Page.Home)
+})
 
 function handleBack() {
   if (accessToken.value == null)

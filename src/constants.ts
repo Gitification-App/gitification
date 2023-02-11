@@ -48,7 +48,7 @@ export const reasonFormatMap = {
   [NotificationReason.Invitation]: 'Invitation',
   [NotificationReason.Manual]: 'Manual',
   [NotificationReason.Mention]: 'Mention',
-  [NotificationReason.ReviewRequested]: 'ReviewRequested',
+  [NotificationReason.ReviewRequested]: 'Review Requested',
   [NotificationReason.SecurityAlert]: 'Security Alert',
   [NotificationReason.StateChange]: 'State Change',
   [NotificationReason.Subscribed]: 'Subscribed',

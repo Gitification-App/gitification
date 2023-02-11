@@ -23,6 +23,7 @@ fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
 
         if window.is_visible().unwrap() {
             window.hide().unwrap();
+            window.emit("window:hidden", false).unwrap();
         } else {
             window.show().unwrap();
             window.set_focus().unwrap();
@@ -75,6 +76,7 @@ fn handle_window_event(event: GlobalWindowEvent) {
         }
 
         event.window().hide().unwrap();
+        event.window().emit("window:hidden", true).unwrap();
     }
 }
 
