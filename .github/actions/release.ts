@@ -16,7 +16,6 @@ declare global {
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 const envPath = path.join(dirname, '..', '..', '.env')
-const tauriConfPath = path.join(dirname, '..', '..', 'src-tauri', 'tauri.conf.json')
 const packageJsonPath = path.join(dirname, '..', '..', 'package.json')
 const token = process.env.GITHUB_TOKEN
 const secret = process.env.CLIENT_SECRET
@@ -28,16 +27,9 @@ VITE_CLIENT_ID=${id}
 `
 
 async function run() {
-  const tauriConf = JSON.parse(
-    await fs.readFile(tauriConfPath, 'utf-8'),
-  ) as typeof import('../../src-tauri/tauri.conf.json')
-
   const packageJSON = JSON.parse(
     await fs.readFile(packageJsonPath, 'utf-8'),
   ) as typeof import('../../package.json')
-
-  if (packageJSON.version !== tauriConf.package.version)
-    throw new Error('Tauri config and Package JSON versions are not the same, update both of them!')
 
   const dmgFileName = `Gitification_${packageJSON.version}_universal.dmg`
 
