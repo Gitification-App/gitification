@@ -29,7 +29,7 @@ async function run() {
     })
 
     if (remoteRelease.data.name === packageJSON.version.toString())
-      console.log('No version change detected, skipping build.')
+      throw new Error('No version change detected, skipping build.')
   }
   catch { /* If endpoint throws, it means no release yet */ }
 }
