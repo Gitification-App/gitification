@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import dayjs from 'dayjs'
 import type { Thread } from '../api/notifications'
 import type { NotificationListData } from '../types'
 import { formatReason, notificationSubjectIcon } from '../utils/notification'
@@ -65,6 +66,8 @@ function handleRepoClick() {
 
         <div class="notification-item-content-subtitle">
           {{ formatReason(item.reason) }}
+          -
+          {{ dayjs(item.updatedAt).fromNow() }}
         </div>
       </div>
     </button>
@@ -130,9 +133,9 @@ function handleRepoClick() {
     @include focus-visible;
     @include text-outline($size: 1px);
 
-    &-read {
-      color: var(--white-faded) !important;
-    }
+    // &-read {
+    //   color: var(--white-faded) !important;
+    // }
 
     &:hover {
       background-color: var(--item-hover-bg)

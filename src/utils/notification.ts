@@ -20,6 +20,7 @@ function notificationListItemFromThread(thread: Thread): NotificationListDataIte
     title: thread.subject.title,
     type: thread.subject.type,
     unread: thread.unread,
+    updatedAt: thread.updated_at,
     raw: markRaw(thread),
   }
 }

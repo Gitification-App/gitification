@@ -4,6 +4,8 @@ import 'focus-visible'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
@@ -11,14 +13,15 @@ import { Page } from './constants'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
 
-window.addEventListener('contextmenu', e => e.preventDefault())
+(async () => {
+  dayjs.extend(relativeTime)
+  window.addEventListener('contextmenu', e => e.preventDefault())
 
-const app = createApp(App)
-const pinia = createPinia()
+  const app = createApp(App)
+  const pinia = createPinia()
 
-app.use(pinia)
+  app.use(pinia)
 
-;(async () => {
   await cacheStorageFromDisk()
 
   const store = useStore(pinia)

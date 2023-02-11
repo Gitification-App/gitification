@@ -17,6 +17,7 @@ export interface NotificationListDataItem {
   title: Thread['subject']['title']
   reason: Thread['reason']
   type: Thread['subject']['type']
+  updatedAt: Thread['updated_at']
   raw: Raw<Thread>
 }
 
