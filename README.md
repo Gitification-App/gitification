@@ -12,7 +12,7 @@ An app to view your notifications easily on your menubar.
 - Gitification is built with `TypeScript`, `Vue`, `Tauri` and `Vite` with nice plugins.
 
 # Building App
-If you want to build app:
+If you want to build Gitification by yourself:
 
 - Install rust and cargo.
 - Install pnpm `npm install -g pnpm`
