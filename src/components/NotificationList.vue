@@ -75,7 +75,7 @@ function handleRepoClick() {
 
   &-title {
     @include focus-visible;
-    background-color: var(--notification-title-color);
+    // background-color: var(--notification-title-color);
     border-radius: 8px;
     padding: 5px 16px;
     width: 100%;
@@ -158,6 +158,7 @@ function handleRepoClick() {
         text-overflow: ellipsis;
         font-size: 14px;
         margin-bottom: 4px;
+        font-weight: 500;
       }
 
       &-subtitle {
