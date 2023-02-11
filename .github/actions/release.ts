@@ -48,19 +48,6 @@ async function run() {
 
   const octokit = github.getOctokit(token)
 
-  try {
-    const remoteRelease = await octokit.rest.repos.getLatestRelease({
-      owner: 'Gitification-App',
-      repo: 'gitification',
-    })
-
-    if (remoteRelease.data.name === packageJSON.version.toString()) {
-      console.log('No version change detected, skipping build.')
-      return
-    }
-  }
-  catch { /* If endpoint throws, it means no release yet */ }
-
   await fs.writeFile(envPath, envFileContent, 'utf-8')
   await execaCommand('pnpm tauri build --target universal-apple-darwin', { stdio: 'inherit' })
 
