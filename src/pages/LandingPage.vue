@@ -2,8 +2,6 @@
 import { open } from '@tauri-apps/api/shell'
 import { ref } from 'vue'
 import AppButton from '../components/AppButton.vue'
-import PageHeader from '../components/PageHeader.vue'
-import { Icons } from '../components/Icons'
 import { Page } from '../constants'
 import { useStore } from '../stores/store'
 import { useTauriEvent } from '../composables/useTauriEvent'
@@ -58,7 +56,10 @@ function handleLogin() {
     </template>
 
     <template #footer>
-      <AppButton @click="handleLogin">
+      <AppButton
+        :loading="processing"
+        @click="handleLogin"
+      >
         Log in via Github
       </AppButton>
     </template>
