@@ -55,7 +55,7 @@ export const useStore = defineStore('store', () => {
       failedLoadingNotifications.value = true
     }
 
-    loadingNotifications.value = false
+    loadingNotifications.value = true
     skeletonVisible.value = false
 
     if (

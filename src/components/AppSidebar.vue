@@ -10,6 +10,11 @@ const store = useStore()
 
 <template>
   <nav class="nav">
+    <div
+      :class="{ 'nav-loading-indicator-active': store.loadingNotifications }"
+      class="nav-loading-indicator"
+    />
+
     <div class="upper">
       <button
         class="nav-logo"
@@ -28,7 +33,7 @@ const store = useStore()
         title="Reload notifications"
         @click="store.fetchNotifications(true)"
       >
-        <Icons.Sync16 :class="{ 'sync-icon-spin': store.loadingNotifications }" />
+        <Icons.Sync16 />
       </SidebarButton>
 
       <SidebarButton
@@ -43,14 +48,15 @@ const store = useStore()
 </template>
 
 <style lang="scss" scoped>
-@keyframes spin {
+@keyframes nav-loading-indicator {
   0% {
-    transform: rotate(0deg);
+    transform: translateY(-200px);
   }
   100% {
-    transform: rotate(360deg);
+    transform: translateY(600px);
   }
 }
+
 .nav {
   height: 100%;
   flex-shrink: 0;
@@ -59,9 +65,22 @@ const store = useStore()
   flex-wrap: nowrap;
   padding: 20px 10px;
   background-color: var(--sidebar-bg);
+  position: relative;
+  overflow: hidden;
 
-  .sync-icon-spin {
-    animation: 1s spin linear infinite;
+  &-loading-indicator {
+    position: absolute;
+    right: 0;
+    width: 2px;
+    height: 200px;
+    top: 0;
+    background: radial-gradient(circle, rgba(150,150,150) 0%, rgba(255,255,255,0) 100%);
+    visibility: hidden;
+
+    &-active {
+      visibility: visible;
+      animation: 1s nav-loading-indicator linear infinite;
+    }
   }
 
   .upper,

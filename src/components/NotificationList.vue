@@ -133,9 +133,9 @@ function handleRepoClick() {
     @include focus-visible;
     @include text-outline($size: 1px);
 
-    // &-read {
-    //   color: var(--white-faded) !important;
-    // }
+    &-read {
+      color: var(--white-faded) !important;
+    }
 
     &:hover {
       background-color: var(--item-hover-bg)
