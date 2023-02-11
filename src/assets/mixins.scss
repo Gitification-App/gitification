@@ -8,7 +8,8 @@
   text-shadow: 0 0 $size black, 0 0 $size black, 0 0 $size black, 0 0 $size black;
 }
 
-@mixin focus-visible {
+@mixin focus-visible($additionalShadow: null) {
+  outline: none;
   &:not([disabled])[data-focus-visible-added] {
     box-shadow: 0px 0px 0px 1px var(--white-faded);
   }

@@ -12,7 +12,9 @@ const store = useStore()
   <nav class="nav">
     <div class="upper">
       <img
+        class="nav-logo"
         role="button"
+        tabindex="0"
         width="30"
         height="30"
         title="Go to Gitification repository"
@@ -77,6 +79,18 @@ const store = useStore()
 
   .lower {
     margin-top: auto;
+  }
+}
+
+.nav-logo {
+  opacity: .8;
+  @include focus-visible;
+  border:1px solid black;
+  border-radius: 50%;
+
+  &:hover,
+  &:active {
+    opacity: 1;
   }
 }
 </style>
