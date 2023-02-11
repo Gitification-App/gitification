@@ -2,6 +2,7 @@ import { Icons } from './components/Icons'
 
 export const SERVER_PORT = 23846
 export const REPO_LINK = 'https://github.com/Gitification-App/gitification'
+export const FETCH_INTERVAL_DURATION = 60000
 
 export enum Page {
   Settings = 'Settings',

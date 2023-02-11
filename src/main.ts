@@ -24,6 +24,7 @@ app.use(pinia)
   const store = useStore(pinia)
   const token = AppStorage.get('accessToken')
   const user = AppStorage.get('user')
+
   AppStorage.set('openAtStartup', await isAutostartEnabled())
 
   if (token && user)
