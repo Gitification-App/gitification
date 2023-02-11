@@ -11,17 +11,16 @@ const store = useStore()
 <template>
   <nav class="nav">
     <div class="upper">
-      <img
+      <button
         class="nav-logo"
-        role="button"
-        tabindex="0"
-        width="30"
-        height="30"
-        title="Go to Gitification repository"
-        draggable="false"
-        src="/src/assets/img/icon.png"
         @click="open(REPO_LINK)"
       >
+        <img
+          title="Go to Gitification repository"
+          draggable="false"
+          src="/src/assets/img/icon.png"
+        >
+      </button>
     </div>
     <div class="lower">
       <SidebarButton
@@ -87,6 +86,14 @@ const store = useStore()
   @include focus-visible;
   border:1px solid black;
   border-radius: 50%;
+  width: 30px;
+  height: 30px;
+
+  img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
 
   &:hover,
   &:active {
