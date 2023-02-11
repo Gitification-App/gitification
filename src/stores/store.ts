@@ -1,11 +1,11 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { readonly, ref, watch } from 'vue'
+import { readonly, ref, shallowRef, watch } from 'vue'
 import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationListData, Option } from '../types'
+import type { NotificationListData, Option, PageState } from '../types'
 import { notificationListFromThreads } from '../utils/notification'
 
 function hasNewNotification(newThreads: Thread[], previousThreads: Thread[]) {
@@ -67,6 +67,7 @@ export const useStore = defineStore('store', () => {
 
   const currentPage = ref(Page.Landing)
   const pageFrom = ref<Option<Page>>(null)
+  const currentPageState = shallowRef<PageState>({})
 
   function logout() {
     AppStorage.set('accessToken', null)
@@ -75,12 +76,13 @@ export const useStore = defineStore('store', () => {
     currentPage.value = Page.Landing
   }
 
-  function setPage(to: Page) {
+  function setPage(to: Page, state: PageState = {}) {
     if (to === currentPage.value)
       return
 
     pageFrom.value = currentPage.value
     currentPage.value = to
+    currentPageState.value = state
   }
 
   watch(notifications, () => {
@@ -96,6 +98,7 @@ export const useStore = defineStore('store', () => {
     skeletonVisible,
     pageFrom,
     failedLoadingNotifications,
+    currentPageState,
     fetchNotifications,
     logout,
   }

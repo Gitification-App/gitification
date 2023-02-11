@@ -15,6 +15,11 @@ import { useKey } from '../composables/useKey'
 
 const store = useStore()
 
+const initialValues = {
+  showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
+  showReadNotifications: AppStorage.get('showReadNotifications'),
+}
+
 const soundsEnabled = AppStorage.asRef('soundsEnabled')
 const openAtStartup = AppStorage.asRef('openAtStartup')
 const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
@@ -35,12 +40,15 @@ watchDebounced(openAtStartup, (enabled) => {
 }, { debounce: 350 })
 
 function handleBack() {
-  let page = Page.Home
-
   if (accessToken.value == null)
-    page = Page.Landing
+    return store.setPage(Page.Landing)
 
-  store.setPage(page)
+  store.setPage(Page.Home, {
+    fetchOnEnter: (
+      initialValues.showOnlyParticipating !== showOnlyParticipating.value
+      || initialValues.showReadNotifications !== showReadNotifications.value
+    ),
+  })
 }
 
 useKey('esc', handleBack, { prevent: true })

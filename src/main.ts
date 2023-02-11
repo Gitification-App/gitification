@@ -27,8 +27,10 @@ app.use(pinia)
 
   AppStorage.set('openAtStartup', await isAutostartEnabled())
 
-  if (token && user)
+  if (token && user) {
     store.setPage(Page.Home)
+    store.fetchNotifications(true)
+  }
 
   app.mount('#app')
 })()

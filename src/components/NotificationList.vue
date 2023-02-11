@@ -2,6 +2,7 @@
 import type { Thread } from '../api/notifications'
 import type { NotificationListData } from '../types'
 import { formatReason, notificationSubjectIcon } from '../utils/notification'
+import Separator from './Separator.vue'
 
 interface Emits {
   (e: 'click:notification', notification: Thread): void
@@ -42,6 +43,9 @@ function handleRepoClick() {
         {{ props.data.repoFullName }}
       </span>
     </button>
+
+    <Separator />
+
     <button
       v-for="item of props.data.items"
       :key="item.id"
@@ -70,12 +74,12 @@ function handleRepoClick() {
 <style lang="scss" scoped>
 .notification {
   + .notification {
-    margin-top: 5px;
+    margin-top: 10px;
   }
 
   &-title {
     @include focus-visible;
-    // background-color: var(--notification-title-color);
+    @include text-outline();
     border-radius: 8px;
     padding: 5px 16px;
     width: 100%;
@@ -86,12 +90,9 @@ function handleRepoClick() {
     border: 1px solid transparent;
     line-height: inherit;
 
-    &:hover {
-      border-color: var(--item-hover-bg);
-    }
-
+    &:hover,
     &:active {
-      background-color: var(--item-border-color);
+      background-color: var(--item-hover-bg);
     }
 
     &-icon {

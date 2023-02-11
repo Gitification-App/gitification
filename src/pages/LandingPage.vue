@@ -35,6 +35,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
     AppStorage.set('accessToken', access_token)
     AppStorage.set('user', user)
     store.setPage(Page.Home)
+    store.fetchNotifications(true)
   }
   finally {
     processing.value = false

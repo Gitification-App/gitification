@@ -20,8 +20,8 @@ import AppButton from '../components/AppButton.vue'
 
 const store = useStore()
 
-if (store.pageFrom === Page.Landing || store.pageFrom == null)
-  store.fetchNotifications(true)
+if (store.currentPageState.fetchOnEnter)
+  store.fetchNotifications()
 
 function handleNotificationClick(notification: Thread) {
   const url = toGithubWebURL({ notification, userId: AppStorage.get('user')!.id })

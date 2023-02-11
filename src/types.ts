@@ -28,3 +28,7 @@ export interface AppStorageContext {
   soundsEnabled: boolean
   showReadNotifications: boolean
 }
+
+export interface PageState {
+  fetchOnEnter?: boolean
+}
