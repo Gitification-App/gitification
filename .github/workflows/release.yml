@@ -44,9 +44,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install 
-
-      - name: Check version change
-        run: pnpx tsx .github/actions/version.ts
       
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -59,4 +56,3 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
