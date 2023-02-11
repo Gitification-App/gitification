@@ -1,14 +1,19 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
+import { useTauriEvent } from '../composables/useTauriEvent'
 import { useStore } from '../stores/store'
 import type { Option } from '../types'
+import { batchFn } from '../utils/batch'
 
 const store = useStore()
 const mainEl = ref<Option<HTMLElement>>(null)
 
-watch(() => store.currentPage, () => {
+const focus = batchFn(() => {
   mainEl.value?.focus()
-}, { flush: 'post' })
+})
+
+watch(() => store.currentPage, focus, { flush: 'post' })
+useTauriEvent('window:hidden', focus)
 </script>
 
 <template>
