@@ -21,3 +21,26 @@ If you want to build app:
 - Build the app `pnpm tauri build`
 - After that you can find executable in `src-tauri/target` folder.
 
+
+# Contributing
+If you want to contribute you should install these extensions and set-up these settings.
+
+- Install `Eslint` from vscode marketplace.
+- Install `Volar` from vscode marketplace.
+- Add the following settings to your `.vscode/settings.json`
+
+  ```json
+  {
+    "[rust]": {
+      "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "eslint.enable": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "volar.completion.normalizeComponentImportName": true,
+    "volar.completion.preferredAttrNameCase": "camel",
+    "volar.completion.preferredTagNameCase": "pascal"
+  }
+  ```
+- And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.
