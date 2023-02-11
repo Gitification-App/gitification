@@ -10,11 +10,6 @@ const store = useStore()
 
 <template>
   <nav class="nav">
-    <div
-      :class="{ 'nav-loading-indicator-active': store.loadingNotifications }"
-      class="nav-loading-indicator"
-    />
-
     <div class="upper">
       <button
         class="nav-logo"
@@ -48,15 +43,6 @@ const store = useStore()
 </template>
 
 <style lang="scss" scoped>
-@keyframes nav-loading-indicator {
-  0% {
-    transform: translateY(-200px);
-  }
-  100% {
-    transform: translateY(600px);
-  }
-}
-
 .nav {
   height: 100%;
   flex-shrink: 0;
@@ -67,21 +53,6 @@ const store = useStore()
   background-color: var(--sidebar-bg);
   position: relative;
   overflow: hidden;
-
-  &-loading-indicator {
-    position: absolute;
-    right: 0;
-    width: 2px;
-    height: 200px;
-    top: 0;
-    background: radial-gradient(circle, rgba(150,150,150) 0%, rgba(255,255,255,0) 100%);
-    visibility: hidden;
-
-    &-active {
-      visibility: visible;
-      animation: 1s nav-loading-indicator linear infinite;
-    }
-  }
 
   .upper,
   .lower {
