@@ -11,7 +11,14 @@ An app to view your notifications easily on your menubar.
 
 - Gitification is built with `TypeScript`, `Vue`, `Tauri` and `Vite` with nice plugins.
 
-# Building App
+<br>
+
+# About Certificate
+- The app is currently not certificated, I don't earn money from open source so didn't want to pay for apple developer license.
+
+<br>
+
+# Building The App
 If you want to build Gitification by yourself:
 
 - Install rust and cargo.
@@ -21,6 +28,7 @@ If you want to build Gitification by yourself:
 - Build the app `pnpm tauri build`
 - After that you can find executable in `src-tauri/target` folder.
 
+<br>
 
 # Contributing
 If you want to contribute you should install these extensions and set-up these settings.
