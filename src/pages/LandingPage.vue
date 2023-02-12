@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
 import { ref } from 'vue'
+import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
-import { Page } from '../constants'
+import { InvokeCommand, Page } from '../constants'
 import { useStore } from '../stores/store'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { getAccessToken } from '../api/token'
@@ -14,6 +15,8 @@ import EmptyState from '../components/EmptyState.vue'
 const store = useStore()
 
 const processing = ref(false)
+
+invoke(InvokeCommand.StartServer)
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value)
@@ -32,6 +35,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
 
     AppStorage.set('accessToken', access_token)
     AppStorage.set('user', user)
+    invoke(InvokeCommand.StopServer)
     store.setPage(Page.Home)
     store.fetchNotifications(true)
   }

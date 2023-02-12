@@ -13,6 +13,8 @@ export enum Page {
 export enum InvokeCommand {
   PlayNotificationSound = 'play_notification_sound',
   SetIconTemplate = 'set_icon_template',
+  StartServer = 'start_server',
+  StopServer = 'stop_server',
 }
 
 export enum NotificationSubject {

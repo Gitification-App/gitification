@@ -1,7 +1,9 @@
-use std::{fs::File, io::BufReader};
+use std::{fs::File, io::BufReader, sync::Mutex};
 
 use rodio::{Decoder, OutputStream, Sink};
-use tauri::AppHandle;
+use tauri::{AppHandle, State, Window};
+
+use crate::server::AuthServer;
 
 #[tauri::command]
 pub fn play_notification_sound(app: AppHandle) {
@@ -31,4 +33,16 @@ pub fn set_icon_template(is_template: bool, app: AppHandle) {
             include_bytes!("../icons/tray/icon.png").to_vec(),
         ))
         .unwrap();
+}
+
+#[tauri::command]
+pub fn start_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
+    let mut server = state.lock().unwrap();
+    server.listen(window);
+}
+
+#[tauri::command]
+pub fn stop_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
+    let mut server = state.lock().unwrap();
+    server.stop();
 }

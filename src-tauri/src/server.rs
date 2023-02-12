@@ -1,7 +1,8 @@
-use std::{io::Cursor, str::FromStr};
+use tauri::{async_runtime::JoinHandle, Window};
+
+use std::{io::Cursor, str::FromStr, sync::Arc};
 
 use ::ascii::AsciiString;
-use tauri::Window;
 use tiny_http::{Header, HeaderField, Method, Request, Response, Server};
 
 const STYLE: &str = r#"
@@ -100,14 +101,36 @@ fn handle_code_request(request: Request, window: &Window) {
     request.respond(response).unwrap();
 }
 
-pub fn apply_http(window: &Window) {
-    let win = window.clone();
+pub struct AuthServer {
+    server: Option<Arc<Server>>,
+}
 
-    tauri::async_runtime::spawn(async move {
-        let server = Server::http("0.0.0.0:23846").unwrap();
+impl AuthServer {
+    pub fn new() -> AuthServer {
+        AuthServer { server: None }
+    }
 
-        for request in server.incoming_requests() {
-            handle_code_request(request, &win);
+    pub fn listen(&mut self, window: Window) {
+        if self.server.is_some() {
+            return;
         }
-    });
+
+        let server = Arc::new(Server::http("0.0.0.0:23846").unwrap());
+        std::thread::spawn({
+            let server = Arc::clone(&server);
+            move || {
+                for request in server.incoming_requests() {
+                    handle_code_request(request, &window);
+                }
+            }
+        });
+
+        self.server = Some(server)
+    }
+
+    pub fn stop(&mut self) {
+        if let Some(server) = self.server.take() {
+            server.unblock();
+        }
+    }
 }

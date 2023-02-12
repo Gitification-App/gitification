@@ -9,9 +9,9 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
-import { Page } from './constants'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
+import { Page } from './constants'
 
 (async () => {
   dayjs.extend(relativeTime)

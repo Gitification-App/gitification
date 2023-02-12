@@ -2,12 +2,15 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
+#![allow(warnings, unused)]
 
 mod commands;
-mod http;
+mod server;
 
-use commands::{play_notification_sound, set_icon_template};
-use http::apply_http;
+use std::sync::Mutex;
+
+use commands::{play_notification_sound, set_icon_template, start_server, stop_server};
+use server::AuthServer;
 
 use tauri::{
     ActivationPolicy, App, AppHandle, GlobalWindowEvent, Manager, PhysicalPosition, SystemTray,
@@ -59,8 +62,6 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     )
     .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 
-    apply_http(&win);
-
     Ok(())
 }
 
@@ -86,9 +87,12 @@ fn main() {
     let tray = SystemTray::new();
 
     tauri::Builder::default()
+        .manage(Mutex::new(AuthServer::new()))
         .invoke_handler(tauri::generate_handler![
             play_notification_sound,
-            set_icon_template
+            set_icon_template,
+            start_server,
+            stop_server
         ])
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
