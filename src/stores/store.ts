@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { readonly, ref, shallowRef, watch } from 'vue'
 import type { Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
+import type { Release } from '../api/releases'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
 import type { NotificationListData, Option, PageState } from '../types'
@@ -90,15 +91,18 @@ export const useStore = defineStore('store', () => {
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   }, { deep: true, immediate: true })
 
+  const newRelease = ref<Option<Release>>(null)
+
   return {
+    newRelease,
     notifications,
     currentPage: readonly(currentPage),
-    setPage,
     loadingNotifications,
     skeletonVisible,
     pageFrom,
     failedLoadingNotifications,
     currentPageState,
+    setPage,
     fetchNotifications,
     logout,
   }

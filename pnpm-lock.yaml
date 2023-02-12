@@ -11,6 +11,7 @@ specifiers:
   '@vue/devtools': ^6.5.0
   '@vueuse/core': ^9.12.0
   async-mutex: ^0.4.0
+  compare-versions: 6.0.0-rc.1
   dayjs: ^1.11.7
   eslint: ^8.32.0
   execa: ^6.1.0
@@ -33,6 +34,7 @@ specifiers:
 dependencies:
   '@tauri-apps/api': 1.2.0
   '@vueuse/core': 9.12.0_vue@3.2.45
+  compare-versions: 6.0.0-rc.1
   dayjs: 1.11.7
   pinia: 2.0.29_prq2uz4lho2pwp6irk4cfkrxwu
   redaxios: 0.5.1
@@ -1644,6 +1646,10 @@ packages:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
     dev: true
+
+  /compare-versions/6.0.0-rc.1:
+    resolution: {integrity: sha512-cFhkjbGY1jLFWIV7KegECbfuyYPxSGvgGkdkfM+ibboQDoPwg2FRHm5BSNTOApiauRBzJIQH7qvOJs2sW5ueKQ==}
+    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}

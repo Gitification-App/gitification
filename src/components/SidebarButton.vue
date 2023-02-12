@@ -1,16 +1,20 @@
 <script lang="ts" setup>
 interface Props {
   disabled?: boolean
+  highlight?: boolean
 }
 
-withDefaults(defineProps<Props>(), { disabled: false })
+withDefaults(defineProps<Props>(), { disabled: false, highlight: false })
 </script>
 
 <template>
   <button
     class="sidebar-button"
     :disabled="disabled || undefined"
-    :class="{ disabled }"
+    :class="{
+      disabled,
+      'sidebar-button-highlight': highlight,
+    }"
   >
     <slot />
   </button>
@@ -29,6 +33,20 @@ withDefaults(defineProps<Props>(), { disabled: false })
   align-items: center;
   justify-content: center;
   @include focus-visible;
+  position: relative;
+
+  &-highlight {
+    &::before {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--white);
+      right: 2px;
+      top: 2px;
+      content: '';
+    }
+  }
 
   &.disabled {
     opacity: .3;

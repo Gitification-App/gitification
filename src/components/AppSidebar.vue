@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { Page, REPO_LINK } from '../constants'
+import { Page, REPO_LINK, REPO_RELEASES_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
@@ -23,6 +23,15 @@ const store = useStore()
       </button>
     </div>
     <div class="lower">
+      <SidebarButton
+        v-if="store.newRelease != null"
+        highlight
+        title="An update is available"
+        @click="open(`${REPO_RELEASES_LINK}/tag/${store.newRelease!.tag_name}`)"
+      >
+        <Icons.Download16 />
+      </SidebarButton>
+
       <SidebarButton
         :disabled="store.currentPage !== Page.Home"
         title="Reload notifications"

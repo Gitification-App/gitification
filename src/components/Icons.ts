@@ -24,6 +24,7 @@ import QuestionIcon from 'virtual:icons/octicon/question-24'
 import MailIcon from 'virtual:icons/octicon/mail-24'
 import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
 import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
+import DownloadIcon16 from 'virtual:icons/octicon/download-16'
 
 export type IconComponent = typeof Icons[keyof typeof Icons]
 
@@ -52,4 +53,5 @@ export const Icons = {
   Gear16: markRaw(GearIcon16),
   Sync16: markRaw(SyncIcon16),
   ChevronLeft: markRaw(ChevronLeftIcon),
+  Download16: markRaw(DownloadIcon16),
 }

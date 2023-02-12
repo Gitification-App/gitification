@@ -56,10 +56,7 @@ interface PrivateUser {
   business_plus?: boolean
   ldap_dn?: string
 }
-/**
- * Public User
- */
-interface PublicUser {
+export interface PublicUser {
   login: string
   id: number
   node_id: string

@@ -1,7 +1,13 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Icons from 'unplugin-icons/vite'
 import { checker as Checker } from 'vite-plugin-checker'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+const { version } = JSON.parse(fs.readFileSync(path.join(dirname, 'package.json'), 'utf-8')) as { version: string }
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +21,10 @@ export default defineConfig({
       defaultClass: 'icon',
     }),
   ],
+
+  define: {
+    __APP_VERSION__: `'${version}'`,
+  },
 
   css: {
     preprocessorOptions: {

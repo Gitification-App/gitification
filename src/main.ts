@@ -12,6 +12,8 @@ import { useStore } from './stores/store'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
 import { Page } from './constants'
+import { getReleases } from './api/releases'
+import { getNewRelease } from './utils/getNewRelease'
 
 (async () => {
   dayjs.extend(relativeTime)
@@ -33,6 +35,11 @@ import { Page } from './constants'
   if (token && user) {
     store.setPage(Page.Home)
     store.fetchNotifications(true)
+  }
+
+  {
+    const releases = await getReleases(AppStorage.get('accessToken'))
+    store.newRelease = getNewRelease(releases)
   }
 
   app.mount('#app')
