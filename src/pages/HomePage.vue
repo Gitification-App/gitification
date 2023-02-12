@@ -3,7 +3,7 @@
 
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { onMounted, onUpdated, ref, shallowRef } from 'vue'
+import { ref } from 'vue'
 import { useStore } from '../stores/store'
 import NotificationList from '../components/NotificationList.vue'
 import { useInterval } from '../composables/useInterval'
@@ -11,7 +11,6 @@ import type { Thread } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
-import { Page } from '../constants'
 import type { Option } from '../types'
 import { useElementNavigation } from '../composables/useElementNavigation'
 import EmptyState, { EmptyStateIconSize } from '../components/EmptyState.vue'

@@ -1,12 +1,9 @@
 name: Release
 
-# I use npm to store app version.
-# When a new version is created
 
 on:
   push:
-    branches:
-      - main
+    branches: []
 
 jobs:
   release:
