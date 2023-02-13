@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import { MinimalRepository, Thread } from '../api/notifications'
+import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
 import { formatReason, isRepository, notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
@@ -33,15 +33,15 @@ function handleRepoClick(repo: MinimalRepository) {
   >
     <button
       class="notification-title"
-      @click="handleRepoClick(value as MinimalRepository)"
+      @click="handleRepoClick(value)"
     >
       <img
         class="notification-title-icon"
-        :src="(value as MinimalRepository).owner.avatar_url"
+        :src="value.owner.avatar_url"
         alt="repo logo"
       >
       <span class="notification-title-text">
-        {{ (value as MinimalRepository).full_name }}
+        {{ value.full_name }}
       </span>
     </button>
 
@@ -51,23 +51,23 @@ function handleRepoClick(repo: MinimalRepository) {
   <button
     v-else
     class="notification-item"
-    :class="{ 'notification-item-read': !(value as Thread).unread }"
-    @click="handleThreadClick(value as Thread)"
+    :class="{ 'notification-item-read': !value.unread }"
+    @click="handleThreadClick(value)"
   >
     <Component
-      :is="notificationSubjectIcon((value as Thread).subject.type)"
+      :is="notificationSubjectIcon(value.subject.type)"
       class="notification-item-icon"
     />
 
     <div class="notification-item-content">
       <div class="notification-item-content-title">
-        {{ (value as Thread).subject.title }}
+        {{ value.subject.title }}
       </div>
 
       <div class="notification-item-content-subtitle">
-        {{ formatReason((value as Thread).reason) }}
+        {{ formatReason(value.reason) }}
         -
-        {{ dayjs((value as Thread).updated_at).fromNow() }}
+        {{ dayjs(value.updated_at).fromNow() }}
       </div>
     </div>
   </button>
