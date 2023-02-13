@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
-import { formatReason, isRepository, notificationSubjectIcon } from '../utils/notification'
+import { formatReason, isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
 
 interface Emits {
@@ -33,7 +33,7 @@ function handleRepoClick(repo: MinimalRepository) {
   >
     <button
       class="notification-title"
-      @click="handleRepoClick(value)"
+      @click="() => isRepository(value) && handleRepoClick(value)"
     >
       <img
         class="notification-title-icon"
@@ -52,7 +52,7 @@ function handleRepoClick(repo: MinimalRepository) {
     v-else
     class="notification-item"
     :class="{ 'notification-item-read': !value.unread }"
-    @click="handleThreadClick(value)"
+    @click="() => isThread(value) && handleThreadClick(value)"
   >
     <Component
       :is="notificationSubjectIcon(value.subject.type)"

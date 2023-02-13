@@ -14,8 +14,5 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", ".github/**/*.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "vueCompilerOptions": {
-    "narrowingTypesInInlineHandlers": true
-  }
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
