@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import type { Thread } from '../api/notifications'
-import type { NotificationListData } from '../types'
-import { formatReason, notificationSubjectIcon } from '../utils/notification'
+import { MinimalRepository, Thread } from '../api/notifications'
+import type { NotificationList } from '../types'
+import { formatReason, isRepository, notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
 
 interface Emits {
@@ -11,74 +11,74 @@ interface Emits {
 }
 
 interface Props {
-  data: NotificationListData
+  value: NotificationList[number]
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-function handleNotificationClick(notification: Thread) {
-  emit('click:notification', notification)
+function handleThreadClick(thread: Thread) {
+  emit('click:notification', thread)
 }
 
-function handleRepoClick() {
-  emit('click:repo', props.data.repoFullName)
+function handleRepoClick(repo: MinimalRepository) {
+  emit('click:repo', repo.full_name)
 }
 </script>
 
 <template>
   <div
-    draggable="false"
-    class="notification"
+    v-if="isRepository(value)"
+    class="notification-title-wrapper"
   >
     <button
       class="notification-title"
-      @click="handleRepoClick"
+      @click="handleRepoClick(value as MinimalRepository)"
     >
       <img
         class="notification-title-icon"
-        :src="props.data.repoAvatarURL"
+        :src="(value as MinimalRepository).owner.avatar_url"
         alt="repo logo"
       >
       <span class="notification-title-text">
-        {{ props.data.repoFullName }}
+        {{ (value as MinimalRepository).full_name }}
       </span>
     </button>
 
     <Separator />
-
-    <button
-      v-for="item of props.data.items"
-      :key="item.id"
-      class="notification-item"
-      :class="{ 'notification-item-read': !item.unread }"
-      @click="handleNotificationClick(item.raw)"
-    >
-      <Component
-        :is="notificationSubjectIcon(item.type)"
-        class="notification-item-icon"
-      />
-
-      <div class="notification-item-content">
-        <div class="notification-item-content-title">
-          {{ item.title }}
-        </div>
-
-        <div class="notification-item-content-subtitle">
-          {{ formatReason(item.reason) }}
-          -
-          {{ dayjs(item.updatedAt).fromNow() }}
-        </div>
-      </div>
-    </button>
   </div>
+
+  <button
+    v-else
+    class="notification-item"
+    :class="{ 'notification-item-read': !(value as Thread).unread }"
+    @click="handleThreadClick(value as Thread)"
+  >
+    <Component
+      :is="notificationSubjectIcon((value as Thread).subject.type)"
+      class="notification-item-icon"
+    />
+
+    <div class="notification-item-content">
+      <div class="notification-item-content-title">
+        {{ (value as Thread).subject.title }}
+      </div>
+
+      <div class="notification-item-content-subtitle">
+        {{ formatReason((value as Thread).reason) }}
+        -
+        {{ dayjs((value as Thread).updated_at).fromNow() }}
+      </div>
+    </div>
+  </button>
 </template>
 
 <style lang="scss" scoped>
+ * + .notification-title-wrapper {
+  margin-top: 10px
+}
+
 .notification {
-  + .notification {
-    margin-top: 10px;
-  }
 
   &-title {
     @include focus-visible;
@@ -132,6 +132,7 @@ function handleRepoClick() {
     line-height: 20px;
     @include focus-visible;
     @include text-outline($size: 1px);
+    margin-top: 5px;
 
     &-read {
       color: var(--white-faded) !important;

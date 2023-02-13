@@ -5,8 +5,7 @@
 import { open } from '@tauri-apps/api/shell'
 import { ref } from 'vue'
 import { useStore } from '../stores/store'
-import NotificationList from '../components/NotificationList.vue'
-import { useInterval } from '../composables/useInterval'
+import NotificationItem from '../components/NotificationItem.vue'
 import type { Thread } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
@@ -20,7 +19,7 @@ import AppButton from '../components/AppButton.vue'
 const store = useStore()
 
 if (store.currentPageState.fetchOnEnter)
-  store.fetchNotifications()
+  store.fetchNotifications(true)
 
 function handleNotificationClick(notification: Thread) {
   const url = toGithubWebURL({ notification, userId: AppStorage.get('user')!.id })
@@ -55,7 +54,7 @@ useElementNavigation({
       description="Oopsie! Couldn't load notifications."
     >
       <template #footer>
-        <AppButton @click="store.fetchNotifications(true)">
+        <AppButton @click="store.fetchNotifications()">
           Refresh
         </AppButton>
       </template>
@@ -68,15 +67,13 @@ useElementNavigation({
       description="It's all clear sir!"
     />
 
-    <template v-else>
-      <NotificationList
-        v-for="notification of store.notifications"
-        :key="notification.repoFullName"
-        :data="notification"
-        @click:notification="handleNotificationClick"
-        @click:repo="handleRepoClick"
-      />
-    </template>
+    <NotificationItem
+      v-for="item of store.notifications"
+      :key="item.id"
+      :value="item"
+      @click:notification="handleNotificationClick"
+      @click:repo="handleRepoClick"
+    />
   </div>
 </template>
 

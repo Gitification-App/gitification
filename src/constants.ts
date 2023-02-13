@@ -30,6 +30,11 @@ export enum NotificationSubject {
   Release = 'Release',
 }
 
+export enum NotificationItemType {
+  Repository = 'repository',
+  Thread = 'thread',
+}
+
 export enum NotificationReason {
   Assign = 'assign',
   Author = 'author',

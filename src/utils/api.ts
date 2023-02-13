@@ -1,4 +1,4 @@
-import type { AppStorageContext, Option } from '../types'
+import type { AppStorageContext } from '../types'
 
 export function createBaseGithubApiHeaders(accessToken: AppStorageContext['accessToken']) {
   const headers: Record<string, string> = {

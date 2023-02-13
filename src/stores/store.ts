@@ -1,13 +1,13 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
 import { readonly, ref, shallowRef, watch } from 'vue'
-import type { Thread } from '../api/notifications'
+import type { MinimalRepository, Thread } from '../api/notifications'
 import { getNotifications } from '../api/notifications'
 import type { Release } from '../api/releases'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationListData, Option, PageState } from '../types'
-import { notificationListFromThreads } from '../utils/notification'
+import type { Option, PageState } from '../types'
+import { toNotificationList } from '../utils/notification'
 
 function hasNewNotification(newThreads: Thread[], previousThreads: Thread[]) {
   const newThreadsFiltered = newThreads.filter(t => t.unread)
@@ -16,7 +16,7 @@ function hasNewNotification(newThreads: Thread[], previousThreads: Thread[]) {
 }
 
 export const useStore = defineStore('store', () => {
-  const notifications = ref<NotificationListData[]>([])
+  const notifications = shallowRef<(Thread | MinimalRepository)[]>([])
   const loadingNotifications = ref(false)
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
@@ -33,8 +33,10 @@ export const useStore = defineStore('store', () => {
     if (accessToken == null)
       return
 
-    if (withSkeletons)
+    if (withSkeletons) {
       skeletonVisible.value = true
+      notifications.value = []
+    }
 
     loadingNotifications.value = true
     failedLoadingNotifications.value = false
@@ -48,7 +50,7 @@ export const useStore = defineStore('store', () => {
 
       notificationsRawPrevious = notificationsRaw
       notificationsRaw = data
-      notifications.value = notificationListFromThreads(data)
+      notifications.value = toNotificationList(data)
     }
     catch (error) {
       console.error('NotificationError: ', error)

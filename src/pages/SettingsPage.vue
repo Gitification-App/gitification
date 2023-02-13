@@ -41,7 +41,7 @@ watchDebounced(openAtStartup, (enabled) => {
 }, { debounce: 350 })
 
 useTauriEvent('window:hidden', () => {
-  store.setPage(Page.Home)
+  setTimeout(() => store.setPage(Page.Home), 50)
 })
 
 function handleBack() {
