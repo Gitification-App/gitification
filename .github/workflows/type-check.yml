@@ -1,14 +1,13 @@
-name: Release
+name: Type Check
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
   release:
     runs-on: macos-latest
-    permissions: write-all
-    name: Release
+    name: Type Check
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -41,14 +40,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install 
       
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
-
-      - name: Run Release
-        run: pnpx tsx .github/actions/release.ts
-        env:
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check types
+        run: pnpm run typecheck
+        

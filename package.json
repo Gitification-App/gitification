@@ -6,7 +6,8 @@
     "dev": "run-p vite:dev devtools",
     "vite:dev": "vite",
     "devtools": "vue-devtools",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "pnpm run typecheck && vite build",
+    "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
     "tauri": "tauri"
   },
