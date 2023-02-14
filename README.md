@@ -13,8 +13,10 @@ An app to view your notifications easily on your menubar.
 
 <br>
 
-# About Certificate
-- The app is currently not certificated, I don't earn money from open source so didn't want to pay for apple developer license.
+# Known Problems
+- Notifications,  Opening external links may not work on Macs because Gitification is not signed currently. I don't earn money from open source, but if I earn `50$` from github sponsorships, I will sign the app.
+
+- The app is currently ready to be compiled for Windows or Linux but I'm a Mac user so that after I added the features in my mind, I will create Windows and Linux builds.
 
 <br>
 
