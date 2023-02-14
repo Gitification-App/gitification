@@ -1,3 +1,7 @@
+### 0.4.0
+  - Added `Show system notifications` seting, if you enable this and your system granted notifications for Gitification, system notifications will show up.
+  - Some style improvements
+
 ### 0.3.0
   - Auto launch on startup setting added.
   - Custom tray icon added, if an unread notification exists, it will highlight as blue.
