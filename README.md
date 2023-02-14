@@ -2,7 +2,7 @@
   <img width="256px" height="256px" src="src-tauri/icons/128x128%402x.png" />
 </div>
 
-# Gitification
+# Gitification (ALPHA)
 An app to view your notifications easily on your menubar.
 
 - Gitification uses Tauri under the hood, so it does not ship a 200mb chrome browser. App size is just lower than 20 or 10mb.
@@ -48,3 +48,22 @@ If you want to contribute you should install these extensions and set-up these s
   }
   ```
 - And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.
+
+# Size Comparison with Gitify
+<div align="center">
+  <img style="border-radius: 30px" src="images/size_comparison.png" />
+</div>
+
+
+# Screenshots
+<div align="center">
+  <img style="border-radius: 30px" src="images/landing.png" />
+</div>
+<br>
+<div align="center">
+  <img style="border-radius: 30px" src="images/home.png" />
+</div>
+<br>
+<div align="center">
+  <img style="border-radius: 30px" src="images/settings.png" />
+</div>
