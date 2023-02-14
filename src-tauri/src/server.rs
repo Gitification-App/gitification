@@ -1,4 +1,4 @@
-use tauri::{async_runtime::JoinHandle, Window};
+use tauri::Window;
 
 use std::{io::Cursor, str::FromStr, sync::Arc};
 

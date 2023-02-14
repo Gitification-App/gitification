@@ -42,7 +42,7 @@ pub fn start_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
 }
 
 #[tauri::command]
-pub fn stop_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
+pub fn stop_server(state: State<'_, Mutex<AuthServer>>) {
     let mut server = state.lock().unwrap();
     server.stop();
 }
@@ -50,7 +50,7 @@ pub fn stop_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn go_to_notification_settings() {
-    std::process::Command::new("open")
+    let _ = std::process::Command::new("open")
         .arg("x-apple.systempreferences:com.apple.preference.notifications")
         .spawn();
 }
@@ -58,5 +58,5 @@ pub fn go_to_notification_settings() {
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn go_to_notification_settings() {
-    std::process::Command::new("ms-settings:notifications").spawn();
+    let _ = std::process::Command::new("ms-settings:notifications").spawn();
 }
