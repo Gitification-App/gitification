@@ -14,6 +14,7 @@ export interface AppStorageContext {
   openAtStartup: boolean
   soundsEnabled: boolean
   showReadNotifications: boolean
+  showSystemNotifications: boolean
 }
 
 export interface PageState {

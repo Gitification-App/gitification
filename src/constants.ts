@@ -17,6 +17,7 @@ export enum InvokeCommand {
   SetIconTemplate = 'set_icon_template',
   StartServer = 'start_server',
   StopServer = 'stop_server',
+  GoToNotificationSettings = 'go_to_notification_settings',
 }
 
 export enum NotificationSubject {

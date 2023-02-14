@@ -24,8 +24,14 @@
       "process": {
         "exit": true
       },
+      "notification": {
+        "all": true
+      },
       "shell": {
         "open": true
+      },
+      "dialog": {
+        "confirm": true
       }
     },
     "bundle": {

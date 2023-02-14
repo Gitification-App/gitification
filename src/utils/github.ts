@@ -4,9 +4,6 @@ import { NotificationSubject } from '../constants'
 const NOTIFICATION_REFERRER_ID_KEY = 'notification_referrer_id'
 const DISCUSSIONS_QUERY_KEY = 'discussions_q'
 
-/**
- * @source https://github.com/manosim/gitify/blob/f8a6ac26c5a58d17f9c2eb639489b045aec1a780/src/utils/helpers.ts#L19
- */
 export function createNotificationReferrerId(
   notificationId: string,
   userId: number,
@@ -19,9 +16,6 @@ export interface ToGithubWebURLArgs {
   userId: number
 }
 
-/**
- * @source https://github.com/manosim/gitify/blob/f8a6ac26c5a58d17f9c2eb639489b045aec1a780/src/utils/helpers.ts#L29
- */
 export function toGithubWebURL({ notification, userId }: ToGithubWebURLArgs) {
   const notificationReferrerId = createNotificationReferrerId(notification.id, userId)
 

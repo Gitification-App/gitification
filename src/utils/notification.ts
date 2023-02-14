@@ -44,3 +44,11 @@ export function isThread(value: any): value is Thread {
 export function isRepository(value: any): value is MinimalRepository {
   return isObject<MinimalRepository>(value) && 'teams_url' in value
 }
+
+export function filterNewThreads(newThreads: Thread[], previousThreads: Thread[]) {
+  const newUnread = newThreads.filter(t => t.unread)
+  const previousUnread = previousThreads.filter(t => t.unread)
+
+  return newUnread.filter(t => t.unread)
+    .filter(thread => !previousUnread.some(pThread => pThread.id === thread.id))
+}

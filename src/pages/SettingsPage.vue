@@ -4,6 +4,8 @@ import { exit } from '@tauri-apps/api/process'
 import { invoke } from '@tauri-apps/api/tauri'
 import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
 import { watchDebounced } from '@vueuse/core'
+import { requestPermission } from '@tauri-apps/api/notification'
+import { confirm } from '@tauri-apps/api/dialog'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import SettingsItem from '../components/SettingsItem.vue'
@@ -57,6 +59,29 @@ function handleBack() {
 }
 
 useKey('esc', handleBack, { prevent: true })
+
+const showSystemNotifications = AppStorage.asRef('showSystemNotifications')
+async function handleUpdateShowSystemNotifications(value: boolean) {
+  if (!value) {
+    showSystemNotifications.value = false
+    return
+  }
+
+  const permission = await requestPermission()
+
+  if (permission !== 'granted') {
+    const confirmed = await confirm('Gitification has no permission to show notifications. Press Ok to go to Preferences/Notifications.', {
+      type: 'error',
+    })
+
+    if (confirmed)
+      invoke(InvokeCommand.GoToNotificationSettings)
+
+    return
+  }
+
+  showSystemNotifications.value = value
+}
 </script>
 
 <template>
@@ -92,6 +117,11 @@ useKey('esc', handleBack, { prevent: true })
       <SettingsItem
         v-model:enabled="showReadNotifications"
         title="Show read notifications"
+      />
+      <SettingsItem
+        :enabled="showSystemNotifications"
+        title="Show system notifications"
+        @update:enabled="handleUpdateShowSystemNotifications"
       />
     </div>
 

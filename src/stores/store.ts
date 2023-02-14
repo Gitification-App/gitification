@@ -1,3 +1,4 @@
+import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
 import { readonly, ref, shallowRef, watch } from 'vue'
@@ -7,13 +8,7 @@ import type { Release } from '../api/releases'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
 import type { Option, PageState } from '../types'
-import { toNotificationList } from '../utils/notification'
-
-function hasNewNotification(newThreads: Thread[], previousThreads: Thread[]) {
-  const newThreadsFiltered = newThreads.filter(t => t.unread)
-  const previousThreadsFiltered = previousThreads.filter(t => t.unread)
-  return !newThreadsFiltered.every(newT => previousThreadsFiltered.some(prevT => prevT.id === newT.id))
-}
+import { filterNewThreads, toNotificationList } from '../utils/notification'
 
 export const useStore = defineStore('store', () => {
   const notifications = shallowRef<(Thread | MinimalRepository)[]>([])
@@ -21,8 +16,8 @@ export const useStore = defineStore('store', () => {
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
-  let notificationsRaw: Thread[] = []
-  let notificationsRawPrevious: Thread[] = []
+  let threadsRaw: Thread[] = []
+  let threadsPreviousRaw: Thread[] = []
 
   async function fetchNotifications(withSkeletons = false) {
     if (loadingNotifications.value)
@@ -48,12 +43,12 @@ export const useStore = defineStore('store', () => {
         showReadNotifications: AppStorage.get('showReadNotifications'),
       })
 
-      notificationsRawPrevious = notificationsRaw
-      notificationsRaw = data
+      threadsPreviousRaw = threadsRaw
+      threadsRaw = data
+
       notifications.value = toNotificationList(data)
     }
     catch (error) {
-      console.error('NotificationError: ', error)
       notifications.value = []
       failedLoadingNotifications.value = true
     }
@@ -61,11 +56,19 @@ export const useStore = defineStore('store', () => {
     loadingNotifications.value = false
     skeletonVisible.value = false
 
-    if (
-      AppStorage.get('soundsEnabled')
-      && hasNewNotification(notificationsRaw, notificationsRawPrevious)
-    )
-      invoke(InvokeCommand.PlayNotificationSound)
+    const newNotifications = filterNewThreads(threadsRaw, threadsPreviousRaw)
+
+    if (newNotifications.length > 0) {
+      if (AppStorage.get('soundsEnabled'))
+        invoke(InvokeCommand.PlayNotificationSound)
+
+      if (AppStorage.get('showSystemNotifications')) {
+        sendNotification({
+          title: newNotifications[0].repository.full_name,
+          body: newNotifications[0].subject.title,
+        })
+      }
+    }
   }
 
   const currentPage = ref(Page.Landing)
@@ -89,7 +92,7 @@ export const useStore = defineStore('store', () => {
   }
 
   watch(notifications, () => {
-    const hasUnread = notificationsRaw.some(n => n.unread)
+    const hasUnread = threadsRaw.some(n => n.unread)
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   }, { deep: true, immediate: true })
 

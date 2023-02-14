@@ -9,7 +9,10 @@ mod server;
 
 use std::sync::Mutex;
 
-use commands::{play_notification_sound, set_icon_template, start_server, stop_server};
+use commands::{
+    go_to_notification_settings, play_notification_sound, set_icon_template, start_server,
+    stop_server,
+};
 use server::AuthServer;
 
 use tauri::{
@@ -92,7 +95,8 @@ fn main() {
             play_notification_sound,
             set_icon_template,
             start_server,
-            stop_server
+            stop_server,
+            go_to_notification_settings
         ])
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
