@@ -40,13 +40,23 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install 
+
+      - name: Check if new release
+        id: releaseCheck
+        run: pnpx tsx .github/actions/versionCheck.ts
+        env:
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: install Rust stable
+        if: steps.releaseCheck.outputs.isNewRelease == 'true'
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
 
       - name: Run Release
+        if: steps.releaseCheck.outputs.isNewRelease == 'true'
         run: pnpx tsx .github/actions/release.ts
         env:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
