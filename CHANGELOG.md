@@ -1,3 +1,8 @@
+### 0.5.0
+  - Added checkboxes to notifications/repositories, now users can select notifications and mark or open them at once. Can mark as read without going to notification page.
+  - Minor style changes
+  - Minor bug fixes
+
 ### 0.4.0
   - Added `Show system notifications` seting, if you enable this and your system granted notifications for Gitification, system notifications will show up.
   - Some style improvements
