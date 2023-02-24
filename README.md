@@ -19,15 +19,9 @@ An app to view your notifications easily on your menubar.
 
 # Screenshots
 <div align="center">
-  <img src="images/landing.png" />
-</div>
-<br>
-<div align="center">
-  <img src="images/home.png" />
-</div>
-<br>
-<div align="center">
-  <img src="images/settings.png" />
+  <img width="400" src="images/landing.png" />
+  <img width="400" src="images/home.png" />
+  <img width="400" src="images/settings.png" />
 </div>
 
 # Known Problems
