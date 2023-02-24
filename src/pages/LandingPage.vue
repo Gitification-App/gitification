@@ -54,6 +54,7 @@ function handleLogin() {
     <template #icon>
       <img
         width="75"
+        draggable="false"
         height="75"
         src="/src/assets/img/icon.png"
       >
