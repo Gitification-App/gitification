@@ -50,10 +50,9 @@ export const useStore = defineStore('store', () => {
       threadsRaw = data
 
       notifications.value = toNotificationList(data)
-      checkedItems.value = checkedItems.value.filter((checkedItem) => {
-        return threadsRaw.some(thread => thread.id === checkedItem.id,
-        )
-      })
+      checkedItems.value = checkedItems.value.filter(checkedItem => (
+        threadsRaw.some(thread => thread.id === checkedItem.id)
+      ))
     }
     catch (error) {
       notifications.value = []

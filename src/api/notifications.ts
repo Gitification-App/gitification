@@ -165,7 +165,6 @@ export function getNotifications({
 }
 
 export function markNotificationAsRead(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
-  console.log(accessToken)
   return redaxios.patch(`https://api.github.com/notifications/threads/${id}`, null, {
     headers: createBaseGithubApiHeaders(accessToken),
   })
