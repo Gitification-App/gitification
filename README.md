@@ -11,8 +11,27 @@ An app to view your notifications easily on your menubar.
 
 - Gitification is built with `TypeScript`, `Vue`, `Tauri` and `Vite` with nice plugins.
 
+# Size Comparison with Gitify
+<div align="center">
+  <img style="border-radius: 30px" src="images/size_comparison.png" />
+</div>
+
+
+# Screenshots
+<div align="center">
+  <img src="images/landing.png" />
+</div>
+<br>
+<div align="center">
+  <img src="images/home.png" />
+</div>
+<br>
+<div align="center">
+  <img src="images/settings.png" />
+</div>
+
 # Known Problems
-- Notifications,  Opening external links may not work on Macs because Gitification is not signed currently. I don't earn money from open source, but if I earn `50$` from github sponsorships, I will sign the app.
+-  Gitification is not certificated by an apple developer account, after you download it you have to allow it in `Preference/Privacy & Securiy`. I don't earn money from open source, but if I earn `50$` from github sponsorships, I will sign the app.
 
 - The app is currently ready to be compiled for Windows or Linux but I'm a Mac user so that after I added the features in my mind, I will create Windows and Linux builds.
 
@@ -48,22 +67,3 @@ If you want to contribute you should install these extensions and set-up these s
   }
   ```
 - And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.
-
-# Size Comparison with Gitify
-<div align="center">
-  <img style="border-radius: 30px" src="images/size_comparison.png" />
-</div>
-
-
-# Screenshots
-<div align="center">
-  <img style="border-radius: 30px" src="images/landing.png" />
-</div>
-<br>
-<div align="center">
-  <img style="border-radius: 30px" src="images/home.png" />
-</div>
-<br>
-<div align="center">
-  <img style="border-radius: 30px" src="images/settings.png" />
-</div>
