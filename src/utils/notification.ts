@@ -13,29 +13,23 @@ export function formatReason(reason: NotificationReason) {
   return reasonFormatMap[reason] || 'Unknown reason'
 }
 
-export function toNotificationList(threads: Thread[]) {
-  const notifications: NotificationList = []
+export function toNotificationList(threads: Thread[]): NotificationList {
+  const repoThreadsMap = new Map<MinimalRepository['id'], Thread[]>()
 
-  for (let index = 0; index < threads.length; index++) {
-    const thread = threads[index]
+  for (const thread of threads) {
+    const { repository } = thread
 
-    if (index === 0) {
-      notifications.push(
-        thread.repository,
-        thread,
-      )
-      continue
-    }
+    if (!repoThreadsMap.has(repository.id))
+      repoThreadsMap.set(repository.id, [])
 
-    const previousThread = threads[index - 1]
-
-    if (thread.repository.id === previousThread.repository.id)
-      notifications.push(thread)
-    else
-      notifications.push(thread.repository, thread)
+    repoThreadsMap.get(repository.id)!.push(thread)
   }
 
-  return notifications
+  return Array
+    .from(repoThreadsMap.values())
+    .flatMap(threadGroup => (
+      [threadGroup[0].repository, ...threadGroup]
+    ))
 }
 
 export function isThread(value: any): value is Thread {

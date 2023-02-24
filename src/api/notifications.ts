@@ -1,5 +1,6 @@
 import redaxios from 'redaxios'
 import type { NotificationReason, NotificationSubject } from '../constants'
+import type { AppStorageContext } from '../types'
 import { createBaseGithubApiHeaders } from '../utils/api'
 import type { User } from './user'
 
@@ -160,5 +161,11 @@ export function getNotifications({
       all: showReadNotifications,
       t: Date.now(),
     },
+  })
+}
+
+export function markNotificationAsRead(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
+  return redaxios.patch(`https://api.github.com/notifications/threads/${id}`, null, {
+    headers: createBaseGithubApiHeaders(accessToken),
   })
 }

@@ -5,6 +5,7 @@ specifiers:
   '@actions/github': ^5.1.1
   '@antfu/eslint-config': ^0.34.1
   '@iconify-json/octicon': ^1.1.30
+  '@iconify-json/ph': ^1.1.4
   '@tauri-apps/api': ^1.2.0
   '@tauri-apps/cli': ^1.2.2
   '@types/node': ^18.7.10
@@ -19,6 +20,7 @@ specifiers:
   focus-visible: ^5.2.0
   hotkeys-js: ^3.10.1
   npm-run-all: ^4.1.5
+  p-all: ^4.0.0
   pinia: ^2.0.29
   redaxios: ^0.5.1
   sass: ^1.57.1
@@ -37,6 +39,7 @@ dependencies:
   '@vueuse/core': 9.12.0_vue@3.2.45
   compare-versions: 6.0.0-rc.1
   dayjs: 1.11.7
+  p-all: 4.0.0
   pinia: 2.0.29_prq2uz4lho2pwp6irk4cfkrxwu
   redaxios: 0.5.1
   tauri-plugin-autostart-api: github.com/tauri-apps/tauri-plugin-autostart/0c8e3ad92e00e7b0aed60fc8a639e77407105253
@@ -48,6 +51,7 @@ devDependencies:
   '@actions/github': 5.1.1
   '@antfu/eslint-config': 0.34.1_7uibuqfxkfaozanbtbziikiqje
   '@iconify-json/octicon': 1.1.30
+  '@iconify-json/ph': 1.1.4
   '@tauri-apps/cli': 1.2.3
   '@types/node': 18.11.18
   '@vitejs/plugin-vue': 4.0.0_vite@4.0.4+vue@3.2.45
@@ -723,6 +727,12 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/ph/1.1.4:
+    resolution: {integrity: sha512-2A3+G/bvYB+ab1QL4SIsXVECvjSkSg+smNdWAg30QlksyZ1bI7Zh3wzyZCA2saDJPkVGyMJHSLI5EXExk/jmnQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify/types/2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
     dev: true
@@ -1354,6 +1364,14 @@ packages:
     hasBin: true
     dev: true
 
+  /aggregate-error/4.0.1:
+    resolution: {integrity: sha512-0poP0T7el6Vq3rstR8Mn4V/IQrpBLO6POkUSrN7RhyY+GF/InCFShQzsQ39T25gkHhLgSLByyAz+Kjb+c2L98w==}
+    engines: {node: '>=12'}
+    dependencies:
+      clean-stack: 4.2.0
+      indent-string: 5.0.0
+    dev: false
+
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
     dependencies:
@@ -1623,6 +1641,13 @@ packages:
     dependencies:
       escape-string-regexp: 1.0.5
     dev: true
+
+  /clean-stack/4.2.0:
+    resolution: {integrity: sha512-LYv6XPxoyODi36Dp976riBtSY27VmFo+MKqEU9QCCWyTrdEPDog+RWA7xQWHi6Vbp61j5c4cdzzX1NidnwtUWg==}
+    engines: {node: '>=12'}
+    dependencies:
+      escape-string-regexp: 5.0.0
+    dev: false
 
   /clone-response/1.0.3:
     resolution: {integrity: sha512-ROoL94jJH2dUVML2Y/5PEDNaSHgeOdSDicUyS7izcF63G6sTc/FTjLub4b8Il9S8S0beOfYt0TaA5qvFK+w0wA==}
@@ -2095,6 +2120,11 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
     dev: true
+
+  /escape-string-regexp/5.0.0:
+    resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /eslint-import-resolver-node/0.3.7:
     resolution: {integrity: sha512-gozW2blMLJCeFpBwugLTGyvVjNoeo1knonXAcatC6bjPBZitotxdWf7Gimr25N4c0AAOo4eOUfaG82IJPDpqCA==}
@@ -2999,6 +3029,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /indent-string/5.0.0:
+    resolution: {integrity: sha512-m6FAo/spmsW2Ab2fU35JTYwtOKa2yAwXSwgjSv1TJzh4Mh7mC3lzAOVLBprb72XsTrgkEIsl7YrFNAiDiRhIGg==}
+    engines: {node: '>=12'}
+    dev: false
+
   /inflight/1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
     dependencies:
@@ -3694,6 +3729,13 @@ packages:
       word-wrap: 1.2.3
     dev: true
 
+  /p-all/4.0.0:
+    resolution: {integrity: sha512-QXqMc8PpYu0gmNM6VcKP0uYqeI+dtvSNeaDb8ktnNjposr+nftHHCSYbj/S/oUceF6R868jw1XOxkJKUSiHgEQ==}
+    engines: {node: '>=12.20'}
+    dependencies:
+      p-map: 5.5.0
+    dev: false
+
   /p-cancelable/1.1.0:
     resolution: {integrity: sha512-s73XxOZ4zpt1edZYZzvhqFa6uvQc1vwUa0K0BdtIZgQMAJj9IbebH+JkgKZc9h+B05PKHLOTl4ajG1BmNrVZlw==}
     engines: {node: '>=6'}
@@ -3726,6 +3768,13 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /p-map/5.5.0:
+    resolution: {integrity: sha512-VFqfGDHlx87K66yZrNdI4YGtD70IRyd+zSvgks6mzHPRNkoKy+9EKP4SFC77/vTTQYmRmti7dvqC+m5jBrBAcg==}
+    engines: {node: '>=12'}
+    dependencies:
+      aggregate-error: 4.0.1
+    dev: false
 
   /p-try/2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}

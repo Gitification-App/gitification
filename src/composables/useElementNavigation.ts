@@ -15,8 +15,12 @@ export enum Navigation {
   Previous,
 }
 
-const getFocusedItemIndex = (elements: HTMLElement[]) => elements
-  .findIndex(item => document.activeElement === item)
+const getFocusedItemIndex = (elements: HTMLElement[], query: string) => {
+  const activeElement = document.activeElement!.closest(query)
+
+  return elements
+    .findIndex(item => activeElement === item)
+}
 
 const hotkeyOptions: UseKeyOptions = { prevent: true, repeat: true }
 
@@ -36,7 +40,7 @@ export function useElementNavigation({
   onUpdated(queryNotificationItems)
 
   function focusItemInDirection(navigation: Navigation) {
-    let currentIndex = getFocusedItemIndex(elements.value)
+    let currentIndex = getFocusedItemIndex(elements.value, targetQuery)
 
     if (navigation === Navigation.Next && currentIndex < elements.value.length - 1)
       currentIndex++

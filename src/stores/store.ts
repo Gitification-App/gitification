@@ -1,23 +1,26 @@
 import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { readonly, ref, shallowRef, watch } from 'vue'
-import type { MinimalRepository, Thread } from '../api/notifications'
-import { getNotifications } from '../api/notifications'
+import { readonly, ref, shallowRef, triggerRef, watch } from 'vue'
+import pAll from 'p-all'
+import type { Thread } from '../api/notifications'
+import { getNotifications, markNotificationAsRead } from '../api/notifications'
 import type { Release } from '../api/releases'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
-import type { Option, PageState } from '../types'
-import { filterNewThreads, toNotificationList } from '../utils/notification'
+import type { AppStorageContext, NotificationList, Option, PageState } from '../types'
+import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
 
 export const useStore = defineStore('store', () => {
-  const notifications = shallowRef<(Thread | MinimalRepository)[]>([])
+  const notifications = shallowRef<NotificationList>([])
   const loadingNotifications = ref(false)
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
   let threadsRaw: Thread[] = []
   let threadsPreviousRaw: Thread[] = []
+
+  const checkedItems = ref<Thread[]>([])
 
   async function fetchNotifications(withSkeletons = false) {
     if (loadingNotifications.value)
@@ -47,6 +50,9 @@ export const useStore = defineStore('store', () => {
       threadsRaw = data
 
       notifications.value = toNotificationList(data)
+      checkedItems.value = checkedItems.value.filter(checkedItem => (
+        threadsRaw.some(thread => thread.id === checkedItem.id)
+      ))
     }
     catch (error) {
       notifications.value = []
@@ -98,6 +104,51 @@ export const useStore = defineStore('store', () => {
 
   const newRelease = ref<Option<Release>>(null)
 
+  function findThreadIndex(thread: Thread) {
+    return notifications.value.findIndex(({ id }) => id === thread.id)
+  }
+
+  async function markCheckedNotificationsAsRead(accessToken: NonNullable<AppStorageContext['accessToken']>) {
+    const deletedThreads: Thread['id'][] = []
+
+    try {
+      await pAll(
+        checkedItems.value.map(thread => async () => {
+          try {
+            await markNotificationAsRead(thread.id, accessToken)
+            deletedThreads.push(thread.id)
+          }
+          catch (error) {
+            console.error(error)
+          }
+        }),
+        {
+          stopOnError: false,
+          concurrency: 7,
+        },
+      )
+    }
+    finally {
+      notifications.value = notifications.value
+        .filter((item) => {
+          if (isRepository(item))
+            return true
+
+          return !deletedThreads.includes(item.id)
+        })
+        .filter((item, _, array) => {
+          if (isThread(item))
+            return true
+
+          return array.some((someItem) => {
+            return isThread(someItem) && someItem.repository.id === item.id
+          })
+        })
+      checkedItems.value = []
+      triggerRef(notifications)
+    }
+  }
+
   return {
     newRelease,
     notifications,
@@ -107,6 +158,9 @@ export const useStore = defineStore('store', () => {
     pageFrom,
     failedLoadingNotifications,
     currentPageState,
+    checkedItems,
+    findThreadIndex,
+    markCheckedNotificationsAsRead,
     setPage,
     fetchNotifications,
     logout,
