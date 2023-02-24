@@ -58,5 +58,7 @@ pub fn go_to_notification_settings() {
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn go_to_notification_settings() {
-    let _ = std::process::Command::new("ms-settings:notifications").spawn();
+    let _ = std::process::Command::new("start")
+        .arg("ms-settings:notifications")
+        .spawn();
 }
