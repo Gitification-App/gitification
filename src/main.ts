@@ -7,14 +7,16 @@ import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { isPermissionGranted } from '@tauri-apps/api/notification'
+import { type as osType } from '@tauri-apps/api/os'
+
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
-import { Page } from './constants'
+import { OsClassMap, Page } from './constants'
 import { getReleases } from './api/releases'
-import { getNewRelease } from './utils/getNewRelease'
+import { findNewRelease } from './utils/getNewRelease'
 
 ;(async () => {
   dayjs.extend(relativeTime)
@@ -43,10 +45,13 @@ import { getNewRelease } from './utils/getNewRelease'
     store.fetchNotifications(true)
   }
 
-  {
-    const releases = await getReleases(AppStorage.get('accessToken'))
-    store.newRelease = getNewRelease(releases)
-  }
+  getReleases(AppStorage.get('accessToken'))
+    .then((releases) => {
+      store.newRelease = findNewRelease(releases)
+    })
+
+  const os = await osType()
+  document.documentElement.classList.add(OsClassMap[os])
 
   app.mount('#app')
 })()

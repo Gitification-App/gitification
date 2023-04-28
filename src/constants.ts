@@ -1,3 +1,4 @@
+import type { OsType } from '@tauri-apps/api/os'
 import { Icons } from './components/Icons'
 
 export const REPOSITORY_PATH = 'Gitification-App/gitification'
@@ -76,4 +77,10 @@ export const subjectIconMap = {
   [NotificationSubject.Release]: Icons.Tag,
   [NotificationSubject.RepositoryInvitation]: Icons.Mail,
   [NotificationSubject.RepositoryVulnerabilityAlert]: Icons.Alert,
+}
+
+export const OsClassMap: Record<OsType, string> = {
+  Darwin: 'mac',
+  Linux: 'linux',
+  Windows_NT: 'windows',
 }
