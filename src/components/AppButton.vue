@@ -50,6 +50,7 @@ function handleClick(e: MouseEvent) {
 
 <style lang="scss" scoped>
 .button {
+  @include text-outline();
   height: 35px;
   font-size: 14px;
   padding: 8px 12px;
@@ -59,19 +60,21 @@ function handleClick(e: MouseEvent) {
   overflow: hidden;
   color: var(--white);
   border-radius: 8px;
-  @include text-outline();
   vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &-content {
+    display: inline-flex;
+  }
 
   &-paddingless, &-square {
     padding: 0px;
   }
 
   &-square {
-    display: inline-flex;
-    height: 35px;
     width: 35px;
-    align-items: center;
-    justify-content: center;
   }
 
   &-loading {
