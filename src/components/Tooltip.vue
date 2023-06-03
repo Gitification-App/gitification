@@ -58,7 +58,7 @@ const visible = ref(false)
 const timeout = useTimeoutPool()
 const id = getTooltipId()
 
-function handleTargetMouseEnter() {
+function handleTargetInteractionStart() {
   timeout.cancel('_')
 
   if (openTooltips.size > 0) {
@@ -73,7 +73,7 @@ function handleTargetMouseEnter() {
   }
 }
 
-function handleTargetMouseLeave() {
+function handleTargetInteractionEnd() {
   timeout.cancel('_')
   visible.value = false
   timeout.set('_', () => {
@@ -81,8 +81,17 @@ function handleTargetMouseLeave() {
   }, /** leave animation duration */200)
 }
 
-useEventListener(() => props.target, 'mouseenter', handleTargetMouseEnter)
-useEventListener(() => props.target, 'mouseleave', handleTargetMouseLeave)
+const targetGetter = () => props.target
+
+useEventListener(targetGetter, 'mouseenter', handleTargetInteractionStart)
+useEventListener(targetGetter, 'mouseleave', handleTargetInteractionEnd)
+useEventListener(targetGetter, 'blur', handleTargetInteractionEnd)
+useEventListener(targetGetter, 'focus', (e) => {
+  if (!(e.target instanceof HTMLElement) || !e.target.hasAttribute('data-focus-visible-added'))
+    return
+
+  handleTargetInteractionStart()
+})
 
 onScopeDispose(() => {
   openTooltips.delete(id)
