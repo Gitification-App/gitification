@@ -1,4 +1,5 @@
 import './assets/main.scss'
+import 'wowerlay/style.css'
 import 'focus-visible'
 
 import { createApp } from 'vue'

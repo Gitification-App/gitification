@@ -10,6 +10,7 @@
   --white-faded: rgb(190, 190, 190);
   --white: rgb(255, 255, 255);
   --content-bg: rgba(30, 30, 30, .8);
+  --popover-bg: rgba(40, 40, 40, .6);
   --bottom-bar-bg: rgba(21, 21, 21, 0.2);
   --sidebar-bg: rgba(50, 50, 50, .75);
   --app-border: rgb(90, 90, 90);
@@ -67,7 +68,7 @@ button, a {
   @include borderRadiusOverflowHidden(8px);
 }
 
-.icon {
+.icon:not(.no-stroke) {
   stroke: black;
   stroke-width: 1px;
   stroke-linejoin: round;

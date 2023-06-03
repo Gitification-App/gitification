@@ -2,8 +2,8 @@ import { Icons } from './components/Icons'
 
 export const REPOSITORY_PATH = 'Gitification-App/gitification'
 export const SERVER_PORT = 23846
-export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}`
-export const REPO_RELEASES_LINK = `https://github.com/${REPOSITORY_PATH}/releases`
+export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}` as const
+export const REPO_RELEASES_LINK = `https://github.com/${REPOSITORY_PATH}/releases` as const
 export const FETCH_INTERVAL_DURATION = 60000
 
 export enum Page {
