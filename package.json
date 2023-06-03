@@ -21,9 +21,7 @@
     "redaxios": "^0.5.1",
     "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
-    "vue": "^3.3.4",
-    "vue-selectable-items": "^1.0.0",
-    "wowerlay": "1.0.0-beta.4"
+    "vue": "^3.2.45"
   },
   "files": [
     "README.md",

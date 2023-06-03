@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { watch } from 'vue'
+import { exit } from '@tauri-apps/api/process'
+import { invoke } from '@tauri-apps/api/tauri'
 import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
 import { watchDebounced } from '@vueuse/core'
-
-import { invoke } from '@tauri-apps/api/tauri'
 import { requestPermission } from '@tauri-apps/api/notification'
 import { confirm } from '@tauri-apps/api/dialog'
 import AppButton from '../components/AppButton.vue'
@@ -124,6 +124,19 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
         @update:enabled="handleUpdateShowSystemNotifications"
       />
     </div>
+
+    <div class="settings-footer">
+      <AppButton
+        v-if="accessToken"
+        @click="store.logout"
+      >
+        Log out
+      </AppButton>
+
+      <AppButton @click="exit(0)">
+        Exit App
+      </AppButton>
+    </div>
   </div>
 </template>
 
@@ -152,6 +165,18 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
       grid-template-columns: 115px 115px 115px;
       grid-template-rows: 75px 75px;
       grid-gap: 5px;
+    }
+
+    &-footer {
+      margin-top: auto;
+      display: flex;
+      width: 100%;
+      flex-direction: row nowrap;
+      justify-content: flex-end;
+
+      > .button + .button {
+        margin-left: 5px;
+      }
     }
   }
 </style>
