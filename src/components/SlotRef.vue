@@ -17,7 +17,7 @@ const { renderSlot, element } = useSlotWithRef()
 
 <template>
   <Component
-    :is="renderSlot"
+    :is="renderSlot()"
     v-bind="$attrs"
   />
 
