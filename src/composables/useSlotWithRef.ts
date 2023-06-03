@@ -20,8 +20,7 @@ export function useSlotWithRef<T = HTMLElement>(slotName = 'default', options?: 
 
   function renderSlot() {
     if (slotName in slots) {
-      const [slot, ...others] = slots[slotName]!(options?.slotPropsGetter?.())
-      console.log([slot, others])
+      const [slot] = slots[slotName]!(options?.slotPropsGetter?.())
       return withDirectives(slot, [[vRef, handleRef]])
     }
 
