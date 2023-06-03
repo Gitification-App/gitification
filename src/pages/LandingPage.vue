@@ -54,7 +54,7 @@ const cancelAuthPortEvent = useTauriEvent<number>('auth-port', ({ payload }) => 
 })
 
 timeout.set('_', () => {
-  processing.value = true
+  processing.value = false
   cancelAuthPortEvent()
 }, 4000)
 
