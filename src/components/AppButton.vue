@@ -3,6 +3,7 @@ interface Props {
   loading?: boolean
   paddingless?: boolean
   square?: boolean
+  ghost?: boolean
 }
 interface Emits {
   (name: 'click', event: MouseEvent): void
@@ -31,6 +32,7 @@ function handleClick(e: MouseEvent) {
       'button-loading': loading,
       'button-paddingless': paddingless,
       'button-square': square,
+      'button-ghost': ghost,
     }"
     @click="handleClick"
   >
@@ -53,14 +55,25 @@ function handleClick(e: MouseEvent) {
   height: 35px;
   font-size: 14px;
   padding: 8px 12px;
-  border: 1px solid var(--item-border-color);
-  background-color: var(--item-bg);
   position: relative;
   overflow: hidden;
   color: var(--white);
   border-radius: 8px;
-  @include text-outline();
   vertical-align: middle;
+
+  &-content {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:not(.button-ghost) {
+    background-color: var(--item-bg);
+  }
 
   &-paddingless, &-square {
     padding: 0px;
@@ -83,12 +96,8 @@ function handleClick(e: MouseEvent) {
   &:not(.button-loading) {
     @include focus-visible;
 
-    &:active {
+    &:active, &:hover {
       background-color: var(--item-hover-bg);
-    }
-
-    &:hover {
-      border-color: var(--item-hover-bg);;
     }
   }
 }

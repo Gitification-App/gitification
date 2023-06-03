@@ -140,7 +140,6 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
 
   &-title {
     @include focus-visible;
-    @include text-outline();
     border-radius: 8px;
     padding: 5px 10px 5px 16px;
     width: 100%;
@@ -191,7 +190,6 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     text-align: left;
     line-height: 20px;
     @include focus-visible;
-    @include text-outline($size: 1px);
     margin-top: 5px;
 
     &-read {

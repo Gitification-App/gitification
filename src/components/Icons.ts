@@ -11,6 +11,7 @@ import GithubIcon from 'virtual:icons/octicon/mark-github-16'
 import UnmuteIcon from 'virtual:icons/octicon/unmute-24'
 import PullRequestIcon from 'virtual:icons/octicon/git-pull-request-24'
 import CheckIcon from 'virtual:icons/octicon/check-24'
+import CheckIcon16 from 'virtual:icons/octicon/check-16'
 import CheckFillIcon from 'virtual:icons/octicon/check-circle-fill-12'
 import XIcon from 'virtual:icons/octicon/x-16'
 import BellIcon from 'virtual:icons/octicon/bell-24'
@@ -61,4 +62,5 @@ export const Icons = {
   Command: markRaw(CommandIcon),
   BellSlash: markRaw(BellSlashIcon),
   Info16: markRaw(InfoIcon16),
+  Check16: markRaw(CheckIcon16),
 }

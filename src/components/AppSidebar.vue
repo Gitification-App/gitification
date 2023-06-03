@@ -10,6 +10,8 @@ import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
 import MenuItems, { menuItem } from './MenuItems.vue'
+import Tooltip from './Tooltip.vue'
+import SlotRef from './SlotRef.vue'
 
 const store = useStore()
 
@@ -44,60 +46,91 @@ const moreItems = computed(() => [
 <template>
   <nav class="nav">
     <div class="upper">
-      <button
-        class="nav-logo"
-        @click="open(REPO_LINK)"
-      >
-        <img
-          title="Go to Gitification repository"
-          draggable="false"
-          src="/src/assets/img/icon.png"
-        >
-      </button>
-    </div>
-    <div class="lower">
-      <SidebarButton
-        v-if="store.newRelease != null"
-        highlight
-        title="An update is available"
-        @click="open(`${REPO_RELEASES_LINK}/tag/${store.newRelease!.tag_name}`)"
-      >
-        <Icons.Download16 />
-      </SidebarButton>
-
-      <SidebarButton
-        :disabled="store.currentPage !== Page.Home"
-        title="Reload notifications"
-        @click="store.fetchNotifications(true)"
-      >
-        <Icons.Sync16 />
-      </SidebarButton>
-
-      <!-- <SidebarButton
-        :disabled="store.currentPage === Page.Settings"
-        title="Go to settings"
-        @click="store.setPage(Page.Settings)"
-      >
-        <Icons.Gear16 />
-      </SidebarButton> -->
-
-      <Popover
-        :wowerlayOptions="{
-          position: 'right-end',
-          noBackground: true,
-          style: 'display: flex; flex-direction: column: flex-wrap: nowrap: gap: 5px; padding: 5px;',
-        }"
-      >
+      <SlotRef>
         <template #default>
-          <SidebarButton title="More">
+          <button
+            class="nav-logo"
+            @click="open(REPO_LINK)"
+          >
+            <img
+              title="Go to Gitification repository"
+              draggable="false"
+              src="/src/assets/img/icon.png"
+            >
+          </button>
+        </template>
+
+        <template #ref="{ el }">
+          <Tooltip
+            :target="el"
+            position="right"
+            text="Navigate to repository"
+          />
+        </template>
+      </SlotRef>
+    </div>
+
+    <div class="lower">
+      <SlotRef v-if="store.newRelease != null">
+        <template #default>
+          <SidebarButton
+            highlight
+            @click="open(`${REPO_RELEASES_LINK}/tag/${store.newRelease!.tag_name}`)"
+          >
+            <Icons.Download16 />
+          </SidebarButton>
+        </template>
+
+        <template #ref="{ el }">
+          <Tooltip
+            :target="el"
+            position="right"
+            text="A new version is available"
+          />
+        </template>
+      </SlotRef>
+
+      <SlotRef>
+        <template #default>
+          <SidebarButton
+            :disabled="store.currentPage !== Page.Home"
+            @click="store.fetchNotifications(true)"
+          >
+            <Icons.Sync16 />
+          </SidebarButton>
+        </template>
+
+        <template #ref="{ el }">
+          <Tooltip
+            :target="el"
+            position="right"
+            text="Reload notifications"
+          />
+        </template>
+      </SlotRef>
+
+      <SlotRef>
+        <template #default>
+          <SidebarButton>
             <Icons.More />
           </SidebarButton>
         </template>
 
-        <template #content>
-          <MenuItems :items="moreItems" />
+        <template #ref="{ el }">
+          <Tooltip
+            position="right"
+            :target="el"
+            text="More"
+          />
+
+          <Popover
+            :target="el"
+            :wowerlayOptions="{ position: 'right-end' }"
+          >
+            <MenuItems :items="moreItems" />
+          </Popover>
         </template>
-      </Popover>
+      </SlotRef>
     </div>
   </nav>
 </template>
@@ -134,10 +167,10 @@ const moreItems = computed(() => [
 .nav-logo {
   opacity: .8;
   @include focus-visible;
-  border:1px solid black;
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  overflow: hidden;
 
   img {
     border-radius: 50%;

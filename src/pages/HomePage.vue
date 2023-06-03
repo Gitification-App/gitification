@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { h, onScopeDispose, ref } from 'vue'
+import { onScopeDispose, ref } from 'vue'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
 import type { MinimalRepository, Thread } from '../api/notifications'
