@@ -9,7 +9,7 @@ import { AppStorage } from '../storage'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
-import MenuItemsVue, { menuItem } from './MenuItems.vue'
+import MenuItems, { menuItem } from './MenuItems.vue'
 
 const store = useStore()
 
@@ -20,7 +20,7 @@ function openCurrentReleaseChangelog() {
 const moreItems = computed(() => [
   menuItem({
     key: 'changelog',
-    meta: { text: 'Changelog', icon: Icons.BellSlash },
+    meta: { text: 'Changelog', icon: Icons.Info16 },
     onSelect: openCurrentReleaseChangelog,
   }),
   menuItem({
@@ -82,7 +82,7 @@ const moreItems = computed(() => [
       </SidebarButton> -->
 
       <Popover
-        :wowerlay-options="{
+        :wowerlayOptions="{
           position: 'right-end',
           noBackground: true,
           style: 'display: flex; flex-direction: column: flex-wrap: nowrap: gap: 5px; padding: 5px;',
@@ -95,7 +95,7 @@ const moreItems = computed(() => [
         </template>
 
         <template #content>
-          <MenuItemsVue :items="moreItems" />
+          <MenuItems :items="moreItems" />
         </template>
       </Popover>
     </div>

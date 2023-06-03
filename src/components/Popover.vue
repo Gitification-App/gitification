@@ -33,7 +33,6 @@ interface Props {
   wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
 }
 
-const { renderSlot, element: target } = useSlotWithRef()
 const visible = ref(false)
 
 provide(popoverContextKey, { visible })
@@ -79,6 +78,10 @@ watch(visible, (value) => {
   else {
     setTimeout(() => lastFocusedElement instanceof HTMLElement && lastFocusedElement.focus())
   }
+})
+
+const { renderSlot, element: target } = useSlotWithRef('default', {
+  slotPropsGetter: () => ({ visible: visible.value }),
 })
 </script>
 
