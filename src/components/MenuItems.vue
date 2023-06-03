@@ -30,8 +30,6 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const popoverContext = usePopoverContext()
-
 const setupHandle = (ctx: Context) => {
   useKey('up,shift+tab', () => ctx.focusPrevious(), { input: true, repeat: true, prevent: true })
   useKey('down,tab', () => ctx.focusNext(), { input: true, repeat: true, prevent: true })
@@ -46,6 +44,8 @@ const setupHandle = (ctx: Context) => {
     el?.focus()
   })
 
+  const popoverContext = usePopoverContext()
+
   ctx.onSelect((meta, item) => {
     popoverContext.visible.value = false
   })
@@ -54,10 +54,10 @@ const setupHandle = (ctx: Context) => {
 
 <template>
   <SelectableItems
-    :item-defaults="itemDefaults"
+    :itemDefaults="itemDefaults"
     :setup="setupHandle"
     :items="items"
-    no-wrapper-element
+    noWrapperElement
   >
     <template #render="{ meta }: Item<ItemMeta>">
       <div class="item-icon">
@@ -81,7 +81,7 @@ const setupHandle = (ctx: Context) => {
     padding: 5px 10px;
     outline: none;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 4px; // 8px parent border radius - 4px parent padding
     color: var(--white-faded);
 
     &,

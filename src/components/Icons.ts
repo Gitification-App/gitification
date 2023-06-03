@@ -21,6 +21,7 @@ import IssueOpenedIcon from 'virtual:icons/octicon/issue-opened-24'
 import TagIcon from 'virtual:icons/octicon/tag-24'
 import AlertIcon from 'virtual:icons/octicon/alert-24'
 import QuestionIcon from 'virtual:icons/octicon/question-24'
+import InfoIcon16 from 'virtual:icons/octicon/info-16'
 import MailIcon from 'virtual:icons/octicon/mail-24'
 import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
 import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
@@ -59,4 +60,5 @@ export const Icons = {
   Download16: markRaw(DownloadIcon16),
   Command: markRaw(CommandIcon),
   BellSlash: markRaw(BellSlashIcon),
+  Info16: markRaw(InfoIcon16),
 }
