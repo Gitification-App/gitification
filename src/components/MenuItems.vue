@@ -1,5 +1,10 @@
 <script lang="ts">
-import { type Context, Item, type ItemRenderList, SelectableItems, createItemDefaults, item } from 'vue-selectable-items'
+import {
+  type Context,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type Item,
+  type ItemRenderList, SelectableItems, createItemDefaults, item,
+} from 'vue-selectable-items'
 import { useKey } from '../composables/useKey'
 import { type Icons } from './Icons'
 import { usePopoverContext } from './Popover.vue'
@@ -61,10 +66,7 @@ const setupHandle = (ctx: Context) => {
   >
     <template #render="{ meta }: Item<ItemMeta>">
       <div class="item-icon">
-        <component
-          :is="meta!.icon"
-          class="no-stroke"
-        />
+        <component :is="meta!.icon" />
       </div>
       <div class="item-text">
         {{ meta!.text }}

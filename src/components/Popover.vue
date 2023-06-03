@@ -1,7 +1,7 @@
 <script lang="ts">
 import { type InjectionKey, type Ref, inject, provide, ref, watch } from 'vue'
 import { Wowerlay, type WowerlayTransitionFn } from 'wowerlay'
-import { useSlotWithRef } from '../composables/useSlotWithRef'
+import { useEventListener } from '@vueuse/core'
 import { useKey } from '../composables/useKey'
 
 interface PopoverContext {
@@ -25,12 +25,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 defineSlots<{
-  content: (props: SlotProps) => any
   default: (props: SlotProps) => any
 }>()
 
 interface Props {
   wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
+  target?: HTMLElement | null
 }
 
 const visible = ref(false)
@@ -80,35 +80,37 @@ watch(visible, (value) => {
   }
 })
 
-const { renderSlot, element: target } = useSlotWithRef('default', {
-  slotPropsGetter: () => ({ visible: visible.value }),
-})
+useEventListener(
+  () => props.target,
+  'click',
+  () => {
+    visible.value = !visible.value
+  },
+  { passive: true },
+)
 </script>
 
 <template>
-  <Component
-    :is="renderSlot"
-    @click="visible = !visible"
-  />
-
   <Wowerlay
     v-model:visible="visible"
+    class="popover"
     tabindex="-1"
     :target="target"
     v-bind="props.wowerlayOptions"
     :gap="2"
+    noBackground
     :transition="handleTransition"
     @update:el="(el) => popoverEl = el"
   >
     <slot
-      name="content"
+      name="default"
       :visible="visible"
     />
   </Wowerlay>
 </template>
 
 <style lang="scss">
-.wowerlay {
+.popover {
   outline: none;
   background-color: var(--popover-bg);
   min-width: 150px;
@@ -119,6 +121,7 @@ const { renderSlot, element: target } = useSlotWithRef('default', {
   display: flex;
   flex-direction: column;
   padding: 4px;
+  --wowerlay-z: 1500;
 
   > * + * {
     margin-top: 2px;

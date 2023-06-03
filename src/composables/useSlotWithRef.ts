@@ -1,26 +1,22 @@
 import { ref, useSlots, withDirectives } from 'vue'
 import { type Directive, type Ref } from 'vue'
 
-export interface SlotWithRefOptions {
-  slotPropsGetter: () => Record<string, any>
-}
-
 const vRef: Directive<HTMLElement, (el: HTMLElement) => void> = (el, { value }) => value(el)
 
 /**
  * @param slotName Target slot default value: "default"
  */
-export function useSlotWithRef<T = HTMLElement>(slotName = 'default', options?: SlotWithRefOptions) {
+export function useSlotWithRef() {
   const slots = useSlots()
-  const element: Ref<T | null> = ref(null)
+  const element: Ref<HTMLElement | null> = ref(null)
 
-  function handleRef(el: T) {
+  function handleRef(el: HTMLElement) {
     element.value = el
   }
 
   function renderSlot() {
-    if (slotName in slots) {
-      const [slot] = slots[slotName]!(options?.slotPropsGetter?.())
+    if ('default' in slots) {
+      const [slot] = slots.default!()
       return withDirectives(slot, [[vRef, handleRef]])
     }
 
