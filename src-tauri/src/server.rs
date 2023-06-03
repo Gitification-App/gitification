@@ -1,6 +1,6 @@
 use tauri::Window;
 
-use std::{io::Cursor, str::FromStr, sync::Arc};
+use std::{io::Cursor, net::SocketAddr, str::FromStr, sync::Arc};
 
 use ::ascii::AsciiString;
 use tiny_http::{Header, HeaderField, Method, Request, Response, Server};
@@ -110,12 +110,22 @@ impl AuthServer {
         AuthServer { server: None }
     }
 
-    pub fn listen(&mut self, window: Window) {
+    pub fn listen(&mut self, window: Window, addr: SocketAddr) {
         if self.server.is_some() {
             return;
         }
 
-        let server = Arc::new(Server::http("0.0.0.0:23846").unwrap());
+        match window.emit("auth-port", addr.port()) {
+            Ok(_) => {
+                println!("Emitted port")
+            }
+            Err(e) => {
+                println!("Failed to emit server:open, {e:?}");
+                return;
+            }
+        };
+
+        let server = Arc::new(Server::http(addr).unwrap());
         std::thread::spawn({
             let server = Arc::clone(&server);
             move || {
@@ -125,7 +135,7 @@ impl AuthServer {
             }
         });
 
-        self.server = Some(server)
+        self.server = Some(server);
     }
 
     pub fn stop(&mut self) {

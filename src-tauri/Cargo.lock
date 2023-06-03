@@ -1047,6 +1047,7 @@ name = "gitification"
 version = "0.5.0"
 dependencies = [
  "ascii",
+ "port_scanner",
  "rodio",
  "serde",
  "serde_json",
@@ -2274,6 +2275,12 @@ dependencies = [
  "flate2",
  "miniz_oxide",
 ]
+
+[[package]]
+name = "port_scanner"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "325a6d2ac5dee293c3b2612d4993b98aec1dff096b0a2dae70ed7d95784a05da"
 
 [[package]]
 name = "ppv-lite86"

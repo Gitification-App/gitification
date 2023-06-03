@@ -1,22 +1,19 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import { InvokeCommand, Page } from '../constants'
 import { useStore } from '../stores/store'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { getAccessToken } from '../api/token'
-import { GITHUB_AUTH_URL } from '../api/constants'
 import { AppStorage } from '../storage'
 import { getUser } from '../api/user'
 import EmptyState from '../components/EmptyState.vue'
+import { createAuthURL } from '../utils/github'
 
 const store = useStore()
-
-const processing = ref(false)
-
-invoke(InvokeCommand.StartServer)
+const processing = ref(true)
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value)
@@ -44,9 +41,20 @@ useTauriEvent<string>('code', async ({ payload }) => {
   }
 })
 
+let port = 23846
+
+useTauriEvent<number>('auth-port', ({ payload }) => {
+  port = payload
+  setTimeout(() => {
+    processing.value = false
+  }, 1000)
+})
+
 function handleLogin() {
-  open(GITHUB_AUTH_URL)
+  open(createAuthURL(port))
 }
+
+onMounted(() => invoke(InvokeCommand.StartServer))
 </script>
 
 <template>

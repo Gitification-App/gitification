@@ -3,7 +3,7 @@ use std::{fs::File, io::BufReader, sync::Mutex};
 use rodio::{Decoder, OutputStream, Sink};
 use tauri::{AppHandle, State, Window};
 
-use crate::server::AuthServer;
+use crate::{server::AuthServer, utils::get_available_socket_addr};
 
 #[tauri::command]
 pub fn play_notification_sound(app: AppHandle) {
@@ -38,7 +38,8 @@ pub fn set_icon_template(is_template: bool, app: AppHandle) {
 #[tauri::command]
 pub fn start_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
     let mut server = state.lock().unwrap();
-    server.listen(window);
+    let addr = get_available_socket_addr();
+    server.listen(window, addr);
 }
 
 #[tauri::command]
