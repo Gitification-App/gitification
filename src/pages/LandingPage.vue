@@ -11,7 +11,6 @@ import { AppStorage } from '../storage'
 import { getUser } from '../api/user'
 import EmptyState from '../components/EmptyState.vue'
 import { createAuthURL } from '../utils/github'
-import { useTimeoutPool } from '../composables/useTimeoutPool'
 
 const store = useStore()
 const processing = ref(true)
@@ -42,21 +41,12 @@ useTauriEvent<string>('code', async ({ payload }) => {
   }
 })
 
-/** Random backup port */
-let port = 23846
+let port: number
 
-const timeout = useTimeoutPool()
-
-const cancelAuthPortEvent = useTauriEvent<number>('auth-port', ({ payload }) => {
+useTauriEvent<number>('auth-port', ({ payload }) => {
   port = payload
   processing.value = false
-  timeout.cancel('_')
 })
-
-timeout.set('_', () => {
-  processing.value = false
-  cancelAuthPortEvent()
-}, 4000)
 
 function handleLogin() {
   open(createAuthURL(port))
