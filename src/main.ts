@@ -11,13 +11,18 @@ import { isPermissionGranted } from '@tauri-apps/api/notification'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
-import { initDevtools } from './utils/initDevtools'
-import { useKey } from './composables/useKey'
 import { Page } from './constants'
 import { getReleases } from './api/releases'
 import { getNewRelease } from './utils/getNewRelease'
+import { initDevtools } from './utils/initDevtools'
+import { useKey } from './composables/useKey'
 
-;(async () => {
+async function main() {
+  if (import.meta.env.DEV) {
+    initDevtools()
+    useKey('command+r', () => location.reload(), { prevent: true })
+  }
+
   dayjs.extend(relativeTime)
   window.addEventListener('contextmenu', e => e.preventDefault())
 
@@ -50,9 +55,6 @@ import { getNewRelease } from './utils/getNewRelease'
   }
 
   app.mount('#app')
-})()
-
-if (import.meta.env.DEV) {
-  initDevtools()
-  useKey('command+r', () => location.reload(), { prevent: true })
 }
+
+main()

@@ -2,10 +2,10 @@
 import { open } from '@tauri-apps/api/shell'
 import { exit } from '@tauri-apps/api/process'
 import { computed } from 'vue'
-import { type ItemRenderList } from 'vue-selectable-items'
 import { Page, REPO_LINK, REPO_RELEASES_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
+import { useKey } from '../composables/useKey'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
@@ -40,7 +40,11 @@ const moreItems = computed(() => [
     meta: { text: 'Exit app', icon: Icons.X },
     onSelect: () => exit(0),
   }),
-] as ItemRenderList)
+])
+
+useKey('r', () => {
+  store.fetchNotifications(true)
+}, { source: () => store.currentPage === Page.Home })
 </script>
 
 <template>
@@ -103,7 +107,7 @@ const moreItems = computed(() => [
           <Tooltip
             :target="el"
             position="right"
-            text="Reload notifications"
+            text="Reload notifications (R)"
           />
         </template>
       </SlotRef>

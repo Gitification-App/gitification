@@ -77,12 +77,12 @@ const handleTransition: WowerlayTransitionFn = (type, element, done) => {
 
 const popoverVisibleHooks = new Set<(el: ReferenceElement) => void>()
 
-const runPopoverVisibleHooks = (el: ReferenceElement) => {
+function runPopoverVisibleHooks(el: ReferenceElement) {
   for (const cb of popoverVisibleHooks)
     cb(el)
 }
 
-export const onPopoverVisible = (cb: (el: ReferenceElement) => void) => {
+export function onPopoverVisible(cb: (el: ReferenceElement) => void) {
   popoverVisibleHooks.add(cb)
   const cleanup = () => popoverVisibleHooks.delete(cb)
   onScopeDispose(cleanup)
@@ -92,6 +92,11 @@ export const onPopoverVisible = (cb: (el: ReferenceElement) => void) => {
 </script>
 
 <script lang="ts" setup>
+interface Props {
+  wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
+  target?: InstanceType<typeof Wowerlay>['$props']['target']
+}
+
 const props = withDefaults(defineProps<Props>(), {
   wowerlayOptions: () => ({}),
 })
@@ -99,11 +104,6 @@ const props = withDefaults(defineProps<Props>(), {
 defineSlots<{
   default: (props: SlotProps) => any
 }>()
-
-interface Props {
-  wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
-  target?: InstanceType<typeof Wowerlay>['$props']['target']
-}
 
 const visible = ref(false)
 

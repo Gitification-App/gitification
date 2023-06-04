@@ -28,6 +28,11 @@ import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
 import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
 import DownloadIcon16 from 'virtual:icons/octicon/download-16'
 import BellSlashIcon from 'virtual:icons/octicon/bell-slash-24'
+import BellSlashIcon16 from 'virtual:icons/octicon/bell-slash-16'
+import MailIcon16 from 'virtual:icons/octicon/mail-16'
+import LinkExternalIcon16 from 'virtual:icons/octicon/link-external-16'
+import SquareIcon16 from 'virtual:icons/octicon/square-16'
+import CircleIcon16 from 'virtual:icons/octicon/Circle-16'
 
 import CommandIcon from 'virtual:icons/ph/command'
 
@@ -53,6 +58,7 @@ export const Icons = {
   Alert: markRaw(AlertIcon),
   Question: markRaw(QuestionIcon),
   Mail: markRaw(MailIcon),
+  Mail16: markRaw(MailIcon16),
   SignOut16: markRaw(SignOutIcon16),
   Bell16: markRaw(BellIcon16),
   Gear16: markRaw(GearIcon16),
@@ -61,6 +67,10 @@ export const Icons = {
   Download16: markRaw(DownloadIcon16),
   Command: markRaw(CommandIcon),
   BellSlash: markRaw(BellSlashIcon),
+  BellSlash16: markRaw(BellSlashIcon16),
   Info16: markRaw(InfoIcon16),
   Check16: markRaw(CheckIcon16),
+  LinkExternal16: markRaw(LinkExternalIcon16),
+  Square16: markRaw(SquareIcon16),
+  Circle16: markRaw(CircleIcon16),
 }
