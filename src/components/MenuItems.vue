@@ -1,7 +1,6 @@
 <script lang="ts">
 import {
   type Context,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Item,
   type ItemRenderList, SelectableItems, createItemDefaults, item,
 } from 'vue-selectable-items'
@@ -12,6 +11,7 @@ import { usePopoverContext } from './Popover.vue'
 export interface ItemMeta {
   text: string
   icon: typeof Icons[keyof typeof Icons]
+  key?: string
 }
 
 export const menuItem = item<ItemMeta>
@@ -35,7 +35,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const setupHandle = (ctx: Context) => {
+function setupHandle(ctx: Context) {
   useKey('up,shift+tab', () => ctx.focusPrevious(), { input: true, repeat: true, prevent: true })
   useKey('down,tab', () => ctx.focusNext(), { input: true, repeat: true, prevent: true })
 
@@ -71,6 +71,12 @@ const setupHandle = (ctx: Context) => {
       <div class="item-text">
         {{ meta!.text }}
       </div>
+      <span
+        v-if="meta?.key"
+        class="item-key"
+      >
+        {{ meta.key }}
+      </span>
     </template>
   </SelectableItems>
 </template>
@@ -99,16 +105,33 @@ const setupHandle = (ctx: Context) => {
       color: var(--white);
     }
 
+    &-disabled {
+      color: var(--gray);
+    }
+
     .item-text {
       font-size: 13px;
       vertical-align: middle;
       color: currentColor;
+      width: 100%;
     }
 
     .item-icon {
+      flex-shrink: 0;
       margin-right: 10px;
       font-size: 14px;
       color: currentColor;
+
+      :deep(.icon) {
+        max-width: 17px;
+        max-height: 17px;
+      }
+    }
+
+    .item-key {
+      color: var(--gray-bright);
+      font-size: 10px;
+      margin-left: 10px;
     }
   }
 }

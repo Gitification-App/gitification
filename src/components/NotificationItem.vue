@@ -5,16 +5,18 @@ import type { NotificationList } from '../types'
 import { formatReason, isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
 
-interface Emits {
-  (e: 'click:notification', notification: Thread): void
-  (e: 'click:repo', repoFullName: string): void
-  (e: 'update:checked', value: boolean): void
-}
-
 interface Props {
   value: NotificationList[number]
   checked?: boolean
   checkable?: boolean
+  checkboxVisible?: boolean
+}
+
+interface Emits {
+  (e: 'click:notification', notification: Thread): void
+  (e: 'click:repo', repoFullName: string): void
+  (e: 'update:checked', value: boolean): void
+  (e: 'contextmenu', value: Thread, event: MouseEvent): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,6 +64,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       @click="(event) => isRepository(value) && handleRepoClick(value, event)"
     >
       <img
+        draggable="false"
         class="notification-title-icon"
         :src="value.owner.avatar_url"
         alt="repo logo"
@@ -75,7 +78,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
         class="notification-checkbox-wrapper"
       >
         <span
-          :class="{ 'notification-checkbox-checked': checked }"
+          :class="{ 'notification-checkbox-checked': checked, 'notification-checkbox-visible': checkboxVisible }"
           role="checkbox"
           tabindex="0"
           aria-checked="true"
@@ -94,6 +97,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     v-else
     class="notification-item"
     :class="{ 'notification-item-read': !value.unread }"
+    @contextmenu="(event) => emit('contextmenu', value as Thread, event)"
     @click="(event) => isThread(value) && handleThreadClick(value, event)"
   >
     <Component
@@ -118,7 +122,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       class="notification-checkbox-wrapper"
     >
       <span
-        :class="{ 'notification-checkbox-checked': checked }"
+        :class="{ 'notification-checkbox-checked': checked, 'notification-checkbox-visible': checkboxVisible }"
         role="checkbox"
         tabindex="0"
         aria-checked="true"
@@ -150,6 +154,10 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     border: 1px solid transparent;
     line-height: inherit;
 
+    &:hover .notification-checkbox {
+      opacity: 1;
+    }
+
     &:hover,
     &:active {
       background-color: var(--item-hover-bg);
@@ -167,7 +175,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       font-weight: bold;
       font-size: 14px;
       display: inline-block;
-      color: white;
+      color: var(--white);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -191,6 +199,10 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     line-height: 20px;
     @include focus-visible;
     margin-top: 5px;
+
+    &:hover .notification-checkbox {
+      opacity: 1;
+    }
 
     &-read {
       color: var(--white-faded) !important;
@@ -235,24 +247,31 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     @include focus-visible;
     width: 16px;
     height: 16px;
-    border-radius: 50%;
-    border: 1px solid rgb(101, 101, 101);
+    border-radius: 6px;
+    border: 1px solid var(--white-faded);
     flex-shrink: 0;
     padding: 3px;
     display: inline-flex;
+    opacity: 0;
+    transition-duration: .2s;
+    transition-property: opacity;
+
+    &-visible {
+      opacity: 1;
+    }
 
     &-checked {
-      border-color: var(--white);
+      border-color: var(--accent-color);
 
       .notification-checkbox-dot {
-        background-color: var(--white);
+        background-color: var(--accent-color);
       }
     }
 
     &-dot {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
+      border-radius: 3px;
     }
 
     &-wrapper {
