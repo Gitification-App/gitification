@@ -1,8 +1,6 @@
 name: Type Check
 
-on:
-  pull_request:
-    types: [opened, reopened]
+on: push
 
 jobs:
   release:

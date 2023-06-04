@@ -5,6 +5,7 @@
 
 mod commands;
 mod server;
+mod utils;
 
 use std::sync::Mutex;
 

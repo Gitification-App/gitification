@@ -22,7 +22,7 @@
       },
       "http": {
         "request": true,
-        "scope": ["https://github.com/*", "https://api.github.com/*"]
+        "scope": ["https://github.com/*", "https://api.github.com/*", "http://localhost:23846/*", "http://localhost:15830/*", "http://localhost:12840/*"]
       },
       "process": {
         "exit": true

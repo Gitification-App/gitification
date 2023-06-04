@@ -1,6 +1,6 @@
 use tauri::Window;
 
-use std::{io::Cursor, str::FromStr, sync::Arc};
+use std::{io::Cursor, net::SocketAddr, str::FromStr, sync::Arc};
 
 use ::ascii::AsciiString;
 use tiny_http::{Header, HeaderField, Method, Request, Response, Server};
@@ -74,7 +74,11 @@ fn set_content_type_html(response: &mut Response<Cursor<Vec<u8>>>) {
 }
 
 fn handle_code_request(request: Request, window: &Window) {
-    if *request.method() != Method::Get || !request.url().starts_with("/callback?code=") {
+    let url = request.url();
+
+    if *request.method() != Method::Get
+        || (!request.url().starts_with("/callback?code=") && !request.url().starts_with("/ping"))
+    {
         let mut response = Response::from_string(create_html(
             "Not Found - Gitification".to_owned(),
             "NOT FOUND".to_owned(),
@@ -86,7 +90,18 @@ fn handle_code_request(request: Request, window: &Window) {
         return;
     }
 
-    let url = request.url();
+    if url.starts_with("/ping") {
+        let mut response = Response::from_string("{\"pong\": true}");
+
+        response.add_header(Header {
+            field: HeaderField::from_str("Content-Type").unwrap(),
+            value: AsciiString::from_str("application/json").unwrap(),
+        });
+
+        request.respond(response).unwrap();
+        return;
+    }
+
     let code_query = url.split("?code=").collect::<Vec<&str>>()[1];
     let code = code_query.split("&").collect::<Vec<&str>>()[0];
 
@@ -110,12 +125,12 @@ impl AuthServer {
         AuthServer { server: None }
     }
 
-    pub fn listen(&mut self, window: Window) {
+    pub fn listen(&mut self, window: Window, addr: SocketAddr) {
         if self.server.is_some() {
             return;
         }
 
-        let server = Arc::new(Server::http("0.0.0.0:23846").unwrap());
+        let server = Arc::new(Server::http(addr).unwrap());
         std::thread::spawn({
             let server = Arc::clone(&server);
             move || {
@@ -125,7 +140,7 @@ impl AuthServer {
             }
         });
 
-        self.server = Some(server)
+        self.server = Some(server);
     }
 
     pub fn stop(&mut self) {
