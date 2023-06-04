@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
 import { InvokeCommand, Page } from '../constants'
@@ -11,6 +11,8 @@ import { AppStorage } from '../storage'
 import { getUser } from '../api/user'
 import EmptyState from '../components/EmptyState.vue'
 import { createAuthURL } from '../utils/github'
+import { useTimeoutPool } from '../composables/useTimeoutPool'
+import { getServerPort } from '../api/app'
 
 const store = useStore()
 const processing = ref(true)
@@ -43,16 +45,18 @@ useTauriEvent<string>('code', async ({ payload }) => {
 
 let port: number
 
-useTauriEvent<number>('auth-port', ({ payload }) => {
-  port = payload
-  processing.value = false
-})
-
 function handleLogin() {
   open(createAuthURL(port))
 }
 
-onMounted(() => invoke(InvokeCommand.StartServer))
+invoke(InvokeCommand.StartServer)
+
+const timeout = useTimeoutPool()
+
+timeout.set('server_start', async () => {
+  port = await getServerPort()
+  processing.value = false
+}, 1000)
 </script>
 
 <template>

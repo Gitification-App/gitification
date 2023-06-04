@@ -74,7 +74,11 @@ fn set_content_type_html(response: &mut Response<Cursor<Vec<u8>>>) {
 }
 
 fn handle_code_request(request: Request, window: &Window) {
-    if *request.method() != Method::Get || !request.url().starts_with("/callback?code=") {
+    let url = request.url();
+
+    if *request.method() != Method::Get
+        || (!request.url().starts_with("/callback?code=") && !request.url().starts_with("/ping"))
+    {
         let mut response = Response::from_string(create_html(
             "Not Found - Gitification".to_owned(),
             "NOT FOUND".to_owned(),
@@ -86,7 +90,18 @@ fn handle_code_request(request: Request, window: &Window) {
         return;
     }
 
-    let url = request.url();
+    if url.starts_with("/ping") {
+        let mut response = Response::from_string("{\"pong\": true}");
+
+        response.add_header(Header {
+            field: HeaderField::from_str("Content-Type").unwrap(),
+            value: AsciiString::from_str("application/json").unwrap(),
+        });
+
+        request.respond(response).unwrap();
+        return;
+    }
+
     let code_query = url.split("?code=").collect::<Vec<&str>>()[1];
     let code = code_query.split("&").collect::<Vec<&str>>()[0];
 
@@ -114,16 +129,6 @@ impl AuthServer {
         if self.server.is_some() {
             return;
         }
-
-        match window.emit("auth-port", addr.port()) {
-            Ok(_) => {
-                println!("Emitted port")
-            }
-            Err(e) => {
-                println!("Failed to emit server:open, {e:?}");
-                return;
-            }
-        };
 
         let server = Arc::new(Server::http(addr).unwrap());
         std::thread::spawn({
