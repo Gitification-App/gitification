@@ -1,6 +1,6 @@
 <script lang="ts">
-import { type InjectionKey, type Ref, inject, provide, ref, watch } from 'vue'
-import { Wowerlay, type WowerlayTransitionFn } from 'wowerlay'
+import { type InjectionKey, type Ref, inject, onScopeDispose, provide, ref, watch } from 'vue'
+import { type AlignedPlacement, type ReferenceElement, type Side, Wowerlay, type WowerlayTransitionFn } from 'wowerlay'
 import { useEventListener } from '@vueuse/core'
 import { useKey } from '../composables/useKey'
 
@@ -12,10 +12,41 @@ interface SlotProps {
   visible: boolean
 }
 
-const popoverContextKey: InjectionKey<PopoverContext> = Symbol('PopoverContext')
+// We use plain string on dev mode because hot reloading brokes symbols.
+const popoverContextKey: InjectionKey<PopoverContext> = import.meta.env.DEV ? 'PopoverContext' as any : Symbol('PopoverContext')
 
 export function usePopoverContext() {
   return inject(popoverContextKey)!
+}
+
+const transformOriginMap: Record<AlignedPlacement | Side, string> = {
+  'bottom-end': 'right top',
+  'bottom-start': 'left top',
+  'bottom': 'center top',
+  'left-end': 'right bottom',
+  'left-start': 'right top',
+  'left': 'right center',
+  'right-end': 'left bottom',
+  'right-start': 'left top',
+  'right': 'left center',
+  'top-end': 'right bottom',
+  'top-start': 'left bottom',
+  'top': 'center bottom',
+}
+
+const popoverVisibleHooks = new Set<(el: ReferenceElement) => void>()
+
+const runPopoverVisibleHooks = (el: ReferenceElement) => {
+  for (const cb of popoverVisibleHooks)
+    cb(el)
+}
+
+export const onPopoverVisible = (cb: (el: ReferenceElement) => void) => {
+  popoverVisibleHooks.add(cb)
+  const cleanup = () => popoverVisibleHooks.delete(cb)
+  onScopeDispose(cleanup)
+
+  return cleanup
 }
 </script>
 
@@ -30,11 +61,19 @@ defineSlots<{
 
 interface Props {
   wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
-  target?: HTMLElement | null
+  target?: InstanceType<typeof Wowerlay>['$props']['target']
 }
 
 const visible = ref(false)
 
+defineExpose({
+  show() {
+    visible.value = true
+  },
+  hide() {
+    visible.value = false
+  },
+})
 provide(popoverContextKey, { visible })
 
 useKey('esc', () => {
@@ -42,13 +81,14 @@ useKey('esc', () => {
 }, { prevent: true, source: visible })
 
 const handleTransition: WowerlayTransitionFn = (type, element, done) => {
-  const placement = element.getAttribute('data-popover-placement')!.split('-')[0]
+  const placement = element.getAttribute('data-popover-placement') as AlignedPlacement | Side
+  const side = placement.split('-')[0] as Side
 
-  const vertical = placement === 'top' || placement === 'bottom'
+  const vertical = side === 'top' || side === 'bottom'
   const transformFunction = vertical ? 'translateY' : 'translateX'
 
   const from = {
-    transform: `scale(0.97) ${transformFunction}(${placement === 'bottom' || placement === 'right' ? '-7px' : '7px'})`,
+    transform: `scale(0.97) ${transformFunction}(${side === 'bottom' || side === 'right' ? '-3px' : '3px'})`,
     opacity: 0,
   }
 
@@ -57,12 +97,28 @@ const handleTransition: WowerlayTransitionFn = (type, element, done) => {
     opacity: 1,
   }
 
+  const oldTransformOrigin = element.style.transformOrigin
+  element.style.transformOrigin = transformOriginMap[placement]
+
+  if (type === 'leave') {
+    const background = element.parentElement
+    if (background) {
+      background.style.setProperty('pointer-events', 'none')
+      element.style.setProperty('pointer-events', 'auto')
+    }
+  }
+
   const animation = element.animate(type === 'enter' ? [from, to] : [to, from], {
     duration: 200,
     easing: 'ease',
   })
 
-  animation.onfinish = done
+  animation.onfinish = () => {
+    if (type === 'enter')
+      element.style.transformOrigin = oldTransformOrigin
+
+    done()
+  }
 }
 
 const popoverEl = ref<HTMLElement | null>(null)
@@ -74,6 +130,7 @@ watch(visible, (value) => {
     setTimeout(() => {
       popoverEl.value?.focus()
     })
+    runPopoverVisibleHooks(props.target as ReferenceElement)
   }
   else {
     setTimeout(() => lastFocusedElement instanceof HTMLElement && lastFocusedElement.focus())
@@ -81,7 +138,7 @@ watch(visible, (value) => {
 })
 
 useEventListener(
-  () => props.target,
+  () => props.target instanceof HTMLElement ? props.target : null,
   'click',
   () => {
     visible.value = !visible.value
@@ -96,10 +153,12 @@ useEventListener(
     class="popover"
     tabindex="-1"
     :target="target"
-    v-bind="props.wowerlayOptions"
     :gap="2"
-    noBackground
+    :backgroundAttrs="{
+      style: { zIndex: 1500 },
+    }"
     :transition="handleTransition"
+    v-bind="props.wowerlayOptions"
     @update:el="(el) => popoverEl = el"
   >
     <slot
@@ -121,7 +180,6 @@ useEventListener(
   display: flex;
   flex-direction: column;
   padding: 4px;
-  --wowerlay-z: 1500;
 
   > * + * {
     margin-top: 2px;

@@ -53,7 +53,6 @@ const moreItems = computed(() => [
             @click="open(REPO_LINK)"
           >
             <img
-              title="Go to Gitification repository"
               draggable="false"
               src="/src/assets/img/icon.png"
             >
