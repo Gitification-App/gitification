@@ -39,8 +39,8 @@ dependencies:
     specifier: ^1.0.0
     version: 1.0.0(vue@3.3.4)
   wowerlay:
-    specifier: 1.0.0-beta.4
-    version: 1.0.0-beta.4(vue@3.3.4)
+    specifier: 1.0.0-beta.10
+    version: 1.0.0-beta.10(vue@3.3.4)
 
 devDependencies:
   '@actions/core':
@@ -5023,10 +5023,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /wowerlay@1.0.0-beta.4(vue@3.3.4):
-    resolution: {integrity: sha512-psRmHRx6tGzfngrF/Uh0TfhdnXEocK5pyLHZItgDYRXQCs0vn1go5Mp3fdHypit5Vq2bvD/E0ngVcXw0+BQ3Gw==}
+  /wowerlay@1.0.0-beta.10(vue@3.3.4):
+    resolution: {integrity: sha512-WA7MAH0iylCY7FIvAhNWmc8ancFqwMgr5pIRzjXge7KcUqDfoa4cv7C6HpTZOl8wz+J3wzL3ZQstUitMUtfL1w==}
     peerDependencies:
-      vue: ^3.2.0
+      vue: ^3.3.0
     dependencies:
       '@floating-ui/vue': 1.0.1(vue@3.3.4)
       vue: 3.3.4

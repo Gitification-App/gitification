@@ -23,7 +23,7 @@
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "vue": "^3.3.4",
     "vue-selectable-items": "^1.0.0",
-    "wowerlay": "1.0.0-beta.4"
+    "wowerlay": "1.0.0-beta.10"
   },
   "files": [
     "README.md",
