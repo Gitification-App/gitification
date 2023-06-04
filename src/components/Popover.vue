@@ -34,6 +34,47 @@ const transformOriginMap: Record<AlignedPlacement | Side, string> = {
   'top': 'center bottom',
 }
 
+const handleTransition: WowerlayTransitionFn = (type, element, done) => {
+  const placement = element.getAttribute('data-popover-placement') as AlignedPlacement | Side
+  const side = placement.split('-')[0] as Side
+
+  const vertical = side === 'top' || side === 'bottom'
+  const transformFunction = vertical ? 'translateY' : 'translateX'
+
+  const from = {
+    transform: `scale(0.97) ${transformFunction}(${side === 'bottom' || side === 'right' ? '-3px' : '3px'})`,
+    opacity: 0,
+  }
+
+  const to = {
+    transform: `scale(1) ${transformFunction}(0px)`,
+    opacity: 1,
+  }
+
+  const oldTransformOrigin = element.style.transformOrigin
+  element.style.transformOrigin = transformOriginMap[placement]
+
+  if (type === 'leave') {
+    const background = element.parentElement
+    if (background) {
+      background.style.setProperty('pointer-events', 'none')
+      element.style.setProperty('pointer-events', 'auto')
+    }
+  }
+
+  const animation = element.animate(type === 'enter' ? [from, to] : [to, from], {
+    duration: 200,
+    easing: 'ease',
+  })
+
+  animation.onfinish = () => {
+    if (type === 'enter')
+      element.style.transformOrigin = oldTransformOrigin
+
+    done()
+  }
+}
+
 const popoverVisibleHooks = new Set<(el: ReferenceElement) => void>()
 
 const runPopoverVisibleHooks = (el: ReferenceElement) => {
@@ -79,47 +120,6 @@ provide(popoverContextKey, { visible })
 useKey('esc', () => {
   visible.value = false
 }, { prevent: true, source: visible })
-
-const handleTransition: WowerlayTransitionFn = (type, element, done) => {
-  const placement = element.getAttribute('data-popover-placement') as AlignedPlacement | Side
-  const side = placement.split('-')[0] as Side
-
-  const vertical = side === 'top' || side === 'bottom'
-  const transformFunction = vertical ? 'translateY' : 'translateX'
-
-  const from = {
-    transform: `scale(0.97) ${transformFunction}(${side === 'bottom' || side === 'right' ? '-3px' : '3px'})`,
-    opacity: 0,
-  }
-
-  const to = {
-    transform: `scale(1) ${transformFunction}(0px)`,
-    opacity: 1,
-  }
-
-  const oldTransformOrigin = element.style.transformOrigin
-  element.style.transformOrigin = transformOriginMap[placement]
-
-  if (type === 'leave') {
-    const background = element.parentElement
-    if (background) {
-      background.style.setProperty('pointer-events', 'none')
-      element.style.setProperty('pointer-events', 'auto')
-    }
-  }
-
-  const animation = element.animate(type === 'enter' ? [from, to] : [to, from], {
-    duration: 200,
-    easing: 'ease',
-  })
-
-  animation.onfinish = () => {
-    if (type === 'enter')
-      element.style.transformOrigin = oldTransformOrigin
-
-    done()
-  }
-}
 
 const popoverEl = ref<HTMLElement | null>(null)
 let lastFocusedElement: Element | null = null
