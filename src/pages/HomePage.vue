@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { computed, onScopeDispose, ref } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { type ReferenceElement } from 'wowerlay'
+import { whenever } from '@vueuse/core'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
-import { type MinimalRepository, type Thread, markNotificationAsRead } from '../api/notifications'
+import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
@@ -110,32 +111,16 @@ const popoverTarget = ref<ReferenceElement | null>(null)
 const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
 
 async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
-  if (triggeredByKeyboard) {
-    if (store.checkedItems.length > 0) {
-      store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
-      store.checkedItems = []
-      return
-    }
-
-    if (contextMenuThread.value) {
-      const thread = contextMenuThread.value
-      markNotificationAsRead(contextMenuThread.value.id, AppStorage.get('accessToken')!)
-        .then(() => {
-          store.removeNotificationById(thread.id)
-        })
-
-      return
-    }
-  }
-
-  if (!contextMenuThread.value)
-    return
-
-  if (isChecked(contextMenuThread.value)) {
+  if (
+    (triggeredByKeyboard && store.checkedItems.length > 0)
+    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
     store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
     store.checkedItems = []
     return
   }
+
+  if (!contextMenuThread.value)
+    return
 
   const thread = contextMenuThread.value
   markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
@@ -179,27 +164,61 @@ useKey('o', () => {
   popoverRef.value?.hide()
 })
 
+async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
+  if (
+    (triggeredByKeyboard && store.checkedItems.length > 0)
+    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
+    store.unsubscribeCheckedNotifications(AppStorage.get('accessToken')!)
+    store.checkedItems = []
+    return
+  }
+
+  if (!contextMenuThread.value)
+    return
+
+  const thread = contextMenuThread.value
+  unsubscribeNotification(thread.id, AppStorage.get('accessToken')!)
+    .then(() => {
+      store.removeNotificationById(thread.id)
+    })
+}
+
+useKey('u', () => {
+  handleSelectUnsubscribe(true)
+  popoverRef.value?.hide()
+})
+
 const contextMenuItems = computed(() => [
   menuItem({
     key: 'read',
     meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
-    onSelect: () => handleSelectMarkAsRead(),
+    onSelect() {
+      handleSelectMarkAsRead()
+      contextMenuThread.value = null
+    },
   }),
   menuItem({
     key: 'open',
     meta: { text: 'Open', icon: Icons.LinkExternal16, key: 'O' },
-    onSelect: () => handleSelectOpen(),
+    onSelect() {
+      handleSelectOpen()
+      contextMenuThread.value = null
+    },
   }),
-  // menuItem({
-  //   key: 'unsubscribe',
-  //   meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
-  //   disabled: true,
-  // }),
+  menuItem({
+    key: 'unsubscribe',
+    meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
+    onSelect() {
+      handleSelectUnsubscribe()
+      contextMenuThread.value = null
+    },
+  }),
   isChecked(contextMenuThread.value!) && menuItem({
     key: 'clear',
     meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
     onSelect: () => {
       store.checkedItems = []
+      contextMenuThread.value = null
     },
   }),
 ])
@@ -223,6 +242,27 @@ function handleThreadContextmenu(thread: Thread, event: MouseEvent) {
   }
   popoverRef.value?.show()
 }
+
+// Edge-Case
+// If notifications are reloaded and the context menu target thread is deleted, close the context menu
+watch(() => store.notifications, (notifications) => {
+  if (!contextMenuThread.value)
+    return
+
+  const exists = notifications.some(notification => notification.id === contextMenuThread.value!.id)
+  if (!exists) {
+    contextMenuThread.value = null
+    popoverRef.value?.hide()
+  }
+})
+
+// Edge-Case
+// If user reloaded in the middle of selecting notifications, clear the selection
+whenever(() => store.skeletonVisible, () => {
+  popoverRef.value?.hide()
+  store.checkedItems = []
+  popoverTarget.value = null
+})
 </script>
 
 <template>
