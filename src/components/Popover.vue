@@ -97,15 +97,25 @@ interface Props {
   target?: InstanceType<typeof Wowerlay>['$props']['target']
 }
 
+interface Emits {
+  (e: 'visibilityChange', visible: boolean): void
+}
+
 const props = withDefaults(defineProps<Props>(), {
   wowerlayOptions: () => ({}),
 })
+
+const emit = defineEmits<Emits>()
 
 defineSlots<{
   default: (props: SlotProps) => any
 }>()
 
 const visible = ref(false)
+
+watch(visible, (value) => {
+  emit('visibilityChange', value)
+})
 
 defineExpose({
   show() {

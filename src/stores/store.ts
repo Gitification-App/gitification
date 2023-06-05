@@ -1,11 +1,11 @@
 import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { readonly, ref, shallowRef, triggerRef, watch } from 'vue'
+import { readonly, ref, shallowRef, triggerRef, watchEffect } from 'vue'
 import pAll from 'p-all'
 import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import type { Release } from '../api/releases'
-import { InvokeCommand, Page } from '../constants'
+import { InvokeCommand, Page, notificationApiMutex } from '../constants'
 import { AppStorage } from '../storage'
 import type { AppStorageContext, NotificationList, Option, PageState } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
@@ -53,23 +53,26 @@ export const useStore = defineStore('store', () => {
     failedLoadingNotifications.value = false
 
     try {
-      const { data } = await getNotifications({
+      const checkedThreads = checkedItems.value
+
+      const { data } = await notificationApiMutex.runExclusive(() => getNotifications({
         accessToken,
         showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
         showReadNotifications: AppStorage.get('showReadNotifications'),
-      })
+      }))
 
       threadsPreviousRaw = threadsRaw
       threadsRaw = data
 
       notifications.value = toNotificationList(data)
-      checkedItems.value = checkedItems.value.filter(checkedItem => (
+      checkedItems.value = checkedThreads.filter(checkedItem => (
         threadsRaw.some(thread => thread.id === checkedItem.id)
       ))
     }
     catch (error) {
       notifications.value = []
       failedLoadingNotifications.value = true
+      checkedItems.value = []
     }
 
     loadingNotifications.value = false
@@ -110,10 +113,10 @@ export const useStore = defineStore('store', () => {
     currentPageState.value = state
   }
 
-  watch(notifications, () => {
-    const hasUnread = threadsRaw.some(n => n.unread)
+  watchEffect(() => {
+    const hasUnread = notifications.value.some(n => isThread(n) && n.unread)
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
-  }, { deep: true, immediate: true })
+  })
 
   const newRelease = ref<Option<Release>>(null)
 
@@ -123,10 +126,17 @@ export const useStore = defineStore('store', () => {
 
   async function markCheckedNotificationsAsRead(accessToken: NonNullable<AppStorageContext['accessToken']>) {
     const deletedThreads: Thread['id'][] = []
+    const checkedThreads = checkedItems.value
+    const snapshot = notifications.value.slice(0)
+
+    checkedThreads.forEach(item => removeNotificationById(item.id))
+    triggerRef(notifications)
+
+    checkedItems.value = []
 
     try {
-      await pAll(
-        checkedItems.value.map(thread => async () => {
+      await notificationApiMutex.runExclusive(() => pAll(
+        checkedThreads.map(thread => async () => {
           try {
             await markNotificationAsRead(thread.id, accessToken)
             deletedThreads.push(thread.id)
@@ -139,21 +149,28 @@ export const useStore = defineStore('store', () => {
           stopOnError: false,
           concurrency: 7,
         },
-      )
+      ))
     }
-    finally {
+    catch (error) {
+      notifications.value = snapshot
       deletedThreads.forEach(id => removeNotificationById(id))
-      checkedItems.value = []
       triggerRef(notifications)
     }
   }
 
   async function unsubscribeCheckedNotifications(accessToken: NonNullable<AppStorageContext['accessToken']>) {
     const deletedThreads: Thread['id'][] = []
+    const checkedThreads = checkedItems.value
+    const snapshot = notifications.value.slice(0)
+
+    checkedItems.value = []
+
+    checkedThreads.forEach(item => removeNotificationById(item.id))
+    triggerRef(notifications)
 
     try {
-      await pAll(
-        checkedItems.value.map(thread => async () => {
+      await notificationApiMutex.runExclusive(() => pAll(
+        checkedThreads.map(thread => async () => {
           try {
             await unsubscribeNotification(thread.id, accessToken)
             deletedThreads.push(thread.id)
@@ -166,11 +183,11 @@ export const useStore = defineStore('store', () => {
           stopOnError: false,
           concurrency: 7,
         },
-      )
+      ))
     }
-    finally {
+    catch (error) {
+      notifications.value = snapshot
       deletedThreads.forEach(id => removeNotificationById(id))
-      checkedItems.value = []
       triggerRef(notifications)
     }
   }
