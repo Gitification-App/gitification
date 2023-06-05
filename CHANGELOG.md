@@ -1,3 +1,14 @@
+### 1.0.0
+Gitification is finally version 1.0.0.
+
+  - Now settings button on sidebar is `···` button that opens a popover with options.
+  - Settings page is redesigned, "Logout" and "Exit app" buttons are moved to menu of `···` button on sidebar.
+  - Added tooltips to interactable elements.
+  - Added right click contextmenu for notification items.
+  - Added `Unsubscribe` option for selected thread to contextmenu.
+  - Added shortcut `(U)` to unsubscribe selected notifications.
+  - BottomBar is removed due to new context menu. 
+
 ### 0.5.0
   - Added checkboxes to notifications/repositories, now users can select notifications and mark or open them at once. Can mark as read without going to notification page.
   - Minor style changes
