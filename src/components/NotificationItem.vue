@@ -154,7 +154,8 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     border: 1px solid transparent;
     line-height: inherit;
 
-    &:hover .notification-checkbox {
+    &:hover .notification-checkbox,
+    &[data-focus-visible-added] .notification-checkbox {
       opacity: 1;
     }
 
@@ -200,7 +201,8 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     @include focus-visible;
     margin-top: 5px;
 
-    &:hover .notification-checkbox {
+    &:hover .notification-checkbox,
+    &[data-focus-visible-added] .notification-checkbox {
       opacity: 1;
     }
 
@@ -253,8 +255,10 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     padding: 3px;
     display: inline-flex;
     opacity: 0;
-    transition-duration: .2s;
-    transition-property: opacity;
+
+    &[data-focus-visible-added] {
+      opacity: 1
+    }
 
     &-visible {
       opacity: 1;

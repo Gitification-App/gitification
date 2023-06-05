@@ -17,7 +17,8 @@ import AppButton from '../components/AppButton.vue'
 import { isRepository, isThread } from '../utils/notification'
 import Popover from '../components/Popover.vue'
 import MenuItems, { menuItem } from '../components/MenuItems.vue'
-import { useKey } from '../composables/useKey'
+import { type UseKeyOptions, useKey } from '../composables/useKey'
+import { notificationApiMutex } from '../constants'
 
 const store = useStore()
 
@@ -99,7 +100,7 @@ function isCheckable(item: MinimalRepository | Thread) {
     .some(thread => thread.unread)
 }
 onScopeDispose(() => {
-  store.checkedItems.length = 0
+  store.checkedItems = []
 })
 
 useKey('esc', () => {
@@ -109,13 +110,13 @@ useKey('esc', () => {
 const contextMenuThread = ref<Thread | null>(null)
 const popoverTarget = ref<ReferenceElement | null>(null)
 const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
+const popoverVisible = ref(false)
 
 async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
   if (
     (triggeredByKeyboard && store.checkedItems.length > 0)
     || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
     store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
-    store.checkedItems = []
     return
   }
 
@@ -123,16 +124,22 @@ async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
     return
 
   const thread = contextMenuThread.value
-  markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
-    .then(() => {
-      store.removeNotificationById(thread.id)
-    })
-}
+  try {
+    const snapshot = store.notifications.slice(0)
+    store.removeNotificationById(thread.id)
 
-useKey('m', () => {
-  handleSelectMarkAsRead(true)
-  popoverRef.value?.hide()
-})
+    try {
+      await notificationApiMutex.runExclusive(() => markNotificationAsRead(thread.id, AppStorage.get('accessToken')!))
+    }
+    catch (error) {
+      console.log(error)
+      store.notifications = snapshot
+    }
+  }
+  catch (e) {
+    console.log(e)
+  }
+}
 
 function handleSelectOpen(triggeredByKeyboard = false) {
   if (triggeredByKeyboard) {
@@ -159,17 +166,16 @@ function handleSelectOpen(triggeredByKeyboard = false) {
   store.checkedItems = []
 }
 
-useKey('o', () => {
-  handleSelectOpen(true)
-  popoverRef.value?.hide()
-})
-
 async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
   if (
     (triggeredByKeyboard && store.checkedItems.length > 0)
     || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    store.unsubscribeCheckedNotifications(AppStorage.get('accessToken')!)
-    store.checkedItems = []
+    try {
+      await store.unsubscribeCheckedNotifications(AppStorage.get('accessToken')!)
+    }
+    catch (error) {
+      console.log(error)
+    }
     return
   }
 
@@ -177,19 +183,40 @@ async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
     return
 
   const thread = contextMenuThread.value
-  unsubscribeNotification(thread.id, AppStorage.get('accessToken')!)
-    .then(() => {
-      store.removeNotificationById(thread.id)
-    })
+  const snapshot = store.notifications.slice(0)
+
+  store.removeNotificationById(thread.id)
+
+  try {
+    await notificationApiMutex.runExclusive(() => unsubscribeNotification(thread.id, AppStorage.get('accessToken')!))
+  }
+  catch (error) {
+    console.log(error)
+    store.notifications = snapshot
+  }
 }
+
+const contextMenuShortcutOptions: UseKeyOptions = {
+  source: () => popoverVisible.value || store.checkedItems.length > 0,
+}
+
+useKey('m', () => {
+  handleSelectMarkAsRead(true)
+  popoverRef.value?.hide()
+}, contextMenuShortcutOptions)
+
+useKey('o', () => {
+  handleSelectOpen(true)
+  popoverRef.value?.hide()
+}, contextMenuShortcutOptions)
 
 useKey('u', () => {
   handleSelectUnsubscribe(true)
   popoverRef.value?.hide()
-})
+}, contextMenuShortcutOptions)
 
 const contextMenuItems = computed(() => [
-  menuItem({
+  contextMenuThread.value?.unread && menuItem({
     key: 'read',
     meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
     onSelect() {
@@ -208,10 +235,7 @@ const contextMenuItems = computed(() => [
   menuItem({
     key: 'unsubscribe',
     meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
-    onSelect() {
-      handleSelectUnsubscribe()
-      contextMenuThread.value = null
-    },
+    onSelect: () => handleSelectUnsubscribe(),
   }),
   isChecked(contextMenuThread.value!) && menuItem({
     key: 'clear',
@@ -261,7 +285,6 @@ watch(() => store.notifications, (notifications) => {
 whenever(() => store.skeletonVisible, () => {
   popoverRef.value?.hide()
   store.checkedItems = []
-  popoverTarget.value = null
 })
 </script>
 
@@ -270,6 +293,14 @@ whenever(() => store.skeletonVisible, () => {
     ref="popoverRef"
     :target="popoverTarget"
     :wowerlayOptions="{ position: 'right-start' }"
+    @visibilityChange="(visible) => {
+      popoverVisible = visible;
+      ({}).constructor.constructor('return console.log')()({ visible })
+
+      if (!visible) {
+        popoverTarget = null
+      }
+    }"
   >
     <MenuItems :items="contextMenuItems" />
   </Popover>
