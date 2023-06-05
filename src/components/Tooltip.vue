@@ -122,12 +122,11 @@ onPopoverVisible(() => {
 .tooltip {
   font-size: 12px;
   pointer-events: none;
-  color: var(--white-faded);
-  background-color: rgba(49, 49, 49, .8);
+  color: var(--text-faded);
+  background-color: var(--popover-bg);
   border-radius: 8px;
   padding: 5px 8px;
-  background-color: var(--popover-bg);
-  border: 1px solid #323232;
+  border: 1px solid var(--popover-border);
   backdrop-filter: blur(20px) saturate(180%) contrast(90%) brightness(50%);
   -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(90%) brightness(50%);
   --wowerlay-z: 1000;

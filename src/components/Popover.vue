@@ -182,11 +182,12 @@ useEventListener(
 .popover {
   outline: none;
   background-color: var(--popover-bg);
-  min-width: 150px;
+  min-width: 135px;
   border-radius: 8px;
-  border: 1px solid #323232;
+  border: 1px solid var(--popover-border);
   backdrop-filter: blur(20px) saturate(180%) contrast(90%) brightness(50%);
   -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(90%) brightness(50%);
+  box-shadow: 0px 0px 7px -3px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   padding: 4px;

@@ -16,6 +16,11 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emit = defineEmits<Emits>()
 
+defineSlots<{
+  default: (props: {}) => any
+  icon: (props: {}) => any
+}>()
+
 function handleClick(e: MouseEvent) {
   if (props.loading)
     return
@@ -45,7 +50,11 @@ function handleClick(e: MouseEvent) {
     </div>
 
     <div class="button-content">
-      <slot />
+      <slot name="default" />
+    </div>
+
+    <div class="button-icon">
+      <slot name="icon" />
     </div>
   </button>
 </template>
@@ -57,9 +66,20 @@ function handleClick(e: MouseEvent) {
   padding: 8px 12px;
   position: relative;
   overflow: hidden;
-  color: var(--white);
+  color: var(--text);
   border-radius: 8px;
-  vertical-align: middle;
+
+  &,
+  &-icon {
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+  }
+
+  &-icon :deep(.icon) {
+    color: currentColor;
+    margin-left: 5px;
+  }
 
   &-content {
     display: flex;
@@ -119,7 +139,7 @@ function handleClick(e: MouseEvent) {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: var(--white);
+    background-color: var(--text);
     position: relative;
   }
 

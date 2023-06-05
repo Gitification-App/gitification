@@ -176,7 +176,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       font-weight: bold;
       font-size: 14px;
       display: inline-block;
-      color: var(--white);
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -194,7 +194,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     padding: 8px 10px 8px 8px;
     align-items: center;
     border-radius: 8px;
-    color: var(--white);
+    color: var(--text);
     border: 1px solid var(--item-border-color);
     text-align: left;
     line-height: 20px;
@@ -207,7 +207,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     }
 
     &-read {
-      color: var(--white-faded) !important;
+      color: var(--gray-bright) !important;
     }
 
     &:hover {
@@ -250,7 +250,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     width: 16px;
     height: 16px;
     border-radius: 6px;
-    border: 1px solid var(--white-faded);
+    border: 1px solid var(--text-faded);
     flex-shrink: 0;
     padding: 3px;
     display: inline-flex;
@@ -286,10 +286,10 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
 
       &:hover {
         .notification-checkbox:not(.notification-checkbox-checked) {
-          border-color: var(--white-faded);
+          border-color: var(--text-faded);
 
           .notification-checkbox-dot {
-            background-color: var(--white-faded);
+            background-color: var(--text-faded);
           }
         }
       }

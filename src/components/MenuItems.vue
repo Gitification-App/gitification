@@ -2,32 +2,35 @@
 import {
   type Context,
   type Item,
-  type ItemRenderList, SelectableItems, createItemDefaults, item,
+  type ItemRenderList, SelectableItems, createItemDefaults, filterSelectableItems, item,
 } from 'vue-selectable-items'
+import { onMounted } from 'vue'
 import { useKey } from '../composables/useKey'
 import { type Icons } from './Icons'
 import { usePopoverContext } from './Popover.vue'
 
 export interface ItemMeta {
   text: string
-  icon: typeof Icons[keyof typeof Icons]
+  icon?: typeof Icons[keyof typeof Icons]
   key?: string
+  selected?: boolean
 }
 
 export const menuItem = item<ItemMeta>
 
-const itemDefaults = createItemDefaults<ItemMeta>(({ disabled }) => ({
+const itemDefaults = createItemDefaults<ItemMeta>(({ disabled, meta }) => ({
   elementTag: 'button',
   elementAttrs: {
     tabindex: disabled ? -1 : 0,
     role: 'button',
     disabled: disabled || null,
+    style: meta?.selected ? 'color: var(--accent-color); font-weight: bold;' : undefined,
   },
 }))
 </script>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{ items: ItemRenderList<ItemMeta> }>(), {
+const props = withDefaults(defineProps<{ items: ItemRenderList<ItemMeta> }>(), {
   items: () => [],
 })
 
@@ -54,6 +57,17 @@ function setupHandle(ctx: Context) {
   ctx.onSelect((meta, item) => {
     popoverContext.visible.value = false
   })
+
+  onMounted(() => {
+    const items = filterSelectableItems(props.items)
+
+    for (const item of items) {
+      if (item.meta?.selected) {
+        ctx.setFocusByKey(item.key)
+        break
+      }
+    }
+  })
 }
 </script>
 
@@ -65,7 +79,10 @@ function setupHandle(ctx: Context) {
     noWrapperElement
   >
     <template #render="{ meta }: Item<ItemMeta>">
-      <div class="item-icon">
+      <div
+        v-if="meta!.icon"
+        class="item-icon"
+      >
         <component :is="meta!.icon" />
       </div>
       <div class="item-text">
@@ -90,7 +107,7 @@ function setupHandle(ctx: Context) {
     outline: none;
     height: 32px;
     border-radius: 4px; // 8px parent border radius - 4px parent padding
-    color: var(--white-faded);
+    color: var(--text-faded);
 
     &,
     .item-text,
@@ -102,7 +119,7 @@ function setupHandle(ctx: Context) {
 
     &-focused {
       background-color: var(--item-bg);
-      color: var(--white);
+      color: var(--text);
     }
 
     &-disabled {

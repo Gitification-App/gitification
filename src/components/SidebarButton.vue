@@ -25,7 +25,7 @@ withDefaults(defineProps<Props>(), { disabled: false, highlight: false })
   padding: 8px;
   width: 35px;
   border-radius: 8px;
-  color: var(--white-faded);
+  color: var(--text-faded);
   border: 1px solid transparent;
   width: 35px;
   height: 35px;
@@ -41,7 +41,7 @@ withDefaults(defineProps<Props>(), { disabled: false, highlight: false })
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background-color: var(--white);
+      background-color: var(--text);
       right: 2px;
       top: 2px;
       content: '';
@@ -54,16 +54,16 @@ withDefaults(defineProps<Props>(), { disabled: false, highlight: false })
 
   &:not(.disabled) {
     &:active {
-      background-color: var(--item-hover-bg);
+      background-color: var(--item-bg);
 
       :deep(.icon) {
-        color: var(--white);
+        color: var(--text);
       }
     }
 
     &:hover {
       :deep(.icon) {
-        color: var(--white);
+        color: var(--text);
       }
     }
   }

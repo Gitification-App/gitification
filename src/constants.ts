@@ -1,5 +1,14 @@
 import { Mutex } from 'async-mutex'
+import { useMediaQuery } from '@vueuse/core'
 import { Icons } from './components/Icons'
+
+export const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
+
+export enum ColorPreference {
+  System = 'system',
+  Light = 'light',
+  Dark = 'dark',
+}
 
 /**
  * This mutex helps us to synchronize the access to the GitHub API.

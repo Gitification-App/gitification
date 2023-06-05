@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
-import { watchDebounced } from '@vueuse/core'
+import { computedEager, watchDebounced } from '@vueuse/core'
 
 import { invoke } from '@tauri-apps/api/tauri'
 import { requestPermission } from '@tauri-apps/api/notification'
@@ -10,7 +10,7 @@ import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
-import { InvokeCommand, Page } from '../constants'
+import { ColorPreference, InvokeCommand, Page } from '../constants'
 import { Icons } from '../components/Icons'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
@@ -18,6 +18,10 @@ import Separator from '../components/Separator.vue'
 import Tooltip from '../components/Tooltip.vue'
 import { useElementNavigation } from '../composables/useElementNavigation'
 import SlotRef from '../components/SlotRef.vue'
+import MenuItems, { menuItem } from '../components/MenuItems.vue'
+import Popover from '../components/Popover.vue'
+import Switch from '../components/Switch.vue'
+import SettingItem from '../components/SettingItem.vue'
 
 const store = useStore()
 
@@ -86,61 +90,77 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
   showSystemNotifications.value = value
 }
 
-interface ISettingsItem {
-  title: string
-  valueGetter: () => boolean
-  onToggle: () => void
-}
-
-const items: ISettingsItem[] = [
-  {
-    title: 'Sounds',
-    valueGetter: () => soundsEnabled.value,
-    onToggle: () => soundsEnabled.value = !soundsEnabled.value,
-  },
-  {
-    title: 'Open at startup',
-    valueGetter: () => openAtStartup.value,
-    onToggle: () => openAtStartup.value = !openAtStartup.value,
-  },
-  {
-    title: 'Show only participating',
-    valueGetter: () => showOnlyParticipating.value,
-    onToggle: () => showOnlyParticipating.value = !showOnlyParticipating.value,
-  },
-  {
-    title: 'Show read notifications',
-    valueGetter: () => showReadNotifications.value,
-    onToggle: () => showReadNotifications.value = !showReadNotifications.value,
-  },
-  {
-    title: 'Show system notifications',
-    valueGetter: () => showSystemNotifications.value,
-    onToggle() {
-      handleUpdateShowSystemNotifications(!showSystemNotifications.value)
-    },
-  },
-]
-
 const container = ref<HTMLElement | null>(null)
 useElementNavigation({
   target: container,
-  targetQuery: '.settings-item',
+  targetQuery: 'button:not(.settings-header-back-button)',
   navigateNextHotkey: 'down',
   navigatePreviousHotkey: 'up',
 })
+
+const selectedColorText = computedEager(() => {
+  switch (AppStorage.get('colorPreference')) {
+    case ColorPreference.System:
+      return 'System'
+    case ColorPreference.Light:
+      return 'Light'
+    case ColorPreference.Dark:
+      return 'Dark'
+  }
+})
+
+const selectColorItems = computed(() => [
+  menuItem({
+    key: ColorPreference.System,
+    meta: {
+      text: 'System',
+      selected: AppStorage.get('colorPreference') === ColorPreference.System,
+    },
+    onSelect() {
+      AppStorage.set('colorPreference', ColorPreference.System)
+    },
+  }),
+  menuItem({
+    key: ColorPreference.Light,
+    meta: {
+      text: 'Light',
+      selected: AppStorage.get('colorPreference') === ColorPreference.Light,
+    },
+    onSelect() {
+      AppStorage.set('colorPreference', ColorPreference.Light)
+    },
+  }),
+  menuItem({
+    key: ColorPreference.Dark,
+    meta: {
+      text: 'Dark',
+      selected: AppStorage.get('colorPreference') === ColorPreference.Dark,
+    },
+    onSelect() {
+      AppStorage.set('colorPreference', ColorPreference.Dark)
+    },
+  }),
+])
+
+const scrollTop = ref(0)
+function handleScroll(e: Event) {
+  scrollTop.value = (e.target as HTMLElement).scrollTop
+}
 </script>
 
 <template>
   <div
     ref="container"
     class="settings"
+    @scroll="handleScroll"
   >
-    <div class="settings-header">
+    <div
+      class="settings-header"
+      :class="{ 'settings-header-with-border': scrollTop > 0 }"
+    >
       <SlotRef>
         <template #default>
           <AppButton
-            ghost
             class="settings-header-back-button"
             square
             @click="handleBack"
@@ -163,30 +183,85 @@ useElementNavigation({
     </div>
 
     <div class="settings-grid">
-      <template
-        v-for="(item, index) of items"
-        :key="index"
+      <PageHeader
+        dot
+        style="margin-bottom: 20px;"
       >
-        <button
-          class="settings-item"
-          :class="{ 'settings-item-active': item.valueGetter() }"
-          @click="item.onToggle()"
-        >
-          <div class="settings-item-title">
-            {{ item.title }}
-          </div>
-          <div
-            class="settings-item-switch"
-          >
-            <Icons.Check16 />
-          </div>
-        </button>
+        Notifications
+      </PageHeader>
 
-        <Separator
-          v-if="index !== items.length - 1"
-          style="margin: 2px auto"
+      <SettingItem title="Sounds">
+        <Switch
+          :modelValue="soundsEnabled"
+          @update:modelValue="soundsEnabled = $event"
         />
-      </template>
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Open at startup">
+        <Switch
+          :modelValue="openAtStartup"
+          @update:modelValue="openAtStartup = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Show only participating">
+        <Switch
+          :modelValue="showOnlyParticipating"
+          @update:modelValue="showOnlyParticipating = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Show read notifications">
+        <Switch
+          :modelValue="showReadNotifications"
+          @update:modelValue="showReadNotifications = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Show system notifications">
+        <Switch
+          :modelValue="showSystemNotifications"
+          @update:modelValue="handleUpdateShowSystemNotifications($event)"
+        />
+      </SettingItem>
+
+      <PageHeader
+        dot
+        style="margin: 20px 0px;"
+      >
+        Appearance
+      </PageHeader>
+
+      <SettingItem title="Theme">
+        <SlotRef>
+          <template #default>
+            <AppButton>
+              {{ selectedColorText }}
+
+              <template #icon>
+                <Icons.ChevronDown />
+              </template>
+            </AppButton>
+          </template>
+
+          <template #ref="{ el }">
+            <Popover
+              :target="el"
+              :wowerlayOptions="{ position: 'bottom-end' }"
+            >
+              <MenuItems :items="selectColorItems" />
+            </Popover>
+          </template>
+        </SlotRef>
+      </SettingItem>
     </div>
   </div>
 </template>
@@ -203,7 +278,18 @@ useElementNavigation({
     flex-flow: column nowrap;
 
     &-header {
-      margin: 20px 35px 0px 35px;
+      z-index: 10;
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0;
+      padding: 20px 25px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: box-shadow 0.2s ease-in-out;
+
+      &-with-border {
+        box-shadow: 0px 3px 8px -5px rgba(0, 0, 0, 0.3);
+      }
 
       &-back-button {
         margin-right: 10px;
@@ -215,50 +301,6 @@ useElementNavigation({
       padding: 20px 30px;
       display: grid;
       gap: 5px;
-    }
-
-    &-item {
-      @include focus-visible();
-      display: flex;
-      flex-direction: row;
-      height: 40px;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 8px;
-      padding: 10px;
-      color: var(--white-faded);
-
-      &-active {
-        color: var(--white);
-
-        .settings-item-switch {
-          color: var(--accent-color);
-          opacity: 1;
-        }
-      }
-
-      &:hover {
-        background-color: var(--item-hover-bg);
-      }
-
-      &-title,
-      &-switch {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
-
-      &-title {
-        color: currentColor;
-        font-size: 14px;
-      }
-
-      &-switch {
-        margin-left: 10px;
-        font-size: 16px;
-        color: var(--white-faded);
-        opacity: .2;
-      }
     }
   }
 </style>

@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import type { MinimalRepository, Thread } from './api/notifications'
 import type { User } from './api/user'
+import { type ColorPreference } from './constants'
 
 export type Option<T> = T | null
 export type MaybeRef<T> = T | Ref<T>
@@ -15,6 +16,7 @@ export interface AppStorageContext {
   soundsEnabled: boolean
   showReadNotifications: boolean
   showSystemNotifications: boolean
+  colorPreference: ColorPreference
 }
 
 export interface PageState {
