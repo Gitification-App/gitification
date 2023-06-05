@@ -1,3 +1,8 @@
+### 1.0.1
+  - Fixed a bug when user closes a contextmenu and then press O, U or M last item is triggers.
+  - Synchronized api requests to avoid collisions.
+  - Now Marking or unbuscribing a notification shows effects immediately. `(It was waiting for API request to success before)` but if request fails persists old data.
+
 ### 1.0.0
 Gitification is finally version 1.0.0.
 
