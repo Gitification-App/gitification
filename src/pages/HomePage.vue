@@ -41,7 +41,10 @@ useElementNavigation({
   targetQuery: '.notification-item, .notification-title',
 })
 
-function isChecked(item: MinimalRepository | Thread) {
+function isChecked(item: MinimalRepository | Thread | null) {
+  if (item == null)
+    return false
+
   if (isRepository(item)) {
     return store.notifications
       .filter(isThread)
@@ -94,52 +97,98 @@ function isCheckable(item: MinimalRepository | Thread) {
     .filter(thread => thread.repository.id === item.id)
     .some(thread => thread.unread)
 }
+onScopeDispose(() => {
+  store.checkedItems.length = 0
+})
 
 useKey('esc', () => {
   store.checkedItems = []
 }, { prevent: true })
 
-onScopeDispose(() => {
-  store.checkedItems.length = 0
+const contextMenuThread = ref<Thread | null>(null)
+const popoverTarget = ref<ReferenceElement | null>(null)
+const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
+
+async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
+  if (triggeredByKeyboard) {
+    if (store.checkedItems.length > 0) {
+      store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
+      store.checkedItems = []
+      return
+    }
+
+    if (contextMenuThread.value) {
+      const thread = contextMenuThread.value
+      markNotificationAsRead(contextMenuThread.value.id, AppStorage.get('accessToken')!)
+        .then(() => {
+          store.removeNotificationById(thread.id)
+        })
+
+      return
+    }
+  }
+
+  if (!contextMenuThread.value)
+    return
+
+  if (isChecked(contextMenuThread.value)) {
+    store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
+    store.checkedItems = []
+    return
+  }
+
+  const thread = contextMenuThread.value
+  markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
+    .then(() => {
+      store.removeNotificationById(thread.id)
+    })
+}
+
+useKey('m', () => {
+  handleSelectMarkAsRead(true)
+  popoverRef.value?.hide()
 })
 
-const contextMenuThread = ref<Thread | null>(null)
+function handleSelectOpen(triggeredByKeyboard = false) {
+  if (triggeredByKeyboard) {
+    if (store.checkedItems.length > 0) {
+      store.checkedItems.forEach(handleNotificationClick)
+      store.checkedItems = []
+      return
+    }
+
+    if (contextMenuThread.value) {
+      handleNotificationClick(contextMenuThread.value)
+      return
+    }
+  }
+
+  if (!contextMenuThread.value)
+    return
+
+  if (isChecked(contextMenuThread.value))
+    store.checkedItems.forEach(handleNotificationClick)
+  else
+    handleNotificationClick(contextMenuThread.value)
+
+  store.checkedItems = []
+}
+
+useKey('o', () => {
+  handleSelectOpen(true)
+  popoverRef.value?.hide()
+})
+
 const contextMenuItems = computed(() => [
   menuItem({
     key: 'read',
     meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
-    async onSelect() {
-      if (!contextMenuThread.value)
-        return
-
-      if (isChecked(contextMenuThread.value)) {
-        store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
-        store.checkedItems = []
-        return
-      }
-
-      markNotificationAsRead(contextMenuThread.value.id, AppStorage.get('accessToken')!)
-        .then(() => {
-          store.notifications = store.notifications.filter(notification => (
-            notification.id !== contextMenuThread.value!.id
-          ))
-        })
-    },
+    onSelect: () => handleSelectMarkAsRead(),
   }),
   menuItem({
     key: 'open',
     meta: { text: 'Open', icon: Icons.LinkExternal16, key: 'O' },
-    onSelect() {
-      if (!contextMenuThread.value)
-        return
-
-      if (isChecked(contextMenuThread.value))
-        store.checkedItems.forEach(handleNotificationClick)
-      else
-        handleNotificationClick(contextMenuThread.value)
-
-      store.checkedItems = []
-    },
+    onSelect: () => handleSelectOpen(),
   }),
   // menuItem({
   //   key: 'unsubscribe',
@@ -148,15 +197,12 @@ const contextMenuItems = computed(() => [
   // }),
   isChecked(contextMenuThread.value!) && menuItem({
     key: 'clear',
-    meta: { text: 'Clear selections', icon: Icons.Circle16, key: 'ESC' },
+    meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
     onSelect: () => {
       store.checkedItems = []
     },
   }),
 ])
-
-const popoverTarget = ref<ReferenceElement | null>(null)
-const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
 
 function handleThreadContextmenu(thread: Thread, event: MouseEvent) {
   if (!isChecked(thread))
