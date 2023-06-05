@@ -12,7 +12,7 @@ import UnmuteIcon from 'virtual:icons/octicon/unmute-24'
 import PullRequestIcon from 'virtual:icons/octicon/git-pull-request-24'
 import CheckIcon from 'virtual:icons/octicon/check-24'
 import CheckIcon16 from 'virtual:icons/octicon/check-16'
-import CheckFillIcon from 'virtual:icons/octicon/check-circle-fill-12'
+import CheckFillIcon from 'virtual:icons/octicon/check-circle-16'
 import XIcon from 'virtual:icons/octicon/x-16'
 import BellIcon from 'virtual:icons/octicon/bell-24'
 import BellIcon16 from 'virtual:icons/octicon/bell-16'
@@ -25,7 +25,8 @@ import QuestionIcon from 'virtual:icons/octicon/question-24'
 import InfoIcon16 from 'virtual:icons/octicon/info-16'
 import MailIcon from 'virtual:icons/octicon/mail-24'
 import SignOutIcon16 from 'virtual:icons/octicon/sign-out-16'
-import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left'
+import ChevronLeftIcon from 'virtual:icons/octicon/chevron-left-24'
+import ChevronDownIcon from 'virtual:icons/octicon/chevron-down-24'
 import DownloadIcon16 from 'virtual:icons/octicon/download-16'
 import BellSlashIcon from 'virtual:icons/octicon/bell-slash-24'
 import BellSlashIcon16 from 'virtual:icons/octicon/bell-slash-16'
@@ -73,4 +74,5 @@ export const Icons = {
   LinkExternal16: markRaw(LinkExternalIcon16),
   Square16: markRaw(SquareIcon16),
   Circle: markRaw(CircleIcon24),
+  ChevronDown: markRaw(ChevronDownIcon),
 }

@@ -3,6 +3,7 @@ import type { WritableComputedRef } from 'vue'
 import { computed, shallowReactive } from 'vue'
 import type { AppStorageContext } from './types'
 import { batchFn } from './utils/batch'
+import { ColorPreference } from './constants'
 
 const store = new Store('.storage.dat')
 const storage = shallowReactive<AppStorageContext>({
@@ -13,6 +14,7 @@ const storage = shallowReactive<AppStorageContext>({
   soundsEnabled: true,
   showReadNotifications: false,
   showSystemNotifications: false,
+  colorPreference: ColorPreference.System,
 })
 
 const writeStorageToDisk = batchFn(() => (

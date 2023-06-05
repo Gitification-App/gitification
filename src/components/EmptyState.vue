@@ -64,7 +64,7 @@ withDefaults(defineProps<Props>(), {
 
   &-icon {
     font-size: 30px;
-    color: var(--white);
+    color: var(--text);
 
     &-wrapper {
       margin-bottom: 15px
