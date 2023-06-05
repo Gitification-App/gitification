@@ -170,8 +170,10 @@ export function markNotificationAsRead(id: Thread['id'], accessToken: NonNullabl
   })
 }
 
-export function unsubscribeNotification(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
-  return redaxios.delete(`https://api.github.com/notifications/threads/${id}/subscription`, {
+export async function unsubscribeNotification(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
+  await redaxios.put(`https://api.github.com/notifications/threads/${id}/subscription`, { ignored: true }, {
     headers: createBaseGithubApiHeaders(accessToken),
   })
+
+  await markNotificationAsRead(id, accessToken)
 }
