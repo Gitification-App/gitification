@@ -8,5 +8,6 @@
     "source.fixAll.eslint": true
   },
   "vue.complete.casing.props": "camel",
-  "vue.complete.casing.tags": "pascal"
+  "vue.complete.casing.tags": "pascal",
+  "vue.complete.normalizeComponentImportName": true
 }
