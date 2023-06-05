@@ -19,9 +19,8 @@ An app to view your notifications easily on your menubar.
 
 # Screenshots
 <div align="center">
-  <img width="400" src="images/landing.png" />
   <img width="400" src="images/home.png" />
-  <img width="400" src="images/settings.png" />
+  <img width="400" src="images/contextmenu.png" />
 </div>
 
 # Known Problems
@@ -55,9 +54,9 @@ If you want to contribute you should install these extensions and set-up these s
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
     },
-    "volar.completion.normalizeComponentImportName": true,
-    "volar.completion.preferredAttrNameCase": "camel",
-    "volar.completion.preferredTagNameCase": "pascal"
+    "vue.complete.casing.props": "camel",
+    "vue.complete.casing.tags": "pascal",
+    "vue.complete.normalizeComponentImportName": true
   }
   ```
 - And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.
