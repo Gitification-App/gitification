@@ -3,8 +3,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
 import { readonly, ref, shallowRef, triggerRef, watch } from 'vue'
 import pAll from 'p-all'
-import type { Thread } from '../api/notifications'
-import { getNotifications, markNotificationAsRead } from '../api/notifications'
+import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import type { Release } from '../api/releases'
 import { InvokeCommand, Page } from '../constants'
 import { AppStorage } from '../storage'
@@ -149,17 +148,45 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  async function unsubscribeCheckedNotifications(accessToken: NonNullable<AppStorageContext['accessToken']>) {
+    const deletedThreads: Thread['id'][] = []
+
+    try {
+      await pAll(
+        checkedItems.value.map(thread => async () => {
+          try {
+            await unsubscribeNotification(thread.id, accessToken)
+            deletedThreads.push(thread.id)
+          }
+          catch (error) {
+            console.error(error)
+          }
+        }),
+        {
+          stopOnError: false,
+          concurrency: 7,
+        },
+      )
+    }
+    finally {
+      deletedThreads.forEach(id => removeNotificationById(id))
+      checkedItems.value = []
+      triggerRef(notifications)
+    }
+  }
+
   return {
     newRelease,
     notifications,
     currentPage: readonly(currentPage),
-    removeNotificationById,
     loadingNotifications,
     skeletonVisible,
     pageFrom,
     failedLoadingNotifications,
     currentPageState,
     checkedItems,
+    unsubscribeCheckedNotifications,
+    removeNotificationById,
     findThreadIndex,
     markCheckedNotificationsAsRead,
     setPage,
