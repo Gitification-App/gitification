@@ -17,6 +17,20 @@ export const useStore = defineStore('store', () => {
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
 
+  function removeNotificationById(id: Thread['id']) {
+    const index = notifications.value.findIndex(item => isThread(item) && item.id === id)
+    const thread = notifications.value[index] as Thread
+    notifications.value.splice(index, 1)
+
+    const repoHasNotifications = notifications.value.some(item => isThread(item) && item.repository.id === thread.repository.id)
+    if (!repoHasNotifications) {
+      const repoIndex = notifications.value.findIndex(item => isRepository(item) && item.id === thread.repository.id)
+      notifications.value.splice(repoIndex, 1)
+    }
+
+    triggerRef(notifications)
+  }
+
   let threadsRaw: Thread[] = []
   let threadsPreviousRaw: Thread[] = []
 
@@ -129,21 +143,7 @@ export const useStore = defineStore('store', () => {
       )
     }
     finally {
-      notifications.value = notifications.value
-        .filter((item) => {
-          if (isRepository(item))
-            return true
-
-          return !deletedThreads.includes(item.id)
-        })
-        .filter((item, _, array) => {
-          if (isThread(item))
-            return true
-
-          return array.some((someItem) => {
-            return isThread(someItem) && someItem.repository.id === item.id
-          })
-        })
+      deletedThreads.forEach(id => removeNotificationById(id))
       checkedItems.value = []
       triggerRef(notifications)
     }
@@ -153,6 +153,7 @@ export const useStore = defineStore('store', () => {
     newRelease,
     notifications,
     currentPage: readonly(currentPage),
+    removeNotificationById,
     loadingNotifications,
     skeletonVisible,
     pageFrom,
