@@ -16,7 +16,6 @@ import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import Separator from '../components/Separator.vue'
 import Tooltip from '../components/Tooltip.vue'
-import { useElementNavigation } from '../composables/useElementNavigation'
 import SlotRef from '../components/SlotRef.vue'
 import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import Popover from '../components/Popover.vue'
@@ -90,14 +89,6 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
   showSystemNotifications.value = value
 }
 
-const container = ref<HTMLElement | null>(null)
-useElementNavigation({
-  target: container,
-  targetQuery: 'button:not(.settings-header-back-button)',
-  navigateNextHotkey: 'down',
-  navigatePreviousHotkey: 'up',
-})
-
 const selectedColorText = computedEager(() => {
   switch (AppStorage.get('colorPreference')) {
     case ColorPreference.System:
@@ -150,7 +141,6 @@ function handleScroll(e: Event) {
 
 <template>
   <div
-    ref="container"
     class="settings"
     @scroll="handleScroll"
   >
@@ -187,56 +177,6 @@ function handleScroll(e: Event) {
         dot
         style="margin-bottom: 20px;"
       >
-        Notifications
-      </PageHeader>
-
-      <SettingItem title="Sounds">
-        <Switch
-          :modelValue="soundsEnabled"
-          @update:modelValue="soundsEnabled = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Open at startup">
-        <Switch
-          :modelValue="openAtStartup"
-          @update:modelValue="openAtStartup = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Show only participating">
-        <Switch
-          :modelValue="showOnlyParticipating"
-          @update:modelValue="showOnlyParticipating = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Show read notifications">
-        <Switch
-          :modelValue="showReadNotifications"
-          @update:modelValue="showReadNotifications = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Show system notifications">
-        <Switch
-          :modelValue="showSystemNotifications"
-          @update:modelValue="handleUpdateShowSystemNotifications($event)"
-        />
-      </SettingItem>
-
-      <PageHeader
-        dot
-        style="margin: 20px 0px;"
-      >
         Appearance
       </PageHeader>
 
@@ -261,6 +201,61 @@ function handleScroll(e: Event) {
             </Popover>
           </template>
         </SlotRef>
+      </SettingItem>
+
+      <PageHeader
+        dot
+        style="margin: 20px 0px;"
+      >
+        System
+      </PageHeader>
+
+      <SettingItem title="Sounds">
+        <Switch
+          :modelValue="soundsEnabled"
+          @update:modelValue="soundsEnabled = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Open at startup">
+        <Switch
+          :modelValue="openAtStartup"
+          @update:modelValue="openAtStartup = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Show system notifications">
+        <Switch
+          :modelValue="showSystemNotifications"
+          @update:modelValue="handleUpdateShowSystemNotifications($event)"
+        />
+      </SettingItem>
+
+      <PageHeader
+        dot
+        style="margin: 20px 0px;"
+      >
+        Notifications
+      </PageHeader>
+
+      <SettingItem title="Show only participating">
+        <Switch
+          :modelValue="showOnlyParticipating"
+          @update:modelValue="showOnlyParticipating = $event"
+        />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem title="Show read notifications">
+        <Switch
+          :modelValue="showReadNotifications"
+          @update:modelValue="showReadNotifications = $event"
+        />
       </SettingItem>
     </div>
   </div>

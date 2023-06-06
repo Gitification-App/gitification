@@ -36,6 +36,7 @@ defineProps<Props>()
     &-title {
       color: var(--text);
       font-size: 14px;
+      padding-left: 15px;
     }
 
     &-right {
