@@ -38,4 +38,4 @@ jobs:
           tagName: __VERSION__ 
           releaseName: '__VERSION__'
           releaseDraft: false
-          prerelease: false
+          prerelease: true
