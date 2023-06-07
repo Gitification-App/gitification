@@ -1,6 +1,6 @@
 {
   "name": "gitification",
-  "version": "0.0.10",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "run-p vite:dev devtools",
