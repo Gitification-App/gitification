@@ -39,6 +39,9 @@ jobs:
         with:
           script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal-apple-darwin' : ''"
           result-encoding: string
+
+      - name: install aarch64-apple-darwin
+        run: 'rustup target add aarch64-apple-darwin'
       
       - uses: tauri-apps/tauri-action@v0
         env:
