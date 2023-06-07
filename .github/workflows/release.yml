@@ -31,11 +31,23 @@ jobs:
         run: npm install -g pnpm@8.6.0
       - name: install frontend dependencies
         run: pnpm install
+
+      - uses: actions/github-script@v6
+        id: set-args
+        env:
+          RUNS_ON: '${{ matrix.platform }}'
+        with:
+          script: "process.env.RUNS_ON === macos-latest ? '--target universal_apple_darwin' : \"\""
+          result-encoding: string
+      
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           tagName: __VERSION__ 
           releaseName: '__VERSION__'
           releaseDraft: false
           prerelease: true
+          args: ${{ steps.set-args.outputs.result }}
