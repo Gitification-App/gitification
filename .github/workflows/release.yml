@@ -37,7 +37,7 @@ jobs:
         env:
           RUNS_ON: '${{ matrix.platform }}'
         with:
-          script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal_apple_darwin' : ''"
+          script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal-apple-darwin' : ''"
           result-encoding: string
       
       - uses: tauri-apps/tauri-action@v0
