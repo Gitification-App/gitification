@@ -85,7 +85,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "dialog": true,
+      "endpoints": [
+        "https://gist.githubusercontent.com/kadiryazici/425d2ecc9cc2603c821f9742ec83529b/raw/"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
     },
     "macOSPrivateApi": true,
     "windows": [
