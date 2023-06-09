@@ -30,10 +30,10 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
 }
 
 function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
-  if (!props.checkable || (event instanceof KeyboardEvent && event.repeat))
+  if ((event instanceof KeyboardEvent && event.repeat))
     return
 
-  if ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event)) {
+  if (props.checkable && ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event))) {
     emit('update:checked', !props.checked)
     return
   }
