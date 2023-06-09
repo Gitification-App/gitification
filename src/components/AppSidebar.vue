@@ -2,7 +2,7 @@
 import { open } from '@tauri-apps/api/shell'
 import { exit } from '@tauri-apps/api/process'
 import { computed } from 'vue'
-import { Page, REPO_LINK, REPO_RELEASES_LINK } from '../constants'
+import { Page, REPO_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
 import { useKey } from '../composables/useKey'
@@ -12,6 +12,7 @@ import Popover from './Popover.vue'
 import MenuItems, { menuItem } from './MenuItems.vue'
 import Tooltip from './Tooltip.vue'
 import SlotRef from './SlotRef.vue'
+import PopoverContentInstallUpdate from './PopoverContentInstallUpdate.vue'
 
 const store = useStore()
 
@@ -76,10 +77,7 @@ useKey('r', () => {
     <div class="lower">
       <SlotRef v-if="store.newRelease != null">
         <template #default>
-          <SidebarButton
-            highlight
-            @click="open(`${REPO_RELEASES_LINK}/tag/${store.newRelease!.tag_name}`)"
-          >
+          <SidebarButton highlight>
             <Icons.Download16 />
           </SidebarButton>
         </template>
@@ -90,6 +88,17 @@ useKey('r', () => {
             position="right"
             text="A new version is available"
           />
+
+          <Popover
+            :target="el"
+            :wowerlayOptions="{ position: 'right-end' }"
+          >
+            <PopoverContentInstallUpdate
+              :loading="store.installingUpate"
+              :manifest="store.newRelease"
+              @install="store.updateAndRestart()"
+            />
+          </Popover>
         </template>
       </SlotRef>
 

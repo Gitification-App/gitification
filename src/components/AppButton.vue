@@ -72,7 +72,7 @@ function handleClick(e: MouseEvent) {
   &,
   &-icon {
     vertical-align: middle;
-    display: flex;
+    display: inline-flex;
     align-items: center;
   }
 

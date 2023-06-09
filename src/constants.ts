@@ -18,7 +18,6 @@ export const notificationApiMutex = new Mutex()
 
 export const REPOSITORY_PATH = 'Gitification-App/gitification'
 export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}` as const
-export const REPO_RELEASES_LINK = `https://github.com/${REPOSITORY_PATH}/releases` as const
 export const FETCH_INTERVAL_DURATION = 60000
 export const SERVER_PORTS = [23846, 15830, 12840]
 

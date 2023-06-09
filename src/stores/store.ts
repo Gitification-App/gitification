@@ -3,8 +3,9 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
 import { readonly, ref, shallowRef, triggerRef, watchEffect } from 'vue'
 import pAll from 'p-all'
+import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
+import { relaunch } from '@tauri-apps/api/process'
 import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import type { Release } from '../api/releases'
 import { InvokeCommand, Page, notificationApiMutex } from '../constants'
 import { AppStorage } from '../storage'
 import type { AppStorageContext, NotificationList, Option, PageState } from '../types'
@@ -118,8 +119,6 @@ export const useStore = defineStore('store', () => {
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   })
 
-  const newRelease = ref<Option<Release>>(null)
-
   function findThreadIndex(thread: Thread) {
     return notifications.value.findIndex(({ id }) => id === thread.id)
   }
@@ -192,6 +191,25 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  const newRelease = ref<Option<UpdateManifest>>(null)
+  const installingUpate = ref(false)
+
+  async function updateAndRestart() {
+    if (newRelease.value == null)
+      return
+
+    try {
+      installingUpate.value = true
+      await installUpdate()
+      await relaunch()
+      installingUpate.value = false
+    }
+    catch (error) {
+      console.error(error)
+      installingUpate.value = false
+    }
+  }
+
   return {
     newRelease,
     notifications,
@@ -202,6 +220,8 @@ export const useStore = defineStore('store', () => {
     failedLoadingNotifications,
     currentPageState,
     checkedItems,
+    installingUpate,
+    updateAndRestart,
     unsubscribeCheckedNotifications,
     removeNotificationById,
     findThreadIndex,
