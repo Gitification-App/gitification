@@ -8,12 +8,11 @@ import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { isPermissionGranted } from '@tauri-apps/api/notification'
+import { checkUpdate } from '@tauri-apps/api/updater'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
 import { Page } from './constants'
-import { getReleases } from './api/releases'
-import { getNewRelease } from './utils/getNewRelease'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
 
@@ -49,9 +48,14 @@ async function main() {
     store.fetchNotifications(true)
   }
 
-  {
-    const releases = await getReleases(AppStorage.get('accessToken'))
-    store.newRelease = getNewRelease(releases)
+  try {
+    const { shouldUpdate, manifest } = await checkUpdate()
+
+    if (shouldUpdate)
+      store.newRelease = manifest!
+  }
+  catch (error) {
+    console.error(error)
   }
 
   app.mount('#app')

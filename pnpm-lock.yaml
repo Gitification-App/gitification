@@ -11,9 +11,6 @@ dependencies:
   '@vueuse/core':
     specifier: ^9.12.0
     version: 9.12.0(vue@3.3.4)
-  compare-versions:
-    specifier: 6.0.0-rc.1
-    version: 6.0.0-rc.1
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
@@ -1770,10 +1767,6 @@ packages:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
     dev: true
-
-  /compare-versions@6.0.0-rc.1:
-    resolution: {integrity: sha512-cFhkjbGY1jLFWIV7KegECbfuyYPxSGvgGkdkfM+ibboQDoPwg2FRHm5BSNTOApiauRBzJIQH7qvOJs2sW5ueKQ==}
-    dev: false
 
   /concat-map@0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
