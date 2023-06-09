@@ -25,14 +25,37 @@ pub fn play_notification_sound(app: AppHandle) {
     });
 }
 
+#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_icon_template(is_template: bool, app: AppHandle) {
     app.tray_handle().set_icon_as_template(is_template).unwrap();
+
     app.tray_handle()
         .set_icon(tauri::Icon::Raw(
             include_bytes!("../icons/tray/icon.png").to_vec(),
         ))
         .unwrap();
+}
+
+#[cfg(any(target_os = "linux", target_os = "windows"))]
+#[tauri::command]
+pub fn set_icon_template(is_template: bool, app: AppHandle) {
+    // In other systems there is no template option for tray icons
+    // So we just simulate like it has.
+
+    if is_template {
+        app.tray_handle()
+            .set_icon(tauri::Icon::Raw(
+                include_bytes!("../icons/128x128.png").to_vec(),
+            ))
+            .unwrap();
+    } else {
+        app.tray_handle()
+            .set_icon(tauri::Icon::Raw(
+                include_bytes!("../icons/tray/icon.png").to_vec(),
+            ))
+            .unwrap();
+    }
 }
 
 #[tauri::command]

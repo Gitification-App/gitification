@@ -8,6 +8,7 @@ import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { isPermissionGranted } from '@tauri-apps/api/notification'
+import { type as osType } from '@tauri-apps/api/os'
 import { checkUpdate } from '@tauri-apps/api/updater'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
@@ -57,6 +58,10 @@ async function main() {
   catch (error) {
     console.error(error)
   }
+
+  const os = await osType()
+  if (os === 'Darwin')
+    document.documentElement.setAttribute('data-os-darwin', '')
 
   app.mount('#app')
 }
