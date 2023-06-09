@@ -1,3 +1,9 @@
+### 1.1.0
+  - Now wowerlay has in-app updater, you don't have to download updates manually anymore.
+  - Fixed a bug preventing opening read notifications on browser.
+  - Added light and dark theme support, by default Gitification will choose system color.
+  - Updated settings page to be more ergonomic.
+
 ### 1.0.1
   - Fixed a bug when user closes a contextmenu and then press O, U or M last item is triggers.
   - Synchronized api requests to avoid collisions.
