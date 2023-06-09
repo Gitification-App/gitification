@@ -1,64 +1,56 @@
-name: Release
-
+name: 'Release'
 on:
   push:
-    branches: [main]
+    branches:
+      - release
 
 jobs:
-  release:
-    runs-on: macos-latest
-    permissions: write-all
-    name: Release
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest]
+
+    runs-on: ${{ matrix.platform }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
-
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        with:
-          version: latest
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install 
-
-      - name: Check if new release
-        id: releaseCheck
-        run: pnpx tsx .github/actions/versionCheck.ts
-        env:
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+          node-version: 16
       - name: install Rust stable
-        if: steps.releaseCheck.outputs.isNewRelease == 'true'
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install pnpm
+        run: npm install -g pnpm@8.6.0
+      - name: install frontend dependencies
+        run: pnpm install
 
-      - name: Run Release
-        if: steps.releaseCheck.outputs.isNewRelease == 'true'
-        run: pnpx tsx .github/actions/release.ts
+      - uses: actions/github-script@v6
+        id: set-args
         env:
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          RUNS_ON: '${{ matrix.platform }}'
+        with:
+          script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal-apple-darwin' : ''"
+          result-encoding: string
+
+      - name: install aarch64-apple-darwin
+        run: 'rustup target add aarch64-apple-darwin'
+      
+      - uses: tauri-apps/tauri-action@v0
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        with:
+          tagName: __VERSION__ 
+          releaseName: '__VERSION__'
+          releaseDraft: false
+          prerelease: false
+          args: ${{ steps.set-args.outputs.result }}
