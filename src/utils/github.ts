@@ -1,7 +1,5 @@
-import { GITHUB_AUTHORIZE_ENDPOINT, GITHUB_AUTH_SCOPES } from '../api/constants'
 import type { Thread } from '../api/notifications'
 import { NotificationSubject } from '../constants'
-import { createURL } from './url'
 
 const NOTIFICATION_REFERRER_ID_KEY = 'notification_referrer_id'
 const DISCUSSIONS_QUERY_KEY = 'discussions_q'
@@ -40,14 +38,4 @@ export function toGithubWebURL({ notification, userId }: ToGithubWebURLArgs) {
   }
 
   return `${newUrl}?${NOTIFICATION_REFERRER_ID_KEY}=${notificationReferrerId}`
-}
-
-export function createAuthURL(port: number) {
-  const GITHUB_AUTH_QUERIES = {
-    client_id: import.meta.env.VITE_CLIENT_ID,
-    scope: GITHUB_AUTH_SCOPES.join(' '),
-    redirect_uri: `http://localhost:${port}/callback`,
-  }
-
-  return createURL({ url: GITHUB_AUTHORIZE_ENDPOINT, query: GITHUB_AUTH_QUERIES })
 }

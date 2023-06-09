@@ -1,5 +1,4 @@
 import './assets/main.scss'
-import 'wowerlay/style.css'
 import 'focus-visible'
 
 import { createApp } from 'vue'
@@ -8,20 +7,18 @@ import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { isPermissionGranted } from '@tauri-apps/api/notification'
-import { checkUpdate } from '@tauri-apps/api/updater'
+import { type as osType } from '@tauri-apps/api/os'
+
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
-import { Page } from './constants'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
+import { OsClassMap, Page } from './constants'
+import { getReleases } from './api/releases'
+import { findNewRelease } from './utils/getNewRelease'
 
-async function main() {
-  if (import.meta.env.DEV) {
-    initDevtools()
-    useKey('command+r', () => location.reload(), { prevent: true })
-  }
-
+;(async () => {
   dayjs.extend(relativeTime)
   window.addEventListener('contextmenu', e => e.preventDefault())
 
@@ -48,17 +45,18 @@ async function main() {
     store.fetchNotifications(true)
   }
 
-  try {
-    const { shouldUpdate, manifest } = await checkUpdate()
+  getReleases(AppStorage.get('accessToken'))
+    .then((releases) => {
+      store.newRelease = findNewRelease(releases)
+    })
 
-    if (shouldUpdate)
-      store.newRelease = manifest!
-  }
-  catch (error) {
-    console.error(error)
-  }
+  const os = await osType()
+  document.documentElement.classList.add(OsClassMap[os])
 
   app.mount('#app')
-}
+})()
 
-main()
+if (import.meta.env.DEV) {
+  initDevtools()
+  useKey('command+r', () => location.reload(), { prevent: true })
+}

@@ -4,6 +4,9 @@
   mask-image: -webkit-radial-gradient(white, black);
 }
 
+@mixin text-outline($size: 1px) {
+  text-shadow: 0 0 $size black, 0 0 $size black, 0 0 $size black, 0 0 $size black;
+}
 
 @keyframes outline-anim {
   0% {

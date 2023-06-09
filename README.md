@@ -19,12 +19,13 @@ An app to view your notifications easily on your menubar.
 
 # Screenshots
 <div align="center">
+  <img width="400" src="images/landing.png" />
   <img width="400" src="images/home.png" />
-  <img width="400" src="images/contextmenu.png" />
+  <img width="400" src="images/settings.png" />
 </div>
 
 # Known Problems
--  Gitification is not certificated by an apple developer account, after you download it you have to allow it in `Preference/Privacy & Securiy`. I don't earn money from open source, but if I earn `50$` per year from github sponsorships, I will sign the app.
+-  Gitification is not certificated by an apple developer account, after you download it you have to allow it in `Preference/Privacy & Securiy`. I don't earn money from open source, but if I earn `50$` from github sponsorships, I will sign the app.
 
 - The app is currently ready to be compiled for Windows or Linux but I'm a Mac user so that after I added the features in my mind, I will create Windows and Linux builds.
 
@@ -54,9 +55,9 @@ If you want to contribute you should install these extensions and set-up these s
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
     },
-    "vue.complete.casing.props": "camel",
-    "vue.complete.casing.tags": "pascal",
-    "vue.complete.normalizeComponentImportName": true
+    "volar.completion.normalizeComponentImportName": true,
+    "volar.completion.preferredAttrNameCase": "camel",
+    "volar.completion.preferredTagNameCase": "pascal"
   }
   ```
 - And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.

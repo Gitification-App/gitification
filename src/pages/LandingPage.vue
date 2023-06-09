@@ -7,15 +7,16 @@ import { InvokeCommand, Page } from '../constants'
 import { useStore } from '../stores/store'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { getAccessToken } from '../api/token'
+import { GITHUB_AUTH_URL } from '../api/constants'
 import { AppStorage } from '../storage'
 import { getUser } from '../api/user'
 import EmptyState from '../components/EmptyState.vue'
-import { createAuthURL } from '../utils/github'
-import { useTimeoutPool } from '../composables/useTimeoutPool'
-import { getServerPort } from '../api/app'
 
 const store = useStore()
-const processing = ref(true)
+
+const processing = ref(false)
+
+invoke(InvokeCommand.StartServer)
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value)
@@ -43,20 +44,9 @@ useTauriEvent<string>('code', async ({ payload }) => {
   }
 })
 
-let port: number
-
 function handleLogin() {
-  open(createAuthURL(port))
+  open(GITHUB_AUTH_URL)
 }
-
-invoke(InvokeCommand.StartServer)
-
-const timeout = useTimeoutPool()
-
-timeout.set('server_start', async () => {
-  port = await getServerPort()
-  processing.value = false
-}, 1000)
 </script>
 
 <template>

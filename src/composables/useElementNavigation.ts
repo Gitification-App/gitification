@@ -15,7 +15,7 @@ export enum Navigation {
   Previous,
 }
 
-function getFocusedItemIndex(elements: HTMLElement[], query: string) {
+const getFocusedItemIndex = (elements: HTMLElement[], query: string) => {
   const activeElement = document.activeElement!.closest(query)
 
   return elements

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Gitification",
-    "version": "1.1.0"
+    "version": "0.5.0"
   },
   "tauri": {
     "systemTray": {
@@ -22,11 +22,10 @@
       },
       "http": {
         "request": true,
-        "scope": ["https://github.com/*", "https://api.github.com/*", "http://localhost:23846/*", "http://localhost:15830/*", "http://localhost:12840/*"]
+        "scope": ["https://github.com/*", "https://api.github.com/*"]
       },
       "process": {
-        "exit": true,
-        "relaunch": true
+        "exit": true
       },
       "notification": {
         "all": true
@@ -86,10 +85,7 @@
       "csp": null
     },
     "updater": {
-      "active": true,
-      "dialog": false,
-      "endpoints": ["https://gitification.app/latest-update"],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
+      "active": false
     },
     "macOSPrivateApi": true,
     "windows": [

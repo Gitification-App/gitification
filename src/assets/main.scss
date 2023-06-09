@@ -7,44 +7,12 @@
   -webkit-text-size-adjust: 100%;
   line-height: 20px;
 
-  --text-faded: rgb(190, 190, 190);
-  --text: rgb(255, 255, 255);
-  --gray-bright: rgb(150, 150, 150);
-  --switch-dot: rgb(200, 200, 200);
-  --gray: rgb(95, 95, 95);
-  --switch-bg: var(--gray);
-  --content-bg: rgba(30, 30, 30, .8);
-  --page-header-bg: rgba(43, 43, 43, .6);
-  --popover-bg: rgba(20, 20, 20, .6);
-  --popover-bg-solid: rgba(40, 40, 40);
-  --bottom-bar-bg: rgba(21, 21, 21, 0.2);
-  --sidebar-bg: rgba(50, 50, 50, .75);
+  --white-faded: rgb(190, 190, 190);
+  --white: rgb(255, 255, 255);
   --app-border: rgb(90, 90, 90);
   --item-bg: rgba(80, 80, 80, .3);
   --item-hover-bg: rgba(80, 80, 80, .75);
   --item-border-color: rgb(22, 22, 22, .3);
-  --accent-color: rgb(23, 115, 243);
-  --header-border: rgb(50, 50, 50);
-
-  &.light-theme {
-    --text-faded: rgb(20, 20, 20);
-    --text: rgb(0, 0, 0);
-    --gray-bright: rgb(105, 105, 105);
-    --gray: rgb(160, 160, 160);
-    --switch-bg: rgb(145, 145, 145);
-    --switch-dot: rgb(60, 60, 60);
-    --content-bg: rgba(220, 220, 220, .75);
-    --page-header-bg: rgba(212, 212, 212, .6);
-    --popover-bg: rgba(210, 210, 210, .8);
-    --popover-bg-solid: rgba(215, 215, 215);
-    --bottom-bar-bg: rgba(234, 234, 234, 0.2);
-    --sidebar-bg: rgba(240, 240, 240, .6);
-    --app-border: rgb(185, 185, 185);
-    --item-bg: rgba(255, 255, 255, .3);
-    --item-hover-bg: rgba(150, 150, 150, .7);
-    --item-border-color: rgb(180, 180, 180, .7);
-    --popover-border: rgb(167, 167, 167);
-  }
 }
 
 :root:not(.mac) {
@@ -98,7 +66,6 @@ button, a {
 }
 
 #app-border {
-  z-index: 9999;
   pointer-events: none;
   position: fixed;
   left: 0;
@@ -109,3 +76,9 @@ button, a {
   @include borderRadiusOverflowHidden(8px);
 }
 
+.icon {
+  stroke: black;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}

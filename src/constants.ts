@@ -1,25 +1,11 @@
-import { Mutex } from 'async-mutex'
-import { useMediaQuery } from '@vueuse/core'
+import type { OsType } from '@tauri-apps/api/os'
 import { Icons } from './components/Icons'
 
-export const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
-
-export enum ColorPreference {
-  System = 'system',
-  Light = 'light',
-  Dark = 'dark',
-}
-
-/**
- * This mutex helps us to synchronize the access to the GitHub API.
- * We wouldn't want to mark a thread as read while we're still fetching it.
- */
-export const notificationApiMutex = new Mutex()
-
 export const REPOSITORY_PATH = 'Gitification-App/gitification'
-export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}` as const
+export const SERVER_PORT = 23846
+export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}`
+export const REPO_RELEASES_LINK = `https://github.com/${REPOSITORY_PATH}/releases`
 export const FETCH_INTERVAL_DURATION = 60000
-export const SERVER_PORTS = [23846, 15830, 12840]
 
 export enum Page {
   Settings = 'Settings',

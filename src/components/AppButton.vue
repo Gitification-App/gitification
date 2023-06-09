@@ -3,7 +3,6 @@ interface Props {
   loading?: boolean
   paddingless?: boolean
   square?: boolean
-  ghost?: boolean
 }
 interface Emits {
   (name: 'click', event: MouseEvent): void
@@ -15,11 +14,6 @@ const props = withDefaults(defineProps<Props>(), {
   square: false,
 })
 const emit = defineEmits<Emits>()
-
-defineSlots<{
-  default: (props: {}) => any
-  icon: (props: {}) => any
-}>()
 
 function handleClick(e: MouseEvent) {
   if (props.loading)
@@ -37,7 +31,6 @@ function handleClick(e: MouseEvent) {
       'button-loading': loading,
       'button-paddingless': paddingless,
       'button-square': square,
-      'button-ghost': ghost,
     }"
     @click="handleClick"
   >
@@ -50,11 +43,7 @@ function handleClick(e: MouseEvent) {
     </div>
 
     <div class="button-content">
-      <slot name="default" />
-    </div>
-
-    <div class="button-icon">
-      <slot name="icon" />
+      <slot />
     </div>
   </button>
 </template>
@@ -65,35 +54,19 @@ function handleClick(e: MouseEvent) {
   height: 35px;
   font-size: 14px;
   padding: 8px 12px;
+  border: 1px solid var(--item-border-color);
+  background-color: var(--item-bg);
   position: relative;
   overflow: hidden;
-  color: var(--text);
+  color: var(--white);
   border-radius: 8px;
-
-  &,
-  &-icon {
-    vertical-align: middle;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  &-icon :deep(.icon) {
-    color: currentColor;
-    margin-left: 5px;
-  }
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &-content {
-    display: flex;
-    flex-direction: row;
-    white-space: nowrap;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  &:not(.button-ghost) {
-    background-color: var(--item-bg);
+    display: inline-flex;
   }
 
   &-paddingless, &-square {
@@ -113,8 +86,12 @@ function handleClick(e: MouseEvent) {
   &:not(.button-loading) {
     @include focus-visible;
 
-    &:active, &:hover {
+    &:active {
       background-color: var(--item-hover-bg);
+    }
+
+    &:hover {
+      border-color: var(--item-hover-bg);;
     }
   }
 }
@@ -136,7 +113,7 @@ function handleClick(e: MouseEvent) {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: var(--text);
+    background-color: var(--white);
     position: relative;
   }
 

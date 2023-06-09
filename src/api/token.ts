@@ -29,6 +29,7 @@ export async function getAccessToken({ clientId, clientSecret, code }: GetAccess
     },
     body,
     responseType: ResponseType.JSON,
+
   })
 
   if (!res.ok)

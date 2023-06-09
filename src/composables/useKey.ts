@@ -16,12 +16,11 @@ export type UseKeyCallback = (event: KeyboardEvent, hotkeysEvent: HotkeysEvent) 
 
 const getLast = <T>(arr: T[]) => arr[arr.length - 1]
 
-function isInputing() {
-  return document.activeElement instanceof HTMLTextAreaElement
+const isInputing = () =>
+  document.activeElement instanceof HTMLTextAreaElement
   || document.activeElement?.hasAttribute('contenteditable')
   || document.activeElement instanceof HTMLInputElement
   || document.activeElement instanceof HTMLSelectElement
-}
 
 hotkeys.filter = () => true
 

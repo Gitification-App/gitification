@@ -1,26 +1,20 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
-import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
-import { computedEager, watchDebounced } from '@vueuse/core'
-
+import { watch } from 'vue'
+import { exit } from '@tauri-apps/api/process'
 import { invoke } from '@tauri-apps/api/tauri'
+import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
+import { watchDebounced } from '@vueuse/core'
 import { requestPermission } from '@tauri-apps/api/notification'
 import { confirm } from '@tauri-apps/api/dialog'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
+import SettingsItem from '../components/SettingsItem.vue'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
-import { ColorPreference, InvokeCommand, Page } from '../constants'
+import { InvokeCommand, Page } from '../constants'
 import { Icons } from '../components/Icons'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
-import Separator from '../components/Separator.vue'
-import Tooltip from '../components/Tooltip.vue'
-import SlotRef from '../components/SlotRef.vue'
-import MenuItems, { menuItem } from '../components/MenuItems.vue'
-import Popover from '../components/Popover.vue'
-import Switch from '../components/Switch.vue'
-import SettingItem from '../components/SettingItem.vue'
 
 const store = useStore()
 
@@ -88,84 +82,19 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
 
   showSystemNotifications.value = value
 }
-
-const selectedColorText = computedEager(() => {
-  switch (AppStorage.get('colorPreference')) {
-    case ColorPreference.System:
-      return 'System'
-    case ColorPreference.Light:
-      return 'Light'
-    case ColorPreference.Dark:
-      return 'Dark'
-  }
-})
-
-const selectColorItems = computed(() => [
-  menuItem({
-    key: ColorPreference.System,
-    meta: {
-      text: 'System',
-      selected: AppStorage.get('colorPreference') === ColorPreference.System,
-    },
-    onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.System)
-    },
-  }),
-  menuItem({
-    key: ColorPreference.Light,
-    meta: {
-      text: 'Light',
-      selected: AppStorage.get('colorPreference') === ColorPreference.Light,
-    },
-    onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.Light)
-    },
-  }),
-  menuItem({
-    key: ColorPreference.Dark,
-    meta: {
-      text: 'Dark',
-      selected: AppStorage.get('colorPreference') === ColorPreference.Dark,
-    },
-    onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.Dark)
-    },
-  }),
-])
-
-const scrollTop = ref(0)
-function handleScroll(e: Event) {
-  scrollTop.value = (e.target as HTMLElement).scrollTop
-}
 </script>
 
 <template>
-  <div
-    class="settings"
-    @scroll="handleScroll"
-  >
-    <div
-      class="settings-header"
-      :class="{ 'settings-header-with-border': scrollTop > 0 }"
-    >
-      <SlotRef>
-        <template #default>
-          <AppButton
-            class="settings-header-back-button"
-            square
-            @click="handleBack"
-          >
-            <Icons.ChevronLeft />
-          </AppButton>
-        </template>
-
-        <template #ref="{ el }">
-          <Tooltip
-            text="Go Back (ESC)"
-            :target="el"
-          />
-        </template>
-      </SlotRef>
+  <div class="settings">
+    <div class="settings-header">
+      <AppButton
+        class="settings-header-back-button"
+        square
+        title="Go back"
+        @click="handleBack"
+      >
+        <Icons.ChevronLeft />
+      </AppButton>
 
       <PageHeader inline>
         Settings
@@ -173,90 +102,40 @@ function handleScroll(e: Event) {
     </div>
 
     <div class="settings-grid">
-      <PageHeader
-        dot
-        style="margin-bottom: 20px;"
+      <SettingsItem
+        v-model:enabled="soundsEnabled"
+        title="Sounds"
+      />
+      <SettingsItem
+        v-model:enabled="openAtStartup"
+        title="Open at startup"
+      />
+      <SettingsItem
+        v-model:enabled="showOnlyParticipating"
+        title="Show only participating"
+      />
+      <SettingsItem
+        v-model:enabled="showReadNotifications"
+        title="Show read notifications"
+      />
+      <SettingsItem
+        :enabled="showSystemNotifications"
+        title="Show system notifications"
+        @update:enabled="handleUpdateShowSystemNotifications"
+      />
+    </div>
+
+    <div class="settings-footer">
+      <AppButton
+        v-if="accessToken"
+        @click="store.logout"
       >
-        Appearance
-      </PageHeader>
+        Log out
+      </AppButton>
 
-      <SettingItem title="Theme">
-        <SlotRef>
-          <template #default>
-            <AppButton>
-              {{ selectedColorText }}
-
-              <template #icon>
-                <Icons.ChevronDown />
-              </template>
-            </AppButton>
-          </template>
-
-          <template #ref="{ el }">
-            <Popover
-              :target="el"
-              :wowerlayOptions="{ position: 'bottom-end' }"
-            >
-              <MenuItems :items="selectColorItems" />
-            </Popover>
-          </template>
-        </SlotRef>
-      </SettingItem>
-
-      <PageHeader
-        dot
-        style="margin: 20px 0px;"
-      >
-        System
-      </PageHeader>
-
-      <SettingItem title="Sounds">
-        <Switch
-          :modelValue="soundsEnabled"
-          @update:modelValue="soundsEnabled = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Open at startup">
-        <Switch
-          :modelValue="openAtStartup"
-          @update:modelValue="openAtStartup = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Show system notifications">
-        <Switch
-          :modelValue="showSystemNotifications"
-          @update:modelValue="handleUpdateShowSystemNotifications($event)"
-        />
-      </SettingItem>
-
-      <PageHeader
-        dot
-        style="margin: 20px 0px;"
-      >
-        Notifications
-      </PageHeader>
-
-      <SettingItem title="Show only participating">
-        <Switch
-          :modelValue="showOnlyParticipating"
-          @update:modelValue="showOnlyParticipating = $event"
-        />
-      </SettingItem>
-
-      <Separator style="margin: 2px auto" />
-
-      <SettingItem title="Show read notifications">
-        <Switch
-          :modelValue="showReadNotifications"
-          @update:modelValue="showReadNotifications = $event"
-        />
-      </SettingItem>
+      <AppButton @click="exit(0)">
+        Exit App
+      </AppButton>
     </div>
   </div>
 </template>
@@ -269,33 +148,35 @@ function handleScroll(e: Event) {
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    padding: 20px 45px;
     display: flex;
     flex-flow: column nowrap;
 
     &-header {
-      z-index: 10;
-      position: sticky;
-      position: -webkit-sticky;
-      top: 0;
-      padding: 20px 25px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      transition: box-shadow 0.2s ease-in-out;
-
-      &-with-border {
-        box-shadow: 0px 3px 8px -5px rgba(0, 0, 0, 0.3);
-      }
+      margin-bottom: 25px;
 
       &-back-button {
         margin-right: 10px;
-        border-radius: 8px;
       }
     }
 
     &-grid {
-      padding: 20px 30px;
       display: grid;
-      gap: 5px;
+      grid-template-columns: 115px 115px 115px;
+      grid-template-rows: 75px 75px;
+      grid-gap: 5px;
+    }
+
+    &-footer {
+      margin-top: auto;
+      display: flex;
+      width: 100%;
+      flex-direction: row nowrap;
+      justify-content: flex-end;
+
+      > .button + .button {
+        margin-left: 5px;
+      }
     }
   }
 </style>

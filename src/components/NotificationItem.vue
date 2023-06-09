@@ -5,18 +5,16 @@ import type { NotificationList } from '../types'
 import { formatReason, isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
 
-interface Props {
-  value: NotificationList[number]
-  checked?: boolean
-  checkable?: boolean
-  checkboxVisible?: boolean
-}
-
 interface Emits {
   (e: 'click:notification', notification: Thread): void
   (e: 'click:repo', repoFullName: string): void
   (e: 'update:checked', value: boolean): void
-  (e: 'contextmenu', value: Thread, event: MouseEvent): void
+}
+
+interface Props {
+  value: NotificationList[number]
+  checked?: boolean
+  checkable?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,10 +28,10 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
 }
 
 function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
-  if ((event instanceof KeyboardEvent && event.repeat))
+  if (!props.checkable || (event instanceof KeyboardEvent && event.repeat))
     return
 
-  if (props.checkable && ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event))) {
+  if ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event)) {
     emit('update:checked', !props.checked)
     return
   }
@@ -64,7 +62,6 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       @click="(event) => isRepository(value) && handleRepoClick(value, event)"
     >
       <img
-        draggable="false"
         class="notification-title-icon"
         :src="value.owner.avatar_url"
         alt="repo logo"
@@ -78,7 +75,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
         class="notification-checkbox-wrapper"
       >
         <span
-          :class="{ 'notification-checkbox-checked': checked, 'notification-checkbox-visible': checkboxVisible }"
+          :class="{ 'notification-checkbox-checked': checked }"
           role="checkbox"
           tabindex="0"
           aria-checked="true"
@@ -97,7 +94,6 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     v-else
     class="notification-item"
     :class="{ 'notification-item-read': !value.unread }"
-    @contextmenu="(event) => emit('contextmenu', value as Thread, event)"
     @click="(event) => isThread(value) && handleThreadClick(value, event)"
   >
     <Component
@@ -122,7 +118,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       class="notification-checkbox-wrapper"
     >
       <span
-        :class="{ 'notification-checkbox-checked': checked, 'notification-checkbox-visible': checkboxVisible }"
+        :class="{ 'notification-checkbox-checked': checked }"
         role="checkbox"
         tabindex="0"
         aria-checked="true"
@@ -144,6 +140,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
 
   &-title {
     @include focus-visible;
+    @include text-outline();
     border-radius: 8px;
     padding: 5px 10px 5px 16px;
     width: 100%;
@@ -153,11 +150,6 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     align-items: center;
     border: 1px solid transparent;
     line-height: inherit;
-
-    &:hover .notification-checkbox,
-    &[data-focus-visible-added] .notification-checkbox {
-      opacity: 1;
-    }
 
     &:hover,
     &:active {
@@ -176,7 +168,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       font-weight: bold;
       font-size: 14px;
       display: inline-block;
-      color: var(--text);
+      color: white;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -194,20 +186,16 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     padding: 8px 10px 8px 8px;
     align-items: center;
     border-radius: 8px;
-    color: var(--text);
+    color: var(--white);
     border: 1px solid var(--item-border-color);
     text-align: left;
     line-height: 20px;
     @include focus-visible;
+    @include text-outline($size: 1px);
     margin-top: 5px;
 
-    &:hover .notification-checkbox,
-    &[data-focus-visible-added] .notification-checkbox {
-      opacity: 1;
-    }
-
     &-read {
-      color: var(--gray-bright) !important;
+      color: var(--white-faded) !important;
     }
 
     &:hover {
@@ -249,33 +237,24 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     @include focus-visible;
     width: 16px;
     height: 16px;
-    border-radius: 6px;
-    border: 1px solid var(--text-faded);
+    border-radius: 50%;
+    border: 1px solid rgb(101, 101, 101);
     flex-shrink: 0;
     padding: 3px;
     display: inline-flex;
-    opacity: 0;
-
-    &[data-focus-visible-added] {
-      opacity: 1
-    }
-
-    &-visible {
-      opacity: 1;
-    }
 
     &-checked {
-      border-color: var(--accent-color);
+      border-color: var(--white);
 
       .notification-checkbox-dot {
-        background-color: var(--accent-color);
+        background-color: var(--white);
       }
     }
 
     &-dot {
       width: 100%;
       height: 100%;
-      border-radius: 3px;
+      border-radius: 50%;
     }
 
     &-wrapper {
@@ -286,10 +265,10 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
 
       &:hover {
         .notification-checkbox:not(.notification-checkbox-checked) {
-          border-color: var(--text-faded);
+          border-color: var(--white-faded);
 
           .notification-checkbox-dot {
-            background-color: var(--text-faded);
+            background-color: var(--white-faded);
           }
         }
       }
