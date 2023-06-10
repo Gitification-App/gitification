@@ -1,3 +1,10 @@
+### 1.1.1
+  - Now gitificaiton uses OverlayScrollbars library to make scrollbars look better betweeen operating systems.
+  - Added `indeterminate` feature for repositories.
+  - Added an option to mark notifications when open.
+  - Added Windows and Linux support, (Linux might not comppile right now :sadge:)
+  - `Retry` button of Oopsie error now shows skeletons on refresh.
+
 ### 1.1.0
   - Now wowerlay has in-app updater, you don't have to download updates manually anymore.
   - Fixed a bug preventing opening read notifications on browser.
