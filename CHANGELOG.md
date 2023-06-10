@@ -1,3 +1,6 @@
+### 1.1.2
+  - Fixed bug when login.
+
 ### 1.1.1
   - Now gitificaiton uses OverlayScrollbars library to make scrollbars look better betweeen operating systems.
   - Added `indeterminate` feature for repositories.
