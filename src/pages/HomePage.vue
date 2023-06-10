@@ -26,9 +26,26 @@ const store = useStore()
 if (store.currentPageState.fetchOnEnter)
   store.fetchNotifications(true)
 
-function handleNotificationClick(notification: Thread) {
-  const url = toGithubWebURL({ notification, userId: AppStorage.get('user')!.id })
+function handleOpenNotification(thread: Thread) {
+  const url = toGithubWebURL({ notification: thread, userId: AppStorage.get('user')!.id })
   open(url)
+}
+
+function handleClickNotification(thread: Thread) {
+  handleOpenNotification(thread)
+
+  if (AppStorage.get('markAsReadOnOpen')) {
+    const snapshot = store.notifications.slice(0)
+
+    try {
+      notificationApiMutex.runExclusive(() => markNotificationAsRead(thread.id, AppStorage.get('accessToken')!))
+      store.removeNotificationById(thread.id)
+    }
+    catch (error) {
+      console.log(error)
+      store.notifications = snapshot
+    }
+  }
 }
 
 function handleRepoClick(repoFullName: string) {
@@ -158,29 +175,23 @@ async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
   }
 }
 
-function handleSelectOpen(triggeredByKeyboard = false) {
-  if (triggeredByKeyboard) {
-    if (store.checkedItems.length > 0) {
-      store.checkedItems.forEach(handleNotificationClick)
-      store.checkedItems = []
-      return
-    }
+async function handleSelectOpen(triggeredByKeyboard = false) {
+  if (
+    (triggeredByKeyboard && store.checkedItems.length > 0)
+    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
+    store.checkedItems.forEach(handleOpenNotification)
 
-    if (contextMenuThread.value) {
-      handleNotificationClick(contextMenuThread.value)
-      return
-    }
+    if (AppStorage.get('markAsReadOnOpen'))
+      store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
+
+    store.checkedItems = []
+    return
   }
 
   if (!contextMenuThread.value)
     return
 
-  if (isChecked(contextMenuThread.value))
-    store.checkedItems.forEach(handleNotificationClick)
-  else
-    handleNotificationClick(contextMenuThread.value)
-
-  store.checkedItems = []
+  handleClickNotification(contextMenuThread.value)
 }
 
 async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
@@ -358,7 +369,7 @@ whenever(() => store.skeletonVisible, () => {
         :indeterminate="isIndeterminate(item)"
         :checkboxVisible="store.checkedItems.length > 0"
         @contextmenu="handleThreadContextmenu"
-        @click:notification="handleNotificationClick"
+        @click:notification="handleClickNotification"
         @click:repo="handleRepoClick"
         @update:checked="(value) => handleUpdateChecked(item, value)"
       />
