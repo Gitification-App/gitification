@@ -19,6 +19,7 @@ import Popover from '../components/Popover.vue'
 import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import { type UseKeyOptions, useKey } from '../composables/useKey'
 import { notificationApiMutex } from '../constants'
+import { everySome } from '../utils/array'
 
 const store = useStore()
 
@@ -99,6 +100,22 @@ function isCheckable(item: MinimalRepository | Thread) {
     .filter(thread => thread.repository.id === item.id)
     .some(thread => thread.unread)
 }
+
+function isIndeterminate(item: MinimalRepository | Thread): boolean {
+  if (isThread(item))
+    return false
+
+  const repoThreads = store.notifications
+    .filter(isThread)
+    .filter(thread => thread.unread && thread.repository.id === item.id)
+
+  const { every, some } = everySome(repoThreads, thread => (
+    store.checkedItems.some(checkedItem => checkedItem.id === thread.id)
+  ))
+
+  return some && !every
+}
+
 onScopeDispose(() => {
   store.checkedItems = []
 })
@@ -338,6 +355,7 @@ whenever(() => store.skeletonVisible, () => {
         :value="item"
         :checked="isChecked(item)"
         :checkable="isCheckable(item)"
+        :indeterminate="isIndeterminate(item)"
         :checkboxVisible="store.checkedItems.length > 0"
         @contextmenu="handleThreadContextmenu"
         @click:notification="handleNotificationClick"
