@@ -336,7 +336,7 @@ whenever(() => store.skeletonVisible, () => {
         description="Oopsie! Couldn't load notifications."
       >
         <template #footer>
-          <AppButton @click="store.fetchNotifications()">
+          <AppButton @click="store.fetchNotifications(true)">
             Refresh
           </AppButton>
         </template>
