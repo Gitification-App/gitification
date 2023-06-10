@@ -10,6 +10,7 @@ interface Props {
   checked?: boolean
   checkable?: boolean
   checkboxVisible?: boolean
+  indeterminate?: boolean
 }
 
 interface Emits {
@@ -42,10 +43,15 @@ function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
 }
 
 function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEvent) {
-  if (!props.checkable || (event instanceof KeyboardEvent && event.repeat))
+  if ((event instanceof KeyboardEvent && event.repeat))
     return
 
-  if ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event)) {
+  if (props.checkable && ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event))) {
+    if (props.indeterminate) {
+      emit('update:checked', true)
+      return
+    }
+
     emit('update:checked', !props.checked)
     return
   }
@@ -74,11 +80,15 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       </span>
 
       <div
-        v-if="checkable"
+        v-if="checkable || indeterminate"
         class="notification-checkbox-wrapper"
       >
         <span
-          :class="{ 'notification-checkbox-checked': checked, 'notification-checkbox-visible': checkboxVisible }"
+          :class="{
+            'notification-checkbox-checked': checked,
+            'notification-checkbox-visible': checkboxVisible,
+            'notification-checkbox-indeterminate': indeterminate,
+          }"
           role="checkbox"
           tabindex="0"
           aria-checked="true"
@@ -254,6 +264,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     flex-shrink: 0;
     padding: 3px;
     display: inline-flex;
+    align-items: center;
     opacity: 0;
 
     &[data-focus-visible-added] {
@@ -264,7 +275,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       opacity: 1;
     }
 
-    &-checked {
+    &-checked, &-indeterminate {
       border-color: var(--accent-color);
 
       .notification-checkbox-dot {
@@ -272,10 +283,21 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       }
     }
 
+    &-indeterminate {
+      .notification-checkbox-dot {
+        height: 2px;
+      }
+    }
+
     &-dot {
       width: 100%;
       height: 100%;
       border-radius: 3px;
+
+      &-indeterminate {
+        background-color: var(--accent-color);
+        opacity: 1;
+      }
     }
 
     &-wrapper {
