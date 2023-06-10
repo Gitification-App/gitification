@@ -16,6 +16,7 @@ export interface AppStorageContext {
   soundsEnabled: boolean
   showReadNotifications: boolean
   showSystemNotifications: boolean
+  markAsReadOnOpen: boolean
   colorPreference: ColorPreference
 }
 

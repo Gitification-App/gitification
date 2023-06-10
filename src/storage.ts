@@ -14,6 +14,7 @@ const storage = shallowReactive<AppStorageContext>({
   soundsEnabled: true,
   showReadNotifications: false,
   showSystemNotifications: false,
+  markAsReadOnOpen: false,
   colorPreference: ColorPreference.System,
 })
 
