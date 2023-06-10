@@ -15,6 +15,8 @@
     "@tauri-apps/api": "^1.2.0",
     "@vueuse/core": "^9.12.0",
     "dayjs": "^1.11.7",
+    "overlayscrollbars": "^2.2.0",
+    "overlayscrollbars-vue": "^0.5.1",
     "p-all": "^4.0.0",
     "pinia": "^2.0.29",
     "redaxios": "^0.5.1",

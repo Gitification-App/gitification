@@ -1,6 +1,7 @@
 import './assets/main.scss'
 import 'wowerlay/style.css'
 import 'focus-visible'
+import 'overlayscrollbars/overlayscrollbars.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

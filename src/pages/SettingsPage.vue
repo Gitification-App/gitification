@@ -268,7 +268,6 @@ function handleScroll(e: Event) {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
     display: flex;
     flex-flow: column nowrap;
 

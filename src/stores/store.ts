@@ -5,8 +5,9 @@ import { readonly, ref, shallowRef, triggerRef, watchEffect } from 'vue'
 import pAll from 'p-all'
 import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
+import { computedEager } from '@vueuse/core'
 import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { InvokeCommand, Page, notificationApiMutex } from '../constants'
+import { ColorPreference, InvokeCommand, Page, notificationApiMutex, prefersDark } from '../constants'
 import { AppStorage } from '../storage'
 import type { AppStorageContext, NotificationList, Option, PageState } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
@@ -200,6 +201,21 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  const theme = computedEager(() => {
+    const preference = AppStorage.get('colorPreference')
+
+    let theme: ColorPreference.Dark | ColorPreference.Light
+
+    if (preference === ColorPreference.Dark)
+      theme = ColorPreference.Dark
+    else if (preference === ColorPreference.Light)
+      theme = ColorPreference.Light
+    else
+      theme = prefersDark.value ? ColorPreference.Dark : ColorPreference.Light
+
+    return theme
+  })
+
   return {
     newRelease,
     notifications,
@@ -211,6 +227,7 @@ export const useStore = defineStore('store', () => {
     currentPageState,
     checkedItems,
     installingUpate,
+    theme,
     updateAndRestart,
     unsubscribeCheckedNotifications,
     removeNotificationById,

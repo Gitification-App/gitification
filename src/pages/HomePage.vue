@@ -353,7 +353,6 @@ whenever(() => store.skeletonVisible, () => {
     padding: 10px;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
     scroll-padding-top: 10px;
     scroll-padding-bottom: 10px;
     position: relative;
