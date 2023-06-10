@@ -101,15 +101,15 @@ function isCheckable(item: MinimalRepository | Thread) {
     .some(thread => thread.unread)
 }
 
-function isIndeterminate(item: MinimalRepository | Thread) {
+function isIndeterminate(item: MinimalRepository | Thread): boolean {
   if (isThread(item))
-    return
+    return false
 
-  const repoItems = store.notifications
+  const repoThreads = store.notifications
     .filter(isThread)
     .filter(thread => thread.unread && thread.repository.id === item.id)
 
-  const { every, some } = everySome(repoItems, thread => (
+  const { every, some } = everySome(repoThreads, thread => (
     store.checkedItems.some(checkedItem => checkedItem.id === thread.id)
   ))
 
