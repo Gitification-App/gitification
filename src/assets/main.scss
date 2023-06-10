@@ -1,3 +1,43 @@
+$colors: (
+  // Colors are: [mac, non-mac] because in macOS we use glass effect for the background.
+  dark: (
+    text-faded: rgb(190, 190, 190) rgb(190, 190, 190),
+    text: rgb(255, 255, 255) rgb(255, 255, 255),
+    gray-bright: rgb(150, 150, 150) rgb(150, 150, 150),
+    switch-dot: rgb(200, 200, 200) rgb(200, 200, 200),
+    gray: rgb(95, 95, 95) rgb(95, 95, 95),
+    switch-bg: var(--gray) var(--gray),
+    content-bg: rgba(30, 30, 30, 8) rgb(30, 30, 30),
+    page-header-bg: rgba(43, 43, 43, .6) rgb(43, 43, 43),
+    popover-bg: rgba(20, 20, 20, .6) rgb(26, 26, 26),
+    bottom-bar-bg: rgba(21, 21, 21, 0.2) rgb(21, 21, 21),
+    sidebar-bg: rgba(50, 50, 50, .75) rgb(50, 50, 50),
+    app-border: rgb(90, 90, 90) rgb(90, 90, 90),
+    item-bg: rgba(80, 80, 80, .3) rgb(56, 56, 56),
+    item-hover-bg: rgba(80, 80, 80, .75) rgb(70, 70, 70),
+    item-border-color: rgb(22, 22, 22, .3) rgb(22, 22, 22),
+    header-border: rgb(50, 50, 50) rgb(50, 50, 50),
+    popover-border: rgb(43, 43, 43) rgb(43, 43, 43)
+  ),
+  light: (
+    text-faded: rgb(20, 20, 20) rgb(30, 30, 30),
+    text: rgb(0, 0, 0) rgb(0, 0, 0),
+    gray-bright: rgb(105, 105, 105) rgb(115, 115, 115),
+    gray: rgb(160, 160, 160) rgb(160, 160, 160),
+    switch-bg: rgb(145, 145, 145) rgb(168, 168, 168),
+    switch-dot: rgb(160, 160, 160) rgb(255, 255, 255),
+    content-bg: rgba(220, 220, 220, .75) rgb(220, 220, 220),
+    page-header-bg: rgba(212, 212, 212, .6) rgb(212, 212, 212),
+    popover-bg: rgba(210, 210, 210, .8) rgb(240, 240, 240),
+    sidebar-bg: rgba(240, 240, 240, .6) rgb(240, 240, 240),
+    app-border: rgb(185, 185, 185) rgb(185, 185, 185),
+    item-bg: rgba(255, 255, 255, .3) rgb(255, 255, 255),
+    item-hover-bg: rgba(150, 150, 150, .7) rgb(235, 235, 235),
+    item-border-color: rgb(180, 180, 180, .7) rgb(201, 201, 201),
+    popover-border: rgb(167, 167, 167) rgb(210, 210, 210),
+  )
+);
+
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-synthesis: none;
@@ -6,89 +46,36 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   line-height: 20px;
+  
+  --accent-color: rgb(23, 115, 243);
 
   // Colors look really bad on Windows and Linux because there is no glass effect.
   // Some colors are different because of that.
   &:not([data-os-darwin]) {
-    --text-faded: rgb(190, 190, 190);
-    --text: rgb(255, 255, 255);
-    --gray-bright: rgb(150, 150, 150);
-    --switch-dot: rgb(200, 200, 200);
-    --gray: rgb(95, 95, 95);
-    --switch-bg: var(--gray);
-    --content-bg: rgb(30, 30, 30);
-    --page-header-bg: rgb(43, 43, 43);
-    --popover-bg: rgb(26, 26, 26);
-    --popover-bg-solid: rgb(40, 40, 40);
-    --bottom-bar-bg: rgb(21, 21, 21);
-    --sidebar-bg: rgb(50, 50, 50);
-    --app-border: rgb(90, 90, 90);
-    --item-bg: rgb(56, 56, 56);
-    --item-hover-bg: rgb(70, 70, 70);
-    --item-border-color: rgb(22, 22, 22);
-    --accent-color: rgb(23, 115, 243);
-    --header-border: rgb(50, 50, 50);
-    --popover-border: rgb(43, 43, 43);
+    @each $color-name, $color-list in map-get($colors, dark) {
+      $color: nth($color-list, 2);
+      --#{"" + $color-name}: #{"" + $color};
+    }
 
-  
     &.light-theme {
-      --text-faded: rgb(30, 30, 30);
-      --text: rgb(0, 0, 0);
-      --gray-bright: rgb(115, 115, 115);
-      --gray: rgb(160, 160, 160);
-      --switch-bg: rgb(168, 168, 168);
-      --switch-dot: rgb(255, 255, 255);
-      --content-bg: rgb(220, 220, 220);
-      --page-header-bg: rgb(212, 212, 212);
-      --popover-bg: rgb(240, 240, 240);
-      --popover-bg-solid: var(--popover-bg);
-      --sidebar-bg: rgb(240, 240, 240);
-      --app-border: rgb(185, 185, 185);
-      --item-bg: rgb(255, 255, 255);
-      --item-hover-bg: rgb(235, 235, 235);
-      --item-border-color: rgb(201, 201, 201);
-      --popover-border: rgb(210, 210, 210);
+      @each $color-name, $color-list in map-get($colors, light) {
+        $color: nth($color-list, 2);
+        --#{"" + $color-name}: #{"" + $color};
+      }
     }
   }
 
   &[data-os-darwin] {
-    --text-faded: rgb(190, 190, 190);
-    --text: rgb(255, 255, 255);
-    --gray-bright: rgb(150, 150, 150);
-    --switch-dot: rgb(200, 200, 200);
-    --gray: rgb(95, 95, 95);
-    --switch-bg: var(--gray);
-    --content-bg: rgba(30, 30, 30, .8);
-    --page-header-bg: rgba(43, 43, 43, .6);
-    --popover-bg: rgba(20, 20, 20, .6);
-    --popover-bg-solid: rgba(40, 40, 40);
-    --bottom-bar-bg: rgba(21, 21, 21, 0.2);
-    --sidebar-bg: rgba(50, 50, 50, .75);
-    --app-border: rgb(90, 90, 90);
-    --item-bg: rgba(80, 80, 80, .3);
-    --item-hover-bg: rgba(80, 80, 80, .75);
-    --item-border-color: rgb(22, 22, 22, .3);
-    --accent-color: rgb(23, 115, 243);
-    --header-border: rgb(50, 50, 50);
-  
+    @each $color-name, $color-list in map-get($colors, dark) {
+      $color: nth($color-list, 1);
+      --#{"" + $color-name}: #{"" + $color};
+    }
+
     &.light-theme {
-      --text-faded: rgb(20, 20, 20);
-      --text: rgb(0, 0, 0);
-      --gray-bright: rgb(105, 105, 105);
-      --gray: rgb(160, 160, 160);
-      --switch-bg: rgb(145, 145, 145);
-      --switch-dot: rgb(60, 60, 60);
-      --content-bg: rgba(220, 220, 220, .75);
-      --page-header-bg: rgba(212, 212, 212, .6);
-      --popover-bg: rgba(210, 210, 210, .8);
-      --popover-bg-solid: rgba(215, 215, 215);
-      --bottom-bar-bg: rgba(234, 234, 234, 0.2);
-      --sidebar-bg: rgba(240, 240, 240, .6);
-      --app-border: rgb(185, 185, 185);
-      --item-bg: rgba(255, 255, 255, .3);
-      --item-hover-bg: rgba(150, 150, 150, .7);
-      --item-border-color: rgb(180, 180, 180, .7);
-      --popover-border: rgb(167, 167, 167);
+      @each $color-name, $color-list in map-get($colors, light) {
+        $color: nth($color-list, 1);
+        --#{"" + $color-name}: #{"" + $color};
+      }
     }
   }
 }
