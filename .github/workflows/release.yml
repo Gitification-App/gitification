@@ -40,6 +40,18 @@ jobs:
           script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal-apple-darwin' : ''"
           result-encoding: string
 
+      - uses: actions/github-script@v6
+        id: create-env
+        with:
+          script: |
+            const content = `
+            VITE_CLIENT_SECRET=${{ secrets.CLIENT_SECRET  }}
+            VITE_CLIENT_ID=${{ secrets.CLIENT_ID }}
+            `
+            const root = process.cwd();
+            const fs = require('fs')
+            fs.writeFileSync('.env', content, 'utf-8')
+
       - name: install aarch64-apple-darwin
         run: 'rustup target add aarch64-apple-darwin'
       
