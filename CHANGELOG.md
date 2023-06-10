@@ -1,3 +1,6 @@
+### 1.1.3
+  - Fixed content background for mac.
+
 ### 1.1.2
   - Fixed bug when login.
 
