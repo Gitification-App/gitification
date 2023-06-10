@@ -136,13 +136,8 @@ export const useStore = defineStore('store', () => {
     try {
       await notificationApiMutex.runExclusive(() => pAll(
         checkedThreads.map(thread => async () => {
-          try {
-            await markNotificationAsRead(thread.id, accessToken)
-            deletedThreads.push(thread.id)
-          }
-          catch (error) {
-            console.error(error)
-          }
+          await markNotificationAsRead(thread.id, accessToken)
+          deletedThreads.push(thread.id)
         }),
         {
           stopOnError: false,
@@ -170,13 +165,8 @@ export const useStore = defineStore('store', () => {
     try {
       await notificationApiMutex.runExclusive(() => pAll(
         checkedThreads.map(thread => async () => {
-          try {
-            await unsubscribeNotification(thread.id, accessToken)
-            deletedThreads.push(thread.id)
-          }
-          catch (error) {
-            console.error(error)
-          }
+          await unsubscribeNotification(thread.id, accessToken)
+          deletedThreads.push(thread.id)
         }),
         {
           stopOnError: false,
