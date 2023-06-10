@@ -48,6 +48,7 @@ $colors: (
   line-height: 20px;
   
   --accent-color: rgb(23, 115, 243);
+  --os-handle-bg: var(--accent-color) !important;
 
   // Colors look really bad on Windows and Linux because there is no glass effect.
   // Some colors are different because of that.

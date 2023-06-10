@@ -14,6 +14,12 @@ dependencies:
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
+  overlayscrollbars:
+    specifier: ^2.2.0
+    version: 2.2.0
+  overlayscrollbars-vue:
+    specifier: ^0.5.1
+    version: 0.5.1(overlayscrollbars@2.2.0)(vue@3.3.4)
   p-all:
     specifier: ^4.0.0
     version: 4.0.0
@@ -3833,6 +3839,20 @@ packages:
       type-check: 0.4.0
       word-wrap: 1.2.3
     dev: true
+
+  /overlayscrollbars-vue@0.5.1(overlayscrollbars@2.2.0)(vue@3.3.4):
+    resolution: {integrity: sha512-hYoS7qm1xq4Kv7GpCTpo1YSUmgSXF2z9OcWbwGloGO8ZXefhADwDlYy6e35r2g5Gh04slZPsyQIqEXA/CptFMA==}
+    peerDependencies:
+      overlayscrollbars: ^2.0.0
+      vue: ^3.2.25
+    dependencies:
+      overlayscrollbars: 2.2.0
+      vue: 3.3.4
+    dev: false
+
+  /overlayscrollbars@2.2.0:
+    resolution: {integrity: sha512-Sx7gI2TEx+TFvFXJq4BUYM5R4bfWQR2ertdxyzAQ589ouPKKifMBU0/opdCb1bUC7x6sMiSNI1u9ngC0RbMnBg==}
+    dev: false
 
   /p-all@4.0.0:
     resolution: {integrity: sha512-QXqMc8PpYu0gmNM6VcKP0uYqeI+dtvSNeaDb8ktnNjposr+nftHHCSYbj/S/oUceF6R868jw1XOxkJKUSiHgEQ==}
