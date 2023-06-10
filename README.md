@@ -26,8 +26,6 @@ An app to view your notifications easily on your menubar.
 # Known Problems
 -  Gitification is not certificated by an apple developer account, after you download it you have to allow it in `Preference/Privacy & Securiy`. I don't earn money from open source, but if I earn `50$` per year from github sponsorships, I will sign the app.
 
-- The app is currently ready to be compiled for Windows or Linux but I'm a Mac user so that after I added the features in my mind, I will create Windows and Linux builds.
-
 # Building The App
 If you want to build Gitification by yourself:
 
