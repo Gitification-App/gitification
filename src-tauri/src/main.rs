@@ -16,16 +16,15 @@ use commands::{
 use server::AuthServer;
 
 use tauri::{
-    ActivationPolicy, App, AppHandle, GlobalWindowEvent, Manager, PhysicalPosition, SystemTray,
-    SystemTrayEvent, WindowEvent,
+    App, AppHandle, GlobalWindowEvent, Manager, PhysicalPosition, SystemTray, SystemTrayEvent,
+    WindowEvent,
 };
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     let window = app.get_window("main").unwrap();
 
     if let SystemTrayEvent::LeftClick { position, .. } = event {
-        let win_width = window.outer_size().expect("size").width;
+        let win_outer_size = window.outer_size().unwrap();
 
         if window.is_visible().unwrap() {
             window.hide().unwrap();
@@ -35,17 +34,31 @@ fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
             window.set_focus().unwrap();
         }
 
+        window
+            .set_position(PhysicalPosition {
+                x: position.x,
+                y: position.y,
+            })
+            .unwrap();
+
         let current_monitor = window.current_monitor().unwrap().unwrap();
         let screen_size = current_monitor.size();
         let screen_position = current_monitor.position();
 
+        let y = if position.y > screen_size.height as f64 / 2.0 {
+            position.y - win_outer_size.height as f64
+        } else {
+            position.y as f64
+        };
+
         window
             .set_position(PhysicalPosition {
                 x: f64::min(
-                    position.x - win_width as f64 / 2.0,
-                    (screen_position.x as f64 + screen_size.width as f64) - win_width as f64,
+                    position.x - win_outer_size.width as f64 / 2.0,
+                    (screen_position.x as f64 + screen_size.width as f64)
+                        - win_outer_size.width as f64,
                 ),
-                y: position.y,
+                y,
             })
             .unwrap()
     }
@@ -55,15 +68,22 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let win = app.get_window("main").expect("window not found");
 
     let _ = win.set_always_on_top(true);
-    app.set_activation_policy(ActivationPolicy::Accessory);
 
-    apply_vibrancy(
-        &win,
-        NSVisualEffectMaterial::HudWindow,
-        Some(NSVisualEffectState::Active),
-        Some(8.0),
-    )
-    .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+    #[cfg(target_os = "macos")]
+    {
+        use tauri::ActivationPolicy;
+        app.set_activation_policy(ActivationPolicy::Accessory);
+
+        use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
+
+        apply_vibrancy(
+            &win,
+            NSVisualEffectMaterial::HudWindow,
+            Some(NSVisualEffectState::Active),
+            Some(8.0),
+        )
+        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+    }
 
     Ok(())
 }

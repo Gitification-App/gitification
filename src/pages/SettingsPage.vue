@@ -282,6 +282,10 @@ function handleScroll(e: Event) {
       -webkit-backdrop-filter: blur(20px);
       transition: box-shadow 0.2s ease-in-out;
 
+      @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+        background-color: var(--content-bg);
+      }
+
       &-with-border {
         box-shadow: 0px 3px 8px -5px rgba(0, 0, 0, 0.3);
       }
