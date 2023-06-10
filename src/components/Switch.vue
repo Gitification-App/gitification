@@ -46,7 +46,6 @@ function handleClick() {
     background-color: var(--accent-color);
 
     .switch-dot {
-      background-color: #fff;
       transform: translateX(11px);
     }
   }

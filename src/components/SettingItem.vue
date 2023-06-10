@@ -1,6 +1,11 @@
 <script lang="ts" setup>
+import { Icons } from './Icons'
+import SlotRef from './SlotRef.vue'
+import Tooltip from './Tooltip.vue'
+
 interface Props {
   title: string
+  description?: string
 }
 
 defineProps<Props>()
@@ -10,6 +15,23 @@ defineProps<Props>()
   <div class="setting-item">
     <div class="setting-item-title">
       {{ title }}
+
+      <SlotRef v-if="typeof description === 'string' && description.trim().length > 0">
+        <template #default>
+          <div class="setting-item-title-description">
+            <Icons.Question />
+          </div>
+        </template>
+
+        <template #ref="{ el }">
+          <Tooltip
+            style="width: 275px; text-align: left"
+            :text="description"
+            :target="el"
+            position="top"
+          />
+        </template>
+      </SlotRef>
     </div>
     <div class="setting-item-right">
       <slot />
@@ -37,6 +59,15 @@ defineProps<Props>()
       color: var(--text);
       font-size: 14px;
       padding-left: 15px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+
+      &-description {
+        display: inline-flex;
+        margin-left: 5px;
+        color: var(--accent-color);
+      }
     }
 
     &-right {

@@ -33,6 +33,7 @@ const soundsEnabled = AppStorage.asRef('soundsEnabled')
 const openAtStartup = AppStorage.asRef('openAtStartup')
 const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
 const showReadNotifications = AppStorage.asRef('showReadNotifications')
+const markAsReadOnOpen = AppStorage.asRef('markAsReadOnOpen')
 
 const accessToken = AppStorage.asComputed('accessToken')
 
@@ -211,19 +212,13 @@ function handleScroll(e: Event) {
       </PageHeader>
 
       <SettingItem title="Sounds">
-        <Switch
-          :modelValue="soundsEnabled"
-          @update:modelValue="soundsEnabled = $event"
-        />
+        <Switch v-model="soundsEnabled" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
       <SettingItem title="Open at startup">
-        <Switch
-          :modelValue="openAtStartup"
-          @update:modelValue="openAtStartup = $event"
-        />
+        <Switch v-model="openAtStartup" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
@@ -243,19 +238,22 @@ function handleScroll(e: Event) {
       </PageHeader>
 
       <SettingItem title="Show only participating">
-        <Switch
-          :modelValue="showOnlyParticipating"
-          @update:modelValue="showOnlyParticipating = $event"
-        />
+        <Switch v-model="showOnlyParticipating" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
       <SettingItem title="Show read notifications">
-        <Switch
-          :modelValue="showReadNotifications"
-          @update:modelValue="showReadNotifications = $event"
-        />
+        <Switch v-model="showReadNotifications" />
+      </SettingItem>
+
+      <Separator style="margin: 2px auto" />
+
+      <SettingItem
+        title="Mark as read on open"
+        description="When you open some notifications, Github marks them as read automatically, but for some it doesn't."
+      >
+        <Switch v-model="markAsReadOnOpen" />
       </SettingItem>
     </div>
   </div>
