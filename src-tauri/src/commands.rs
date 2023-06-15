@@ -71,6 +71,10 @@ pub fn stop_server(state: State<'_, Mutex<AuthServer>>) {
     server.stop();
 }
 
+#[cfg(target_os = "linux")]
+#[tauri::command]
+pub fn go_to_notification_settings() {}
+
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn go_to_notification_settings() {
