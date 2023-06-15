@@ -26,7 +26,7 @@ jobs:
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf
       - name: install pnpm
         run: npm install -g pnpm@8.6.0
       - name: install frontend dependencies
@@ -53,6 +53,7 @@ jobs:
             fs.writeFileSync('.env', content, 'utf-8')
 
       - name: install aarch64-apple-darwin
+        if: matrix.platform == 'macos-latest'
         run: 'rustup target add aarch64-apple-darwin'
       
       - uses: tauri-apps/tauri-action@v0
