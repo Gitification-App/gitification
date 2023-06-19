@@ -12,7 +12,7 @@
   - `Retry` button of Oopsie error now shows skeletons on refresh.
 
 ### 1.1.0
-  - Now wowerlay has in-app updater, you don't have to download updates manually anymore.
+  - Now Gitification has in-app updater, you don't have to download updates manually anymore.
   - Fixed a bug preventing opening read notifications on browser.
   - Added light and dark theme support, by default Gitification will choose system color.
   - Updated settings page to be more ergonomic.
