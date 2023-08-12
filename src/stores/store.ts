@@ -7,9 +7,9 @@ import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
 import { computedEager } from '@vueuse/core'
 import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { CheckedNotificationProcess, ColorPreference, InvokeCommand, Page, notificationApiMutex, prefersDark } from '../constants'
+import { ColorPreference, InvokeCommand, Page, notificationApiMutex, prefersDark } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationList, Option, PageState } from '../types'
+import type { AppStorageContext, NotificationList, Option, PageState } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
 
 export const useStore = defineStore('store', () => {
@@ -124,40 +124,62 @@ export const useStore = defineStore('store', () => {
     return notifications.value.findIndex(({ id }) => id === thread.id)
   }
 
-  function processCheckedNotifications(process: CheckedNotificationProcess) {
-    return notificationApiMutex.runExclusive(async () => {
-      const deletedThreads: Thread['id'][] = []
-      const checkedThreads = checkedItems.value
-      const snapshot = notifications.value.slice(0)
-      const accessToken = AppStorage.get('accessToken')!
+  async function markCheckedNotificationsAsRead(accessToken: NonNullable<AppStorageContext['accessToken']>) {
+    const deletedThreads: Thread['id'][] = []
+    const checkedThreads = checkedItems.value
+    const snapshot = notifications.value.slice(0)
 
-      checkedThreads.forEach(item => removeNotificationById(item.id))
+    checkedThreads.forEach(item => removeNotificationById(item.id))
+    triggerRef(notifications)
+
+    checkedItems.value = []
+
+    try {
+      await notificationApiMutex.runExclusive(() => pAll(
+        checkedThreads.map(thread => async () => {
+          await markNotificationAsRead(thread.id, accessToken)
+          deletedThreads.push(thread.id)
+        }),
+        {
+          stopOnError: false,
+          concurrency: 7,
+        },
+      ))
+    }
+    catch (error) {
+      notifications.value = snapshot
+      deletedThreads.forEach(id => removeNotificationById(id))
       triggerRef(notifications)
+    }
+  }
 
-      checkedItems.value = []
+  async function unsubscribeCheckedNotifications(accessToken: NonNullable<AppStorageContext['accessToken']>) {
+    const deletedThreads: Thread['id'][] = []
+    const checkedThreads = checkedItems.value
+    const snapshot = notifications.value.slice(0)
 
-      try {
-        await pAll(
-          checkedThreads.map(thread => async () => {
-            if (process === CheckedNotificationProcess.MarkAsRead)
-              await markNotificationAsRead(thread.id, accessToken)
-            else if (process === CheckedNotificationProcess.Unsubscribe)
-              await unsubscribeNotification(thread.id, accessToken)
+    checkedItems.value = []
 
-            deletedThreads.push(thread.id)
-          }),
-          {
-            stopOnError: false,
-            concurrency: 7,
-          },
-        )
-      }
-      catch (error) {
-        notifications.value = snapshot
-        deletedThreads.forEach(id => removeNotificationById(id))
-        triggerRef(notifications)
-      }
-    })
+    checkedThreads.forEach(item => removeNotificationById(item.id))
+    triggerRef(notifications)
+
+    try {
+      await notificationApiMutex.runExclusive(() => pAll(
+        checkedThreads.map(thread => async () => {
+          await unsubscribeNotification(thread.id, accessToken)
+          deletedThreads.push(thread.id)
+        }),
+        {
+          stopOnError: false,
+          concurrency: 7,
+        },
+      ))
+    }
+    catch (error) {
+      notifications.value = snapshot
+      deletedThreads.forEach(id => removeNotificationById(id))
+      triggerRef(notifications)
+    }
   }
 
   const newRelease = ref<Option<UpdateManifest>>(null)
@@ -207,11 +229,12 @@ export const useStore = defineStore('store', () => {
     installingUpate,
     theme,
     updateAndRestart,
+    unsubscribeCheckedNotifications,
     removeNotificationById,
     findThreadIndex,
+    markCheckedNotificationsAsRead,
     setPage,
     fetchNotifications,
-    processCheckedNotifications,
     logout,
   }
 })

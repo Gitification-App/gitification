@@ -18,7 +18,7 @@ import { isRepository, isThread } from '../utils/notification'
 import Popover from '../components/Popover.vue'
 import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import { type UseKeyOptions, useKey } from '../composables/useKey'
-import { CheckedNotificationProcess, notificationApiMutex } from '../constants'
+import { notificationApiMutex } from '../constants'
 import { everySome } from '../utils/array'
 
 const store = useStore()
@@ -150,7 +150,7 @@ async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
   if (
     (triggeredByKeyboard && store.checkedItems.length > 0)
     || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    store.processCheckedNotifications(CheckedNotificationProcess.MarkAsRead)
+    store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
     return
   }
 
@@ -182,9 +182,9 @@ async function handleSelectOpen(triggeredByKeyboard = false) {
     store.checkedItems.forEach(handleOpenNotification)
 
     if (AppStorage.get('markAsReadOnOpen'))
-      store.processCheckedNotifications(CheckedNotificationProcess.MarkAsRead)
-    else
-      store.checkedItems = []
+      store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
+
+    store.checkedItems = []
     return
   }
 
@@ -198,7 +198,12 @@ async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
   if (
     (triggeredByKeyboard && store.checkedItems.length > 0)
     || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    store.processCheckedNotifications(CheckedNotificationProcess.Unsubscribe)
+    try {
+      await store.unsubscribeCheckedNotifications(AppStorage.get('accessToken')!)
+    }
+    catch (error) {
+      console.log(error)
+    }
     return
   }
 
