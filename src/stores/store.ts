@@ -1,16 +1,17 @@
 import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { readonly, ref, shallowRef, triggerRef, watchEffect } from 'vue'
+import { ref, shallowRef, triggerRef, watchEffect } from 'vue'
 import pAll from 'p-all'
 import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
 import { computedEager } from '@vueuse/core'
 import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { CheckedNotificationProcess, ColorPreference, InvokeCommand, Page, notificationApiMutex, prefersDark } from '../constants'
+import { CheckedNotificationProcess, ColorPreference, InvokeCommand, notificationApiMutex, prefersDark } from '../constants'
 import { AppStorage } from '../storage'
-import type { NotificationList, Option, PageState } from '../types'
+import type { NotificationList, Option } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
+import { Page, useRoute } from '../composables/useRoute'
 
 export const useStore = defineStore('store', () => {
   const notifications = shallowRef<NotificationList>([])
@@ -95,24 +96,13 @@ export const useStore = defineStore('store', () => {
     }
   }
 
-  const currentPage = ref(Page.Landing)
-  const pageFrom = ref<Option<Page>>(null)
-  const currentPageState = shallowRef<PageState>({})
+  const route = useRoute()
 
   function logout() {
     AppStorage.set('accessToken', null)
     AppStorage.set('user', null)
     notifications.value = []
-    currentPage.value = Page.Landing
-  }
-
-  function setPage(to: Page, state: PageState = {}) {
-    if (to === currentPage.value)
-      return
-
-    pageFrom.value = currentPage.value
-    currentPage.value = to
-    currentPageState.value = state
+    route.go(Page.Landing)
   }
 
   watchEffect(() => {
@@ -197,19 +187,15 @@ export const useStore = defineStore('store', () => {
   return {
     newRelease,
     notifications,
-    currentPage: readonly(currentPage),
     loadingNotifications,
     skeletonVisible,
-    pageFrom,
     failedLoadingNotifications,
-    currentPageState,
     checkedItems,
     installingUpate,
     theme,
     updateAndRestart,
     removeNotificationById,
     findThreadIndex,
-    setPage,
     fetchNotifications,
     processCheckedNotifications,
     logout,

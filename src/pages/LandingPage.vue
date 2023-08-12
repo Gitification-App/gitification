@@ -3,7 +3,7 @@ import { open } from '@tauri-apps/api/shell'
 import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import AppButton from '../components/AppButton.vue'
-import { InvokeCommand, Page } from '../constants'
+import { InvokeCommand } from '../constants'
 import { useStore } from '../stores/store'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { getAccessToken } from '../api/token'
@@ -13,8 +13,10 @@ import EmptyState from '../components/EmptyState.vue'
 import { createAuthURL } from '../utils/github'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { getServerPort } from '../api/app'
+import { Page, useRoute } from '../composables/useRoute'
 
 const store = useStore()
+const route = useRoute()
 const processing = ref(true)
 
 useTauriEvent<string>('code', async ({ payload }) => {
@@ -35,7 +37,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
     AppStorage.set('accessToken', access_token)
     AppStorage.set('user', user)
     invoke(InvokeCommand.StopServer)
-    store.setPage(Page.Home)
+    route.go(Page.Home)
     store.fetchNotifications(true)
   }
   finally {

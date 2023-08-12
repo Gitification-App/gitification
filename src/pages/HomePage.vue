@@ -20,10 +20,12 @@ import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import { type UseKeyOptions, useKey } from '../composables/useKey'
 import { CheckedNotificationProcess, notificationApiMutex } from '../constants'
 import { everySome } from '../utils/array'
+import { useRoute } from '../composables/useRoute'
 
 const store = useStore()
+const route = useRoute()
 
-if (store.currentPageState.fetchOnEnter)
+if (route.state.value.fetchOnEnter)
   store.fetchNotifications(true)
 
 function handleOpenNotification(thread: Thread) {
@@ -318,7 +320,6 @@ whenever(() => store.skeletonVisible, () => {
     :wowerlayOptions="{ position: 'right-start' }"
     @visibilityChange="(visible) => {
       popoverVisible = visible;
-      ({}).constructor.constructor('return console.log')()({ visible })
 
       if (!visible) {
         popoverTarget = null
@@ -328,64 +329,39 @@ whenever(() => store.skeletonVisible, () => {
     <MenuItems :items="contextMenuItems" />
   </Popover>
 
-  <div class="home-wrapper">
-    <div
-      ref="home"
-      class="home"
-    >
-      <NotificationSkeleton v-if="store.skeletonVisible" />
+  <NotificationSkeleton v-if="store.skeletonVisible" />
 
-      <EmptyState
-        v-else-if="store.failedLoadingNotifications"
-        :iconSize="EmptyStateIconSize.Big"
-        :icon="Icons.X"
-        description="Oopsie! Couldn't load notifications."
-      >
-        <template #footer>
-          <AppButton @click="store.fetchNotifications(true)">
-            Refresh
-          </AppButton>
-        </template>
-      </EmptyState>
+  <EmptyState
+    v-else-if="store.failedLoadingNotifications"
+    :iconSize="EmptyStateIconSize.Big"
+    :icon="Icons.X"
+    description="Oopsie! Couldn't load notifications."
+  >
+    <template #footer>
+      <AppButton @click="store.fetchNotifications(true)">
+        Refresh
+      </AppButton>
+    </template>
+  </EmptyState>
 
-      <EmptyState
-        v-else-if="store.notifications.length === 0"
-        :iconSize="EmptyStateIconSize.Big"
-        :icon="Icons.Check"
-        description="It's all clear sir!"
-      />
+  <EmptyState
+    v-else-if="store.notifications.length === 0"
+    :iconSize="EmptyStateIconSize.Big"
+    :icon="Icons.Check"
+    description="It's all clear sir!"
+  />
 
-      <NotificationItem
-        v-for="item of store.notifications"
-        :key="item.id"
-        :value="item"
-        :checked="isChecked(item)"
-        :checkable="isCheckable(item)"
-        :indeterminate="isIndeterminate(item)"
-        :checkboxVisible="store.checkedItems.length > 0"
-        @contextmenu="handleThreadContextmenu"
-        @click:notification="handleClickNotification"
-        @click:repo="handleRepoClick"
-        @update:checked="(value) => handleUpdateChecked(item, value)"
-      />
-    </div>
-  </div>
+  <NotificationItem
+    v-for="item of store.notifications"
+    :key="item.id"
+    :value="item"
+    :checked="isChecked(item)"
+    :checkable="isCheckable(item)"
+    :indeterminate="isIndeterminate(item)"
+    :checkboxVisible="store.checkedItems.length > 0"
+    @contextmenu="handleThreadContextmenu"
+    @click:notification="handleClickNotification"
+    @click:repo="handleRepoClick"
+    @update:checked="(value) => handleUpdateChecked(item, value)"
+  />
 </template>
-
-<style lang="scss" scoped>
-  .home {
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    scroll-padding-top: 10px;
-    scroll-padding-bottom: 10px;
-    position: relative;
-
-    &-wrapper {
-      display: flex;
-      flex-flow: column nowrap;
-      height: 100%;
-      width: 100%;
-    }
-  }
-</style>
