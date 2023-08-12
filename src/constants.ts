@@ -4,6 +4,11 @@ import { Icons } from './components/Icons'
 
 export const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 
+export enum CheckedNotificationProcess {
+  Unsubscribe,
+  MarkAsRead,
+}
+
 export enum ColorPreference {
   System = 'system',
   Light = 'light',
