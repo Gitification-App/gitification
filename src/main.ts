@@ -16,7 +16,7 @@ import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
-import { Page, useRoute } from './composables/useRoute'
+import { Page, useRoute } from './stores/route'
 
 async function main() {
   if (import.meta.env.DEV) {

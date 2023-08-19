@@ -8,7 +8,7 @@ import { useStore } from '../stores/store'
 import type { Option } from '../types'
 import { batchFn } from '../utils/batch'
 import { ColorPreference } from '../constants'
-import { useRoute } from '../composables/useRoute'
+import { useRoute } from '../stores/route'
 
 const store = useStore()
 const route = useRoute()
@@ -18,11 +18,11 @@ const focus = batchFn(() => {
   scrollView.value?.getElement()?.focus()
 })
 
-watch(route.currentPage, focus, { flush: 'post' })
+watch(() => route.currentPage, focus, { flush: 'post' })
 useTauriEvent('window:hidden', focus)
 onMounted(focus)
 
-watch(route.currentPage, () => {
+watch(() => route.currentPage, () => {
   const element = scrollView.value?.osInstance()?.elements().scrollOffsetElement
   if (element)
     element.scrollTop = 0
@@ -45,7 +45,7 @@ const options = computedEager<OverlayScrollbarsOptions>(() => ({
     tabindex="-1"
     class="main"
     :class="{
-      'main-with-padding': route.meta.value.withPadding,
+      'main-with-padding': route.meta.withPadding,
     }"
   >
     <slot />

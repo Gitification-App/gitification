@@ -1,5 +1,6 @@
 import { readonly, ref, shallowRef } from 'vue'
-import { computedEager, createSharedComposable } from '@vueuse/core'
+import { computedEager } from '@vueuse/core'
+import { defineStore } from 'pinia'
 import { type Option } from '../types'
 
 export enum Page {
@@ -22,7 +23,7 @@ const metaMap = {
   [Page.Landing]: {},
 }
 
-export const useRoute = createSharedComposable(() => {
+export const useRoute = defineStore('route', () => {
   const currentPage = ref(Page.Landing)
   const pageFrom = ref<Option<Page>>(null)
   const state = shallowRef<PageState>({})

@@ -11,7 +11,7 @@ import { CheckedNotificationProcess, ColorPreference, InvokeCommand, notificatio
 import { AppStorage } from '../storage'
 import type { NotificationList, Option } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
-import { Page, useRoute } from '../composables/useRoute'
+import { Page, useRoute } from '../stores/route'
 
 export const useStore = defineStore('store', () => {
   const notifications = shallowRef<NotificationList>([])

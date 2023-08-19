@@ -20,7 +20,7 @@ import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import Popover from '../components/Popover.vue'
 import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
-import { Page, useRoute } from '../composables/useRoute'
+import { Page, useRoute } from '../stores/route'
 
 const route = useRoute()
 

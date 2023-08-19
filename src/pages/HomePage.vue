@@ -20,12 +20,12 @@ import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import { type UseKeyOptions, useKey } from '../composables/useKey'
 import { CheckedNotificationProcess, notificationApiMutex } from '../constants'
 import { everySome } from '../utils/array'
-import { useRoute } from '../composables/useRoute'
+import { useRoute } from '../stores/route'
 
 const store = useStore()
 const route = useRoute()
 
-if (route.state.value.fetchOnEnter)
+if (route.state.fetchOnEnter)
   store.fetchNotifications(true)
 
 function handleOpenNotification(thread: Thread) {

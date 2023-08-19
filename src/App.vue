@@ -9,7 +9,7 @@ import { useStore } from './stores/store'
 import LandingPage from './pages/LandingPage.vue'
 import { useInterval } from './composables/useInterval'
 import { AppStorage } from './storage'
-import { Page, useRoute } from './composables/useRoute'
+import { Page, useRoute } from './stores/route'
 
 const store = useStore()
 const route = useRoute()
@@ -35,8 +35,8 @@ watchEffect(() => {
   <AppSidebar />
 
   <AppScroller>
-    <HomePage v-if="route.currentPage.value === Page.Home" />
-    <SettingsPage v-else-if="route.currentPage.value === Page.Settings" />
-    <LandingPage v-else-if="route.currentPage.value === Page.Landing" />
+    <HomePage v-if="route.currentPage === Page.Home" />
+    <SettingsPage v-else-if="route.currentPage === Page.Settings" />
+    <LandingPage v-else-if="route.currentPage === Page.Landing" />
   </AppScroller>
 </template>
