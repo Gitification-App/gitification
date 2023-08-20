@@ -35,6 +35,7 @@ function handleClickNotification(thread: Thread) {
   handleOpenNotification(thread)
 
   if (AppStorage.get('markAsReadOnOpen')) {
+    store.setChecked(thread, false)
     store.runWithSnapshot(async () => {
       if (!AppStorage.get('showReadNotifications'))
         store.removeNotificationById(thread.id)
