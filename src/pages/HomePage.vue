@@ -42,7 +42,7 @@ function handleClickNotification(thread: Thread) {
       else
         store.mutateNotifications(() => thread.unread = false)
 
-      markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
+      await markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
     })
   }
 }
