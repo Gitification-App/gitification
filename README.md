@@ -2,6 +2,13 @@
   <img width="256px" height="256px" src="src-tauri/icons/128x128%402x.png" />
 </div>
 
+<div align="center">
+  
+  [Download page](https://gitification.app/)
+
+</div>
+
+
 # Gitification (Beta)
 An app to view your notifications easily on your menubar.
 
