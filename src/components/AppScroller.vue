@@ -44,9 +44,6 @@ const options = computedEager<OverlayScrollbarsOptions>(() => ({
     :options="options"
     tabindex="-1"
     class="main"
-    :class="{
-      'main-with-padding': route.meta.withPadding,
-    }"
   >
     <slot />
   </ScrollView>
@@ -60,10 +57,10 @@ const options = computedEager<OverlayScrollbarsOptions>(() => ({
   background-color: var(--content-bg);
   position: relative;
   outline: none;
-  scroll-padding: 10px 10px;
 
-  &-with-padding {
-    padding: 10px;
+  :deep([data-overlayscrollbars-viewport]) {
+    scroll-padding: 10px 10px;
   }
+
 }
 </style>

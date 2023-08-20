@@ -6,12 +6,13 @@ import pAll from 'p-all'
 import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
 import { computedEager } from '@vueuse/core'
-import { type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
+import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { CheckedNotificationProcess, ColorPreference, InvokeCommand, notificationApiMutex, prefersDark } from '../constants'
 import { AppStorage } from '../storage'
 import type { NotificationList, Option } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
 import { Page, useRoute } from '../stores/route'
+import { everySome } from '../utils/array'
 
 export const useStore = defineStore('store', () => {
   const notifications = shallowRef<NotificationList>([])
@@ -110,19 +111,37 @@ export const useStore = defineStore('store', () => {
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   })
 
-  function findThreadIndex(thread: Thread) {
-    return notifications.value.findIndex(({ id }) => id === thread.id)
+  /**
+   * Creates a snapshot of current notifications state, if given promise failes, it will restore the snapshot
+   * if not, it will do nothing.
+   *
+   * It uses mutex.
+   */
+  async function runWithSnapshot(fn: () => Promise<void>) {
+    const snapshot = notifications.value.slice(0)
+
+    try {
+      await notificationApiMutex.runExclusive(fn)
+    }
+    catch (error) {
+      console.error(error)
+      notifications.value = snapshot
+    }
   }
 
   function processCheckedNotifications(process: CheckedNotificationProcess) {
     return notificationApiMutex.runExclusive(async () => {
-      const deletedThreads: Thread['id'][] = []
+      const deletedThreads: Thread[] = []
       const checkedThreads = checkedItems.value
       const snapshot = notifications.value.slice(0)
       const accessToken = AppStorage.get('accessToken')!
 
-      checkedThreads.forEach(item => removeNotificationById(item.id))
-      triggerRef(notifications)
+      mutateNotifications(() => {
+        if (AppStorage.get('showReadNotifications'))
+          checkedThreads.forEach(thread => thread.unread = false)
+        else
+          checkedThreads.forEach(thread => removeNotificationById(thread.id))
+      })
 
       checkedItems.value = []
 
@@ -134,7 +153,7 @@ export const useStore = defineStore('store', () => {
             else if (process === CheckedNotificationProcess.Unsubscribe)
               await unsubscribeNotification(thread.id, accessToken)
 
-            deletedThreads.push(thread.id)
+            deletedThreads.push(thread)
           }),
           {
             stopOnError: false,
@@ -143,9 +162,16 @@ export const useStore = defineStore('store', () => {
         )
       }
       catch (error) {
-        notifications.value = snapshot
-        deletedThreads.forEach(id => removeNotificationById(id))
-        triggerRef(notifications)
+        mutateNotifications(() => {
+          notifications.value = snapshot
+
+          deletedThreads.forEach((thread) => {
+            if (!AppStorage.get('showReadNotifications'))
+              removeNotificationById(thread.id)
+            else
+              thread.unread = false
+          })
+        })
       }
     })
   }
@@ -184,6 +210,89 @@ export const useStore = defineStore('store', () => {
     return theme
   })
 
+  function isChecked(item: MinimalRepository | Thread | null) {
+    if (item == null || !isCheckable(item))
+      return false
+
+    if (isRepository(item)) {
+      return notifications.value
+        .filter(isThread)
+        .filter(thread => thread.unread && thread.repository.id === item.id)
+        .every(thread => (
+          checkedItems.value.some(checkedItem => checkedItem.id === thread.id)
+        ))
+    }
+
+    return checkedItems.value
+      .some(checkedItem => checkedItem.id === item.id)
+  }
+
+  function setChecked(item: MinimalRepository | Thread, value: boolean) {
+    const checked = isChecked(item)
+
+    if (value === checked)
+      return
+
+    if (value) {
+      if (isRepository(item)) {
+        for (const notificationItem of notifications.value) {
+          if (isThread(notificationItem) && notificationItem.unread && notificationItem.repository.id === item.id)
+            checkedItems.value.push(notificationItem)
+        }
+        return
+      }
+
+      checkedItems.value.push(item)
+      return
+    }
+
+    if (isRepository(item)) {
+      checkedItems.value = checkedItems.value.filter(checkedItem => (
+        checkedItem.repository.id !== item.id
+      ))
+      return
+    }
+
+    const index = checkedItems.value.findIndex(checkedItem => checkedItem.id === item.id)
+    checkedItems.value.splice(index, 1)
+  }
+
+  function isCheckable(item: MinimalRepository | Thread) {
+    if (isThread(item))
+      return item.unread
+
+    return notifications.value
+      .filter(isThread)
+      .filter(thread => thread.repository.id === item.id)
+      .some(thread => thread.unread)
+  }
+
+  function isIndeterminate(item: MinimalRepository | Thread): boolean {
+    if (isThread(item))
+      return false
+
+    const repoThreads = notifications.value
+      .filter(isThread)
+      .filter(thread => thread.unread && thread.repository.id === item.id)
+
+    const { every, some } = everySome(repoThreads, thread => (
+      checkedItems.value.some(checkedItem => checkedItem.id === thread.id)
+    ))
+
+    return some && !every
+  }
+
+  function getThreadsOfRepository(repository: MinimalRepository) {
+    return notifications.value
+      .filter(isThread)
+      .filter(thread => thread.repository.id === repository.id)
+  }
+
+  function mutateNotifications(fn: () => void) {
+    fn()
+    triggerRef(notifications)
+  }
+
   return {
     newRelease,
     notifications,
@@ -193,9 +302,15 @@ export const useStore = defineStore('store', () => {
     checkedItems,
     installingUpate,
     theme,
+    mutateNotifications,
+    getThreadsOfRepository,
+    isChecked,
+    setChecked,
+    isCheckable,
+    isIndeterminate,
+    runWithSnapshot,
     updateAndRestart,
     removeNotificationById,
-    findThreadIndex,
     fetchNotifications,
     processCheckedNotifications,
     logout,

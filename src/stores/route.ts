@@ -1,5 +1,4 @@
 import { readonly, ref, shallowRef } from 'vue'
-import { computedEager } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { type Option } from '../types'
 
@@ -11,16 +10,6 @@ export enum Page {
 
 export interface PageState {
   fetchOnEnter?: boolean
-}
-
-export interface PageMeta {
-  withPadding?: boolean
-}
-
-const metaMap = {
-  [Page.Settings]: {},
-  [Page.Home]: { withPadding: true },
-  [Page.Landing]: {},
 }
 
 export const useRoute = defineStore('route', () => {
@@ -37,13 +26,10 @@ export const useRoute = defineStore('route', () => {
     state.value = pageState
   }
 
-  const meta = computedEager<PageMeta>(() => metaMap[currentPage.value])
-
   return {
     go,
     currentPage: readonly(currentPage),
     pageFrom: readonly(pageFrom),
     state: readonly(state),
-    meta,
   }
 })
