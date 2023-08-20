@@ -14,9 +14,9 @@ import { checkUpdate } from '@tauri-apps/api/updater'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
-import { Page } from './constants'
 import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
+import { Page, useRoute } from './stores/route'
 
 async function main() {
   if (import.meta.env.DEV) {
@@ -35,6 +35,7 @@ async function main() {
   await cacheStorageFromDisk()
 
   const store = useStore(pinia)
+  const route = useRoute()
   const token = AppStorage.get('accessToken')
   const user = AppStorage.get('user')
 
@@ -46,7 +47,7 @@ async function main() {
     AppStorage.set('showSystemNotifications', false)
 
   if (token && user) {
-    store.setPage(Page.Home)
+    route.go(Page.Home)
     store.fetchNotifications(true)
   }
 

@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { watchEffect } from 'vue'
-import AppContent from './components/AppContent.vue'
+import AppScroller from './components/AppScroller.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import HomePage from './pages/HomePage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
-import { ColorPreference, FETCH_INTERVAL_DURATION, Page } from './constants'
+import { ColorPreference, FETCH_INTERVAL_DURATION } from './constants'
 import { useStore } from './stores/store'
 import LandingPage from './pages/LandingPage.vue'
 import { useInterval } from './composables/useInterval'
 import { AppStorage } from './storage'
+import { Page, useRoute } from './stores/route'
+import ContextMenu from './components/ContextMenu.vue'
+import { useContextmenu } from './stores/contextmenu'
 
 const store = useStore()
+const route = useRoute()
+const contextmenu = useContextmenu()
 
 useInterval(() => {
   if (AppStorage.get('accessToken') && AppStorage.get('user'))
@@ -32,9 +37,14 @@ watchEffect(() => {
 
   <AppSidebar />
 
-  <AppContent>
-    <HomePage v-if="store.currentPage === Page.Home" />
-    <SettingsPage v-else-if="store.currentPage === Page.Settings" />
-    <LandingPage v-else-if="store.currentPage === Page.Landing" />
-  </AppContent>
+  <AppScroller>
+    <HomePage v-if="route.currentPage === Page.Home" />
+    <SettingsPage v-else-if="route.currentPage === Page.Settings" />
+    <LandingPage v-else-if="route.currentPage === Page.Landing" />
+  </AppScroller>
+
+  <ContextMenu
+    :state="contextmenu.state"
+    @close="contextmenu.clear"
+  />
 </template>

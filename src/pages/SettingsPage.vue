@@ -8,9 +8,8 @@ import { requestPermission } from '@tauri-apps/api/notification'
 import { confirm } from '@tauri-apps/api/dialog'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
-import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
-import { ColorPreference, InvokeCommand, Page } from '../constants'
+import { ColorPreference, InvokeCommand } from '../constants'
 import { Icons } from '../components/Icons'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
@@ -21,8 +20,9 @@ import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import Popover from '../components/Popover.vue'
 import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
+import { Page, useRoute } from '../stores/route'
 
-const store = useStore()
+const route = useRoute()
 
 const initialValues = {
   showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
@@ -50,14 +50,14 @@ watchDebounced(openAtStartup, (enabled) => {
 }, { debounce: 350 })
 
 useTauriEvent('window:hidden', () => {
-  setTimeout(() => store.setPage(Page.Home), 50)
+  setTimeout(() => route.go(Page.Home), 50)
 })
 
 function handleBack() {
   if (accessToken.value == null)
-    return store.setPage(Page.Landing)
+    return route.go(Page.Landing)
 
-  store.setPage(Page.Home, {
+  route.go(Page.Home, {
     fetchOnEnter: (
       initialValues.showOnlyParticipating !== showOnlyParticipating.value
       || initialValues.showReadNotifications !== showReadNotifications.value

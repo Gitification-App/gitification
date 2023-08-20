@@ -34,6 +34,8 @@ import MailIcon16 from 'virtual:icons/octicon/mail-16'
 import LinkExternalIcon16 from 'virtual:icons/octicon/link-external-16'
 import SquareIcon16 from 'virtual:icons/octicon/square-16'
 import CircleIcon24 from 'virtual:icons/octicon/Circle-24'
+import PlusIcon16 from 'virtual:icons/octicon/plus-16'
+import DashIcon16 from 'virtual:icons/octicon/dash-16'
 
 import CommandIcon from 'virtual:icons/ph/command'
 
@@ -75,4 +77,6 @@ export const Icons = {
   Square16: markRaw(SquareIcon16),
   Circle: markRaw(CircleIcon24),
   ChevronDown: markRaw(ChevronDownIcon),
+  Plus16: markRaw(PlusIcon16),
+  Dash16: markRaw(DashIcon16),
 }

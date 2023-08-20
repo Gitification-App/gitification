@@ -16,7 +16,7 @@ interface SlotProps {
 const popoverContextKey: InjectionKey<PopoverContext> = import.meta.env.DEV ? 'PopoverContext' as any : Symbol('PopoverContext')
 
 export function usePopoverContext() {
-  return inject(popoverContextKey)!
+  return inject(popoverContextKey, undefined)
 }
 
 const transformOriginMap: Record<AlignedPlacement | Side, string> = {

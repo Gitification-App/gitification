@@ -4,6 +4,11 @@ import { Icons } from './components/Icons'
 
 export const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 
+export enum CheckedNotificationProcess {
+  Unsubscribe,
+  MarkAsRead,
+}
+
 export enum ColorPreference {
   System = 'system',
   Light = 'light',
@@ -20,12 +25,6 @@ export const REPOSITORY_PATH = 'Gitification-App/gitification'
 export const REPO_LINK = `https://github.com/${REPOSITORY_PATH}` as const
 export const FETCH_INTERVAL_DURATION = 60000
 export const SERVER_PORTS = [23846, 15830, 12840]
-
-export enum Page {
-  Settings = 'Settings',
-  Home = 'Home',
-  Landing = 'Landing',
-}
 
 export enum InvokeCommand {
   PlayNotificationSound = 'play_notification_sound',

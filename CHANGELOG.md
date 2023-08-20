@@ -1,3 +1,10 @@
+### 1.2.0
+  - Added right click menu to repository titles.
+  - Refactored ugly spaghetti code to a maintainable good looking code.
+  - Fixed scroll padding on home page.
+  - Fixed a bug if user has `mark as read on open` enabled and clicks a selected notification the notification stays selected in data and confuses the app.
+  - Fixed a bug if user has `show read notifications` and marks or unsubscribes a notification it gets deleted (it should just become read).
+
 ### 1.1.3
   - Fixed content background for mac.
 
@@ -12,7 +19,7 @@
   - `Retry` button of Oopsie error now shows skeletons on refresh.
 
 ### 1.1.0
-  - Now wowerlay has in-app updater, you don't have to download updates manually anymore.
+  - Now Gitification has in-app updater, you don't have to download updates manually anymore.
   - Fixed a bug preventing opening read notifications on browser.
   - Added light and dark theme support, by default Gitification will choose system color.
   - Updated settings page to be more ergonomic.

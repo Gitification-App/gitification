@@ -1,10 +1,10 @@
-import type { Ref } from 'vue'
-import { onMounted, onUpdated, shallowRef } from 'vue'
+import type { MaybeRefOrGetter } from 'vue'
+import { onMounted, onUpdated, shallowRef, toValue } from 'vue'
 import type { Option } from '../types'
 import { type UseKeyOptions, useKey } from './useKey'
 
 export interface UseElementNavigationOptions {
-  target: Ref<Option<HTMLElement>>
+  target: MaybeRefOrGetter<Option<HTMLElement>>
   targetQuery: string
   navigateNextHotkey: string
   navigatePreviousHotkey: string
@@ -33,7 +33,7 @@ export function useElementNavigation({
   const elements = shallowRef<HTMLElement[]>([])
 
   function queryNotificationItems() {
-    elements.value = Array.from(target.value?.querySelectorAll(targetQuery) || [])
+    elements.value = Array.from(toValue(target)?.querySelectorAll(targetQuery) || [])
   }
 
   onMounted(queryNotificationItems)

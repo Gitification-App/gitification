@@ -1,29 +1,29 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
-import { computed, onScopeDispose, ref, watch } from 'vue'
-import { type ReferenceElement } from 'wowerlay'
+import { onScopeDispose, ref } from 'vue'
 import { whenever } from '@vueuse/core'
+import { type ItemRenderList } from 'vue-selectable-items'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
 import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { toGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
-import type { Option } from '../types'
 import { useElementNavigation } from '../composables/useElementNavigation'
 import EmptyState, { EmptyStateIconSize } from '../components/EmptyState.vue'
 import { Icons } from '../components/Icons'
 import AppButton from '../components/AppButton.vue'
-import { isRepository, isThread } from '../utils/notification'
-import Popover from '../components/Popover.vue'
-import MenuItems, { menuItem } from '../components/MenuItems.vue'
-import { type UseKeyOptions, useKey } from '../composables/useKey'
-import { notificationApiMutex } from '../constants'
-import { everySome } from '../utils/array'
+import { isRepository } from '../utils/notification'
+import { type ItemMeta, menuItem } from '../components/MenuItems.vue'
+import { useKey } from '../composables/useKey'
+import { CheckedNotificationProcess } from '../constants'
+import { useRoute } from '../stores/route'
+import { vContextmenu } from '../directives/contextmenu'
 
 const store = useStore()
+const route = useRoute()
 
-if (store.currentPageState.fetchOnEnter)
+if (route.state.fetchOnEnter)
   store.fetchNotifications(true)
 
 function handleOpenNotification(thread: Thread) {
@@ -35,16 +35,15 @@ function handleClickNotification(thread: Thread) {
   handleOpenNotification(thread)
 
   if (AppStorage.get('markAsReadOnOpen')) {
-    const snapshot = store.notifications.slice(0)
+    store.setChecked(thread, false)
+    store.runWithSnapshot(async () => {
+      if (!AppStorage.get('showReadNotifications'))
+        store.removeNotificationById(thread.id)
+      else
+        store.mutateNotifications(() => thread.unread = false)
 
-    try {
-      notificationApiMutex.runExclusive(() => markNotificationAsRead(thread.id, AppStorage.get('accessToken')!))
-      store.removeNotificationById(thread.id)
-    }
-    catch (error) {
-      console.log(error)
-      store.notifications = snapshot
-    }
+      await markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
+    })
   }
 }
 
@@ -52,86 +51,13 @@ function handleRepoClick(repoFullName: string) {
   open(`https://github.com/${repoFullName}`)
 }
 
-const home = ref<Option<HTMLElement>>(null)
-
+const home = ref<HTMLElement | null>(null)
 useElementNavigation({
   target: home,
   navigateNextHotkey: 'down, command+down, ctrl+down',
   navigatePreviousHotkey: 'up, command+up, ctrl+up',
   targetQuery: '.notification-item, .notification-title',
 })
-
-function isChecked(item: MinimalRepository | Thread | null) {
-  if (item == null)
-    return false
-
-  if (isRepository(item)) {
-    return store.notifications
-      .filter(isThread)
-      .filter(thread => thread.unread && thread.repository.id === item.id)
-      .every(thread => (
-        store.checkedItems.some(checkedItem => checkedItem.id === thread.id)
-      ))
-  }
-
-  return store.checkedItems
-    .some(checkedItem => checkedItem.id === item.id)
-}
-
-function handleUpdateChecked(item: MinimalRepository | Thread, value: boolean) {
-  const checked = isChecked(item)
-
-  if (value === checked)
-    return
-
-  if (value) {
-    if (isRepository(item)) {
-      for (const notificationItem of store.notifications) {
-        if (isThread(notificationItem) && notificationItem.repository.full_name === item.full_name)
-          store.checkedItems.push(notificationItem)
-      }
-      return
-    }
-
-    store.checkedItems.push(item)
-    return
-  }
-
-  if (isRepository(item)) {
-    store.checkedItems = store.checkedItems.filter(checkedItem => (
-      checkedItem.repository.id !== item.id
-    ))
-    return
-  }
-
-  const index = store.checkedItems.findIndex(checkedItem => checkedItem.id === item.id)
-  store.checkedItems.splice(index, 1)
-}
-
-function isCheckable(item: MinimalRepository | Thread) {
-  if (isThread(item))
-    return item.unread
-
-  return store.notifications
-    .filter(isThread)
-    .filter(thread => thread.repository.id === item.id)
-    .some(thread => thread.unread)
-}
-
-function isIndeterminate(item: MinimalRepository | Thread): boolean {
-  if (isThread(item))
-    return false
-
-  const repoThreads = store.notifications
-    .filter(isThread)
-    .filter(thread => thread.unread && thread.repository.id === item.id)
-
-  const { every, some } = everySome(repoThreads, thread => (
-    store.checkedItems.some(checkedItem => checkedItem.id === thread.id)
-  ))
-
-  return some && !every
-}
 
 onScopeDispose(() => {
   store.checkedItems = []
@@ -141,256 +67,265 @@ useKey('esc', () => {
   store.checkedItems = []
 }, { prevent: true })
 
-const contextMenuThread = ref<Thread | null>(null)
-const popoverTarget = ref<ReferenceElement | null>(null)
-const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
-const popoverVisible = ref(false)
-
-async function handleSelectMarkAsRead(triggeredByKeyboard = false) {
-  if (
-    (triggeredByKeyboard && store.checkedItems.length > 0)
-    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
-    return
-  }
-
-  if (!contextMenuThread.value)
-    return
-
-  const thread = contextMenuThread.value
-  try {
-    const snapshot = store.notifications.slice(0)
-    store.removeNotificationById(thread.id)
-
-    try {
-      await notificationApiMutex.runExclusive(() => markNotificationAsRead(thread.id, AppStorage.get('accessToken')!))
-    }
-    catch (error) {
-      console.log(error)
-      store.notifications = snapshot
-    }
-  }
-  catch (e) {
-    console.log(e)
-  }
-}
-
-async function handleSelectOpen(triggeredByKeyboard = false) {
-  if (
-    (triggeredByKeyboard && store.checkedItems.length > 0)
-    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    store.checkedItems.forEach(handleOpenNotification)
-
-    if (AppStorage.get('markAsReadOnOpen'))
-      store.markCheckedNotificationsAsRead(AppStorage.get('accessToken')!)
-
-    store.checkedItems = []
-    return
-  }
-
-  if (!contextMenuThread.value)
-    return
-
-  handleClickNotification(contextMenuThread.value)
-}
-
-async function handleSelectUnsubscribe(triggeredByKeyboard = false) {
-  if (
-    (triggeredByKeyboard && store.checkedItems.length > 0)
-    || (contextMenuThread.value && isChecked(contextMenuThread.value))) {
-    try {
-      await store.unsubscribeCheckedNotifications(AppStorage.get('accessToken')!)
-    }
-    catch (error) {
-      console.log(error)
-    }
-    return
-  }
-
-  if (!contextMenuThread.value)
-    return
-
-  const thread = contextMenuThread.value
-  const snapshot = store.notifications.slice(0)
-
-  store.removeNotificationById(thread.id)
-
-  try {
-    await notificationApiMutex.runExclusive(() => unsubscribeNotification(thread.id, AppStorage.get('accessToken')!))
-  }
-  catch (error) {
-    console.log(error)
-    store.notifications = snapshot
-  }
-}
-
-const contextMenuShortcutOptions: UseKeyOptions = {
-  source: () => popoverVisible.value || store.checkedItems.length > 0,
-}
-
 useKey('m', () => {
-  handleSelectMarkAsRead(true)
-  popoverRef.value?.hide()
-}, contextMenuShortcutOptions)
+  if (store.checkedItems.length === 0)
+    return
+
+  handleSelectMarkAsRead(store.checkedItems[0])
+})
 
 useKey('o', () => {
-  handleSelectOpen(true)
-  popoverRef.value?.hide()
-}, contextMenuShortcutOptions)
-
-useKey('u', () => {
-  handleSelectUnsubscribe(true)
-  popoverRef.value?.hide()
-}, contextMenuShortcutOptions)
-
-const contextMenuItems = computed(() => [
-  contextMenuThread.value?.unread && menuItem({
-    key: 'read',
-    meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
-    onSelect() {
-      handleSelectMarkAsRead()
-      contextMenuThread.value = null
-    },
-  }),
-  menuItem({
-    key: 'open',
-    meta: { text: 'Open', icon: Icons.LinkExternal16, key: 'O' },
-    onSelect() {
-      handleSelectOpen()
-      contextMenuThread.value = null
-    },
-  }),
-  menuItem({
-    key: 'unsubscribe',
-    meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
-    onSelect: () => handleSelectUnsubscribe(),
-  }),
-  isChecked(contextMenuThread.value!) && menuItem({
-    key: 'clear',
-    meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
-    onSelect: () => {
-      store.checkedItems = []
-      contextMenuThread.value = null
-    },
-  }),
-])
-
-function handleThreadContextmenu(thread: Thread, event: MouseEvent) {
-  if (!isChecked(thread))
-    store.checkedItems = []
-
-  contextMenuThread.value = thread
-  popoverTarget.value = {
-    getBoundingClientRect: () => ({
-      top: event.clientY,
-      left: event.clientX,
-      width: 0,
-      height: 0,
-      bottom: event.clientY,
-      right: event.clientX,
-      x: event.clientX,
-      y: event.clientY,
-    }),
-  }
-  popoverRef.value?.show()
-}
-
-// Edge-Case
-// If notifications are reloaded and the context menu target thread is deleted, close the context menu
-watch(() => store.notifications, (notifications) => {
-  if (!contextMenuThread.value)
+  if (store.checkedItems.length === 0)
     return
 
-  const exists = notifications.some(notification => notification.id === contextMenuThread.value!.id)
-  if (!exists) {
-    contextMenuThread.value = null
-    popoverRef.value?.hide()
-  }
+  handleSelectOpen(store.checkedItems[0])
 })
+
+useKey('u', () => {
+  if (store.checkedItems.length === 0)
+    return
+
+  handleSelectUnsubscribe(store.checkedItems[0])
+})
+
+async function handleSelectMarkAsRead(thread: Thread) {
+  if (!thread.unread)
+    return
+
+  if (store.isChecked(thread)) {
+    store.processCheckedNotifications(CheckedNotificationProcess.MarkAsRead)
+    return
+  }
+
+  store.checkedItems = []
+
+  store.runWithSnapshot(async () => {
+    if (!AppStorage.get('showReadNotifications'))
+      store.removeNotificationById(thread.id)
+    else
+      store.mutateNotifications(() => thread.unread = false)
+
+    await markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
+  })
+}
+
+function handleSelectOpen(thread: Thread) {
+  if (!thread.unread) {
+    handleOpenNotification(thread)
+    return
+  }
+
+  if (store.isChecked(thread)) {
+    store.checkedItems.forEach(handleOpenNotification)
+  }
+  else {
+    store.checkedItems = []
+    handleOpenNotification(thread)
+  }
+
+  if (AppStorage.get('markAsReadOnOpen'))
+    handleSelectMarkAsRead(thread)
+}
+
+async function handleSelectUnsubscribe(thread: Thread) {
+  if (store.isChecked(thread)) {
+    store.processCheckedNotifications(CheckedNotificationProcess.Unsubscribe)
+    return
+  }
+
+  store.checkedItems = []
+
+  store.runWithSnapshot(async () => {
+    if (thread.unread && !AppStorage.get('showReadNotifications'))
+      store.removeNotificationById(thread.id)
+    else
+      store.mutateNotifications(() => thread.unread = false)
+
+    await unsubscribeNotification(thread.id, AppStorage.get('accessToken')!)
+  })
+}
+
+function handleSelectOpenAll(repository: MinimalRepository) {
+  if (store.isCheckable(repository)) {
+    store.setChecked(repository, true)
+    handleSelectOpen(store.checkedItems[0])
+  }
+  else {
+    const threads = store.getThreadsOfRepository(repository)
+    threads.forEach(handleOpenNotification)
+  }
+}
+
+function handleMarkAllAsRead(repository: MinimalRepository) {
+  store.setChecked(repository, true)
+  handleSelectMarkAsRead(store.checkedItems[0])
+}
+
+function handleUnsubscribeAll(repository: MinimalRepository) {
+  if (store.isCheckable(repository)) {
+    store.setChecked(repository, true)
+    handleSelectUnsubscribe(store.checkedItems[0])
+    return
+  }
+
+  const threads = store.getThreadsOfRepository(repository)
+  threads.forEach(handleSelectUnsubscribe)
+}
+
+function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderList<ItemMeta> {
+  const checked = store.isChecked(item)
+
+  const checkText = isRepository(item) ? 'Select all' : 'Select'
+  const uncheckText = isRepository(item) ? 'Unselect all' : 'Unselect'
+
+  const checkMeta = {
+    text: checked ? uncheckText : checkText,
+    icon: checked ? Icons.Dash16 : Icons.Plus16,
+    key: 'S',
+  }
+
+  if (isRepository(item)) {
+    return [
+      store.isCheckable(item) && menuItem({
+        key: 'select:repository',
+        meta: checkMeta,
+        onSelect() {
+          store.setChecked(item, !checked)
+        },
+      }),
+      store.isCheckable(item) && menuItem({
+        key: 'mark:all',
+        meta: { text: 'Mark all as read', icon: Icons.Check16, key: 'M' },
+        onSelect() {
+          handleMarkAllAsRead(item)
+        },
+      }),
+      menuItem({
+        key: 'open:all',
+        meta: { text: 'Open all', icon: Icons.LinkExternal16, key: 'O' },
+        onSelect() {
+          handleSelectOpenAll(item)
+        },
+      }),
+      menuItem({
+        key: 'unsubscribe:all',
+        meta: { text: 'Unsubscribe all', icon: Icons.BellSlash16, key: 'U' },
+        onSelect() {
+          handleUnsubscribeAll(item)
+        },
+      }),
+      checked && menuItem({
+        key: 'clear',
+        meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
+        onSelect: () => {
+          store.checkedItems = []
+        },
+      }),
+    ]
+  }
+
+  return [
+    store.isCheckable(item) && menuItem({
+      key: 'check:thread',
+      meta: checkMeta,
+      onSelect() {
+        store.setChecked(item, !checked)
+      },
+    }),
+
+    item.unread && menuItem({
+      key: 'read',
+      meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
+      onSelect() {
+        handleSelectMarkAsRead(item)
+      },
+    }),
+
+    menuItem({
+      key: 'open',
+      meta: { text: 'Open', icon: Icons.LinkExternal16, key: 'O' },
+      onSelect() {
+        handleSelectOpen(item)
+      },
+    }),
+
+    menuItem({
+      key: 'unsubscribe',
+      meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
+      onSelect() {
+        handleSelectUnsubscribe(item)
+      },
+    }),
+
+    checked && menuItem({
+      key: 'clear',
+      meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
+      onSelect: () => {
+        store.checkedItems = []
+      },
+    }),
+  ]
+}
 
 // Edge-Case
 // If user reloaded in the middle of selecting notifications, clear the selection
 whenever(() => store.skeletonVisible, () => {
-  popoverRef.value?.hide()
   store.checkedItems = []
 })
 </script>
 
 <template>
-  <Popover
-    ref="popoverRef"
-    :target="popoverTarget"
-    :wowerlayOptions="{ position: 'right-start' }"
-    @visibilityChange="(visible) => {
-      popoverVisible = visible;
-      ({}).constructor.constructor('return console.log')()({ visible })
-
-      if (!visible) {
-        popoverTarget = null
-      }
-    }"
+  <div
+    ref="home"
+    class="home"
   >
-    <MenuItems :items="contextMenuItems" />
-  </Popover>
+    <NotificationSkeleton v-if="store.skeletonVisible" />
 
-  <div class="home-wrapper">
-    <div
-      ref="home"
-      class="home"
+    <EmptyState
+      v-else-if="store.failedLoadingNotifications"
+      :iconSize="EmptyStateIconSize.Big"
+      :icon="Icons.X"
+      description="Oopsie! Couldn't load notifications."
     >
-      <NotificationSkeleton v-if="store.skeletonVisible" />
+      <template #footer>
+        <AppButton @click="store.fetchNotifications(true)">
+          Refresh
+        </AppButton>
+      </template>
+    </EmptyState>
 
-      <EmptyState
-        v-else-if="store.failedLoadingNotifications"
-        :iconSize="EmptyStateIconSize.Big"
-        :icon="Icons.X"
-        description="Oopsie! Couldn't load notifications."
-      >
-        <template #footer>
-          <AppButton @click="store.fetchNotifications(true)">
-            Refresh
-          </AppButton>
-        </template>
-      </EmptyState>
+    <EmptyState
+      v-else-if="store.notifications.length === 0"
+      :iconSize="EmptyStateIconSize.Big"
+      :icon="Icons.Check"
+      description="It's all clear sir!"
+    />
 
-      <EmptyState
-        v-else-if="store.notifications.length === 0"
-        :iconSize="EmptyStateIconSize.Big"
-        :icon="Icons.Check"
-        description="It's all clear sir!"
-      />
-
-      <NotificationItem
-        v-for="item of store.notifications"
-        :key="item.id"
-        :value="item"
-        :checked="isChecked(item)"
-        :checkable="isCheckable(item)"
-        :indeterminate="isIndeterminate(item)"
-        :checkboxVisible="store.checkedItems.length > 0"
-        @contextmenu="handleThreadContextmenu"
-        @click:notification="handleClickNotification"
-        @click:repo="handleRepoClick"
-        @update:checked="(value) => handleUpdateChecked(item, value)"
-      />
-    </div>
+    <NotificationItem
+      v-for="item of store.notifications"
+      :key="item.id"
+      v-contextmenu="() => createContextmenuItems(item)"
+      :value="item"
+      :checked="store.isChecked(item)"
+      :checkable="store.isCheckable(item)"
+      :indeterminate="store.isIndeterminate(item)"
+      :checkboxVisible="store.checkedItems.length > 0"
+      @click:notification="handleClickNotification"
+      @click:repo="handleRepoClick"
+      @update:checked="(value) => store.setChecked(item, value)"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-  .home {
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    scroll-padding-top: 10px;
-    scroll-padding-bottom: 10px;
-    position: relative;
+.home {
+  padding: 10px;
+  min-height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
 
-    &-wrapper {
-      display: flex;
-      flex-flow: column nowrap;
-      height: 100%;
-      width: 100%;
-    }
+  .empty-state {
+    margin: auto;
   }
+}
 </style>

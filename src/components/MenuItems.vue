@@ -27,12 +27,22 @@ const itemDefaults = createItemDefaults<ItemMeta>(({ disabled, meta }) => ({
     style: meta?.selected ? 'color: var(--accent-color); font-weight: bold;' : undefined,
   },
 }))
+
+interface Props {
+  items: ItemRenderList<ItemMeta>
+  setup?: (ctx: Context) => void
+}
 </script>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{ items: ItemRenderList<ItemMeta> }>(), {
+const props = withDefaults(defineProps<Props>(), {
   items: () => [],
+  setup: () => {},
 })
+
+const emits = defineEmits<{
+  (e: 'select', meta: ItemMeta): void
+}>()
 
 defineOptions({
   inheritAttrs: false,
@@ -55,7 +65,8 @@ function setupHandle(ctx: Context) {
   const popoverContext = usePopoverContext()
 
   ctx.onSelect((meta, item) => {
-    popoverContext.visible.value = false
+    if (popoverContext)
+      popoverContext.visible.value = false
   })
 
   onMounted(() => {
@@ -68,6 +79,8 @@ function setupHandle(ctx: Context) {
       }
     }
   })
+
+  props.setup(ctx)
 }
 </script>
 
@@ -77,6 +90,7 @@ function setupHandle(ctx: Context) {
     :setup="setupHandle"
     :items="items"
     noWrapperElement
+    @select="(meta: ItemMeta) => emits('select', meta)"
   >
     <template #render="{ meta }: Item<ItemMeta>">
       <div

@@ -2,10 +2,11 @@
 import { open } from '@tauri-apps/api/shell'
 import { exit } from '@tauri-apps/api/process'
 import { computed } from 'vue'
-import { Page, REPO_LINK } from '../constants'
+import { REPO_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
 import { useKey } from '../composables/useKey'
+import { Page, useRoute } from '../stores/route'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
@@ -15,6 +16,7 @@ import SlotRef from './SlotRef.vue'
 import PopoverContentInstallUpdate from './PopoverContentInstallUpdate.vue'
 
 const store = useStore()
+const route = useRoute()
 
 function openCurrentReleaseChangelog() {
   open(`${REPO_LINK}/blob/main/CHANGELOG.md#${__APP_VERSION__.replace(/\./g, '')}`)
@@ -29,7 +31,7 @@ const moreItems = computed(() => [
   menuItem({
     key: 'settings',
     meta: { text: 'Settings', icon: Icons.Gear16 },
-    onSelect: () => store.setPage(Page.Settings),
+    onSelect: () => route.go(Page.Settings),
   }),
   AppStorage.get('user') != null && menuItem({
     key: 'logout',
@@ -45,7 +47,7 @@ const moreItems = computed(() => [
 
 useKey('r', () => {
   store.fetchNotifications(true)
-}, { source: () => store.currentPage === Page.Home })
+}, { source: () => route.currentPage === Page.Home })
 </script>
 
 <template>
@@ -105,7 +107,7 @@ useKey('r', () => {
       <SlotRef>
         <template #default>
           <SidebarButton
-            :disabled="store.currentPage !== Page.Home"
+            :disabled="route.currentPage !== Page.Home"
             @click="store.fetchNotifications(true)"
           >
             <Icons.Sync16 />
