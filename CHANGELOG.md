@@ -1,3 +1,10 @@
+### 1.2.0
+  - Added right click menu to repository titles.
+  - Refactored ugly spaghetti code to a maintainable good looking code.
+  - Fixed scroll padding on home page.
+  - Fixed a bug if user has `mark as read on open` enabled and clicks a selected notification the notification stays selected in data and confuses the app.
+  - Fixed a bug if user has `show read notifications` and marks or unsubscribes a notification it gets deleted (it should just become read).
+
 ### 1.1.3
   - Fixed content background for mac.
 
