@@ -42,8 +42,8 @@ dependencies:
     specifier: ^1.0.1
     version: 1.0.1(vue@3.3.4)
   wowerlay:
-    specifier: 1.0.2
-    version: 1.0.2(vue@3.3.4)
+    specifier: 1.1.0
+    version: 1.1.0(vue@3.3.4)
 
 devDependencies:
   '@antfu/eslint-config':
@@ -4585,8 +4585,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /wowerlay@1.0.2(vue@3.3.4):
-    resolution: {integrity: sha512-F599mOz/8aanZ68P1ZBDt/2kaOV0OeFCzx/P8eH5YcBH5CQ7TY984CadQcAdXdCKTsiLAioUNI2ou+dCn9h+uA==}
+  /wowerlay@1.1.0(vue@3.3.4):
+    resolution: {integrity: sha512-sqz8j0CRN7mkwsUgtK+5dZ2/6LJM4CgWQEqVZyMalJCr2bPptue+wt9HEOdA1KnWsskMT1qtKe2hLyF0Nu4r7g==}
     peerDependencies:
       vue: ^3.3.0
     dependencies:
