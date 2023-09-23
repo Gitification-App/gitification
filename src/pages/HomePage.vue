@@ -19,9 +19,11 @@ import { useKey } from '../composables/useKey'
 import { CheckedNotificationProcess } from '../constants'
 import { useRoute } from '../stores/route'
 import { vContextmenu } from '../directives/contextmenu'
+import { useI18n } from '../composables/useI18n'
 
 const store = useStore()
 const route = useRoute()
+const { t } = useI18n()
 
 if (route.state.fetchOnEnter)
   store.fetchNotifications(true)
@@ -175,8 +177,8 @@ function handleUnsubscribeAll(repository: MinimalRepository) {
 function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderList<ItemMeta> {
   const checked = store.isChecked(item)
 
-  const checkText = isRepository(item) ? 'Select all' : 'Select'
-  const uncheckText = isRepository(item) ? 'Unselect all' : 'Unselect'
+  const checkText = isRepository(item) ? t.selectAll : t.select
+  const uncheckText = isRepository(item) ? t.unselectAll : t.unselect
 
   const checkMeta = {
     text: checked ? uncheckText : checkText,
@@ -195,28 +197,28 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       }),
       store.isCheckable(item) && menuItem({
         key: 'mark:all',
-        meta: { text: 'Mark all as read', icon: Icons.Check16, key: 'M' },
+        meta: { text: t.markAllAsRead, icon: Icons.Check16, key: 'M' },
         onSelect() {
           handleMarkAllAsRead(item)
         },
       }),
       menuItem({
         key: 'open:all',
-        meta: { text: 'Open all', icon: Icons.LinkExternal16, key: 'O' },
+        meta: { text: t.openAll, icon: Icons.LinkExternal16, key: 'O' },
         onSelect() {
           handleSelectOpenAll(item)
         },
       }),
       menuItem({
         key: 'unsubscribe:all',
-        meta: { text: 'Unsubscribe all', icon: Icons.BellSlash16, key: 'U' },
+        meta: { text: t.unsubscribeAll, icon: Icons.BellSlash16, key: 'U' },
         onSelect() {
           handleUnsubscribeAll(item)
         },
       }),
       checked && menuItem({
         key: 'clear',
-        meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
+        meta: { text: t.clearSelections, icon: Icons.Circle, key: 'ESC' },
         onSelect: () => {
           store.checkedItems = []
         },
@@ -235,7 +237,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
 
     item.unread && menuItem({
       key: 'read',
-      meta: { text: 'Mark as read', icon: Icons.Check16, key: 'M' },
+      meta: { text: t.markAsRead, icon: Icons.Check16, key: 'M' },
       onSelect() {
         handleSelectMarkAsRead(item)
       },
@@ -243,7 +245,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
 
     menuItem({
       key: 'open',
-      meta: { text: 'Open', icon: Icons.LinkExternal16, key: 'O' },
+      meta: { text: t.open, icon: Icons.LinkExternal16, key: 'O' },
       onSelect() {
         handleSelectOpen(item)
       },
@@ -251,7 +253,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
 
     menuItem({
       key: 'unsubscribe',
-      meta: { text: 'Unsubscribe', icon: Icons.BellSlash16, key: 'U' },
+      meta: { text: t.unsubscribe, icon: Icons.BellSlash16, key: 'U' },
       onSelect() {
         handleSelectUnsubscribe(item)
       },
@@ -259,7 +261,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
 
     checked && menuItem({
       key: 'clear',
-      meta: { text: 'Clear selections', icon: Icons.Circle, key: 'ESC' },
+      meta: { text: t.clearSelections, icon: Icons.Circle, key: 'ESC' },
       onSelect: () => {
         store.checkedItems = []
       },
@@ -285,11 +287,11 @@ whenever(() => store.skeletonVisible, () => {
       v-else-if="store.failedLoadingNotifications"
       :iconSize="EmptyStateIconSize.Big"
       :icon="Icons.X"
-      description="Oopsie! Couldn't load notifications."
+      :description="t.oopsieCouldntLoad"
     >
       <template #footer>
         <AppButton @click="store.fetchNotifications(true)">
-          Refresh
+          {{ t.refresh }}
         </AppButton>
       </template>
     </EmptyState>
@@ -298,7 +300,7 @@ whenever(() => store.skeletonVisible, () => {
       v-else-if="store.notifications.length === 0"
       :iconSize="EmptyStateIconSize.Big"
       :icon="Icons.Check"
-      description="It's all clear sir!"
+      :description="t.itsAllClear"
     />
 
     <NotificationItem

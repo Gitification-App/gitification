@@ -78,7 +78,6 @@ export const reasonFormatMap = {
   [NotificationReason.Subscribed]: 'Subscribed',
   [NotificationReason.TeamMention]: 'Team Mention',
   [NotificationReason.CiActivity]: 'CI Activity',
-
 }
 
 export const subjectIconMap = {

@@ -15,8 +15,8 @@ export const transformOriginMap: Record<AlignedPlacement | Side, string> = {
   'top': 'center bottom',
 }
 
-export const handleTransition: WowerlayTransitionFn = (type, element, done) => {
-  const placement = element.getAttribute('data-popover-placement') as AlignedPlacement | Side
+export const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
+  const placement = popover.getAttribute('data-popover-placement') as AlignedPlacement | Side
   const side = placement.split('-')[0] as Side
 
   const vertical = side === 'top' || side === 'bottom'
@@ -32,25 +32,25 @@ export const handleTransition: WowerlayTransitionFn = (type, element, done) => {
     opacity: 1,
   }
 
-  const oldTransformOrigin = element.style.transformOrigin
-  element.style.transformOrigin = transformOriginMap[placement]
+  const oldTransformOrigin = popover.style.transformOrigin
+  popover.style.transformOrigin = transformOriginMap[placement]
 
   if (type === 'leave') {
-    const background = element.parentElement
+    const background = popover.parentElement
     if (background) {
       background.style.setProperty('pointer-events', 'none')
-      element.style.setProperty('pointer-events', 'auto')
+      popover.style.setProperty('pointer-events', 'auto')
     }
   }
 
-  const animation = element.animate(type === 'enter' ? [from, to] : [to, from], {
+  const animation = popover.animate(type === 'enter' ? [from, to] : [to, from], {
     duration: 200,
     easing: 'ease',
   })
 
   animation.onfinish = () => {
     if (type === 'enter')
-      element.style.transformOrigin = oldTransformOrigin
+      popover.style.transformOrigin = oldTransformOrigin
 
     done()
   }

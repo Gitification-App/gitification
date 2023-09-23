@@ -11,8 +11,8 @@ interface Props {
   target?: HTMLElement | null
 }
 
-const handleTransition: WowerlayTransitionFn = (type, element, done) => {
-  const placement = element.getAttribute('data-popover-placement')!.split('-')[0]
+const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
+  const placement = popover.getAttribute('data-popover-placement')!.split('-')[0]
 
   const vertical = placement === 'top' || placement === 'bottom'
   const transformFunction = vertical ? 'translateY' : 'translateX'
@@ -27,7 +27,7 @@ const handleTransition: WowerlayTransitionFn = (type, element, done) => {
     opacity: 1,
   }
 
-  const animation = element.animate(type === 'enter' ? [from, to] : [to, from], {
+  const animation = popover.animate(type === 'enter' ? [from, to] : [to, from], {
     duration: 200,
     easing: 'ease',
   })

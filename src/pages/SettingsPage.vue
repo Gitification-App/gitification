@@ -21,8 +21,10 @@ import Popover from '../components/Popover.vue'
 import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
 import { Page, useRoute } from '../stores/route'
+import { useI18n } from '../composables/useI18n'
 
 const route = useRoute()
+const { t, currentLanguage } = useI18n()
 
 const initialValues = {
   showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
@@ -93,11 +95,11 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
 const selectedColorText = computedEager(() => {
   switch (AppStorage.get('colorPreference')) {
     case ColorPreference.System:
-      return 'System'
+      return t.system
     case ColorPreference.Light:
-      return 'Light'
+      return t.light
     case ColorPreference.Dark:
-      return 'Dark'
+      return t.dark
   }
 })
 
@@ -105,7 +107,7 @@ const selectColorItems = computed(() => [
   menuItem({
     key: ColorPreference.System,
     meta: {
-      text: 'System',
+      text: t.system,
       selected: AppStorage.get('colorPreference') === ColorPreference.System,
     },
     onSelect() {
@@ -115,7 +117,7 @@ const selectColorItems = computed(() => [
   menuItem({
     key: ColorPreference.Light,
     meta: {
-      text: 'Light',
+      text: t.light,
       selected: AppStorage.get('colorPreference') === ColorPreference.Light,
     },
     onSelect() {
@@ -125,11 +127,34 @@ const selectColorItems = computed(() => [
   menuItem({
     key: ColorPreference.Dark,
     meta: {
-      text: 'Dark',
+      text: t.dark,
       selected: AppStorage.get('colorPreference') === ColorPreference.Dark,
     },
     onSelect() {
       AppStorage.set('colorPreference', ColorPreference.Dark)
+    },
+  }),
+])
+
+const selectLanguageItems = computed(() => [
+  menuItem({
+    key: 'en',
+    meta: {
+      text: t.language.en,
+      selected: currentLanguage.value === 'en',
+    },
+    onSelect() {
+      currentLanguage.value = 'en'
+    },
+  }),
+  menuItem({
+    key: 'tr',
+    meta: {
+      text: t.language.tr,
+      selected: currentLanguage.value === 'tr',
+    },
+    onSelect() {
+      currentLanguage.value = 'tr'
     },
   }),
 ])
@@ -162,14 +187,14 @@ function handleScroll(e: Event) {
 
         <template #ref="{ el }">
           <Tooltip
-            text="Go Back (ESC)"
+            :text="t.goBack('ESC')"
             :target="el"
           />
         </template>
       </SlotRef>
 
       <PageHeader inline>
-        Settings
+        {{ t.settings }}
       </PageHeader>
     </div>
 
@@ -178,10 +203,10 @@ function handleScroll(e: Event) {
         dot
         style="margin-bottom: 20px;"
       >
-        Appearance
+        {{ t.appearance }}
       </PageHeader>
 
-      <SettingItem title="Theme">
+      <SettingItem :title="t.theme">
         <SlotRef>
           <template #default>
             <AppButton>
@@ -204,26 +229,49 @@ function handleScroll(e: Event) {
         </SlotRef>
       </SettingItem>
 
+      <SettingItem :title="t.language.title">
+        <SlotRef>
+          <template #default>
+            <AppButton>
+              {{ t.language[currentLanguage] }}
+
+              <template #icon>
+                <Icons.ChevronDown />
+              </template>
+            </AppButton>
+          </template>
+
+          <template #ref="{ el }">
+            <Popover
+              :target="el"
+              :wowerlayOptions="{ position: 'bottom-end' }"
+            >
+              <MenuItems :items="selectLanguageItems" />
+            </Popover>
+          </template>
+        </SlotRef>
+      </SettingItem>
+
       <PageHeader
         dot
         style="margin: 20px 0px;"
       >
-        System
+        {{ t.system }}
       </PageHeader>
 
-      <SettingItem title="Sounds">
+      <SettingItem :title="t.sounds">
         <Switch v-model="soundsEnabled" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
-      <SettingItem title="Open at startup">
+      <SettingItem :title="t.openAtStartup">
         <Switch v-model="openAtStartup" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
-      <SettingItem title="Show system notifications">
+      <SettingItem :title="t.showSystemNotifications">
         <Switch
           :modelValue="showSystemNotifications"
           @update:modelValue="handleUpdateShowSystemNotifications($event)"
@@ -234,24 +282,24 @@ function handleScroll(e: Event) {
         dot
         style="margin: 20px 0px;"
       >
-        Notifications
+        {{ t.notificationsTitle }}
       </PageHeader>
 
-      <SettingItem title="Show only participating">
+      <SettingItem :title="t.showOnlyParticipating">
         <Switch v-model="showOnlyParticipating" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
-      <SettingItem title="Show read notifications">
+      <SettingItem :title="t.showReadNotifications">
         <Switch v-model="showReadNotifications" />
       </SettingItem>
 
       <Separator style="margin: 2px auto" />
 
       <SettingItem
-        title="Mark as read on open"
-        description="When you open some notifications, Github marks them as read automatically, but for some it doesn't."
+        :title="t.markAsReadOnOpen"
+        :description="t.markAsReadOpenDescription"
       >
         <Switch v-model="markAsReadOnOpen" />
       </SettingItem>

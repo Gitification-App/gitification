@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import dayjs from 'dayjs'
 import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
-import { formatReason, isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
+import { isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
+import { useI18n } from '../composables/useI18n'
+import { fromNow } from '../utils/date'
 import Separator from './Separator.vue'
 
 interface Props {
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
   checkable: false,
 })
 const emit = defineEmits<Emits>()
+const { t } = useI18n()
 
 function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
   return e.target instanceof HTMLElement && e.target.closest('.notification-checkbox') != null
@@ -121,9 +123,9 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
       </div>
 
       <div class="notification-item-content-subtitle">
-        {{ formatReason(value.reason) }}
+        {{ t.reason[value.reason] }}
         -
-        {{ dayjs(value.updated_at).fromNow() }}
+        {{ fromNow(value.updated_at) }}
       </div>
     </div>
 
