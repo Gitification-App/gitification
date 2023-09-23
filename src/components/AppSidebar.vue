@@ -7,6 +7,7 @@ import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
 import { useKey } from '../composables/useKey'
 import { Page, useRoute } from '../stores/route'
+import { useI18n } from '../composables/useI18n'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
@@ -17,6 +18,7 @@ import PopoverContentInstallUpdate from './PopoverContentInstallUpdate.vue'
 
 const store = useStore()
 const route = useRoute()
+const { t } = useI18n()
 
 function openCurrentReleaseChangelog() {
   open(`${REPO_LINK}/blob/main/CHANGELOG.md#${__APP_VERSION__.replace(/\./g, '')}`)
@@ -25,22 +27,22 @@ function openCurrentReleaseChangelog() {
 const moreItems = computed(() => [
   menuItem({
     key: 'changelog',
-    meta: { text: 'Changelog', icon: Icons.Info16 },
+    meta: { text: t.changelog, icon: Icons.Info16 },
     onSelect: openCurrentReleaseChangelog,
   }),
   menuItem({
     key: 'settings',
-    meta: { text: 'Settings', icon: Icons.Gear16 },
+    meta: { text: t.settings, icon: Icons.Gear16 },
     onSelect: () => route.go(Page.Settings),
   }),
   AppStorage.get('user') != null && menuItem({
     key: 'logout',
-    meta: { text: 'Log out', icon: Icons.SignOut16 },
+    meta: { text: t.logOut, icon: Icons.SignOut16 },
     onSelect: store.logout,
   }),
   menuItem({
     key: 'exit',
-    meta: { text: 'Exit app', icon: Icons.X },
+    meta: { text: t.exitApp, icon: Icons.X },
     onSelect: () => exit(0),
   }),
 ])
@@ -70,7 +72,7 @@ useKey('r', () => {
           <Tooltip
             :target="el"
             position="right"
-            text="Navigate to repository"
+            :text="t.navigateToRepository"
           />
         </template>
       </SlotRef>
@@ -88,7 +90,7 @@ useKey('r', () => {
           <Tooltip
             :target="el"
             position="right"
-            text="A new version is available"
+            :text="t.aNewVersionIsAvailable"
           />
 
           <Popover
@@ -118,7 +120,7 @@ useKey('r', () => {
           <Tooltip
             :target="el"
             position="right"
-            text="Reload notifications (R)"
+            :text="t.reloadNotifications('R')"
           />
         </template>
       </SlotRef>
@@ -134,7 +136,7 @@ useKey('r', () => {
           <Tooltip
             position="right"
             :target="el"
-            text="More"
+            :text="t.more"
           />
 
           <Popover

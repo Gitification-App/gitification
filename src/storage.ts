@@ -16,6 +16,7 @@ const storage = shallowReactive<AppStorageContext>({
   showSystemNotifications: false,
   markAsReadOnOpen: false,
   colorPreference: ColorPreference.System,
+  language: 'en',
 })
 
 const writeStorageToDisk = batchFn(() => (

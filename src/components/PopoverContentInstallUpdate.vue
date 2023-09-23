@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { UpdateManifest } from '@tauri-apps/api/updater'
+import { useI18n } from '../composables/useI18n'
 import AppButton from './AppButton.vue'
 import EmptyState from './EmptyState.vue'
 
@@ -9,15 +10,15 @@ interface Props {
 }
 
 defineProps<Props>()
-
 defineEmits<{ (e: 'install'): void }>()
 
+const { t } = useI18n()
 const appVersion = __APP_VERSION__
 </script>
 
 <template>
   <div class="install-update">
-    <EmptyState :description="`Gitification ${manifest.version} is available!`">
+    <EmptyState :description="t.gitificationVersionIsAvailable(manifest.version)">
       <template #icon>
         <img
           style="border-radius: 50%;"
@@ -30,14 +31,14 @@ const appVersion = __APP_VERSION__
 
       <template #footer>
         <p class="pharagraph">
-          Current version is <b>{{ appVersion }}</b>
+          <component :is="t.currentVersionIs(appVersion)" />
         </p>
 
         <AppButton
           :loading="loading"
           @click="$emit('install')"
         >
-          Install
+          {{ t.install }}
         </AppButton>
       </template>
     </EmptyState>

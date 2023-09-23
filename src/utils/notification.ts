@@ -1,16 +1,12 @@
 import type { MinimalRepository, Thread } from '../api/notifications'
 import { Icons } from '../components/Icons'
-import type { NotificationReason, NotificationSubject } from '../constants'
-import { reasonFormatMap, subjectIconMap } from '../constants'
+import type { NotificationSubject } from '../constants'
+import { subjectIconMap } from '../constants'
 import type { NotificationList } from '../types'
 import { isObject } from './is'
 
 export function notificationSubjectIcon(subject: NotificationSubject) {
   return subjectIconMap[subject] || Icons.Question
-}
-
-export function formatReason(reason: NotificationReason) {
-  return reasonFormatMap[reason] || 'Unknown reason'
 }
 
 export function toNotificationList(threads: Thread[]): NotificationList {

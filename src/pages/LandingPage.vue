@@ -14,10 +14,12 @@ import { createAuthURL } from '../utils/github'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { getServerPort } from '../api/app'
 import { Page, useRoute } from '../stores/route'
+import { useI18n } from '../composables/useI18n'
 
 const store = useStore()
 const route = useRoute()
 const processing = ref(true)
+const { t } = useI18n()
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value)
@@ -62,7 +64,7 @@ timeout.set('server_start', async () => {
 </script>
 
 <template>
-  <EmptyState description="Welcome to Gitification">
+  <EmptyState :description="t.welcomeToGitification">
     <template #icon>
       <img
         width="75"
@@ -77,7 +79,7 @@ timeout.set('server_start', async () => {
         :loading="processing"
         @click="handleLogin"
       >
-        Log in via Github
+        {{ t.loginViaGithub }}
       </AppButton>
     </template>
   </EmptyState>
