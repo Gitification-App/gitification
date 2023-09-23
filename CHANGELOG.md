@@ -1,3 +1,7 @@
+### 1.3.0
+  - Updated Wowerlay to 1.1.0 to fix some bugs.
+  - Added select language option to settings page (en and tr for now).
+
 ### 1.2.0
   - Added right click menu to repository titles.
   - Refactored ugly spaghetti code to a maintainable good looking code.
