@@ -145,7 +145,7 @@ const localeMap: Record<Locale, typeof en> = { en, tr }
 
 export const useI18n = createSharedComposable(() => {
   const currentLanguage = customRef<Locale>((track, trigger) => {
-    const locale = ref<Locale>('tr')
+    const locale = ref<Locale>(AppStorage.get('language'))
 
     return {
       get() {
