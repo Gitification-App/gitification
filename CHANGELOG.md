@@ -1,3 +1,6 @@
+### 1.3.1
+  - Fixed app always starts in Turkish. (Sorry for that :sweat_smile:)
+
 ### 1.3.0
   - Updated Wowerlay to 1.1.0 to fix some bugs.
   - Added select language option to settings page (en and tr for now).
