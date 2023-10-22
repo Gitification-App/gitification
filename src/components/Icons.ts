@@ -36,6 +36,7 @@ import SquareIcon16 from 'virtual:icons/octicon/square-16'
 import CircleIcon24 from 'virtual:icons/octicon/Circle-24'
 import PlusIcon16 from 'virtual:icons/octicon/plus-16'
 import DashIcon16 from 'virtual:icons/octicon/dash-16'
+import PencilIcon from 'virtual:icons/octicon/pencil-24'
 
 import CommandIcon from 'virtual:icons/ph/command'
 
@@ -79,4 +80,5 @@ export const Icons = {
   ChevronDown: markRaw(ChevronDownIcon),
   Plus16: markRaw(PlusIcon16),
   Dash16: markRaw(DashIcon16),
+  Pencil: markRaw(PencilIcon),
 }

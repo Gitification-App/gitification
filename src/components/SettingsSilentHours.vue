@@ -22,7 +22,7 @@ interface Props {
 
 const mockListData = [
   {
-    repoName: 'test',
+    repoName: 'this is really long repo name text by the way yo',
     start: '10:00',
     end: '12:00',
     days: [SilentHourDays.Monday, SilentHourDays.Tuesday],
@@ -42,9 +42,13 @@ import Dialog from './Dialog.vue'
 import PageHeader from './PageHeader.vue'
 import SettingsSilentHoursAddButton from './SettingsSilentHoursAddButton.vue'
 import SettingsSilentHoursItem from './SettingsSilentHoursItem.vue'
+import SlotRef from './SlotRef.vue'
+import AppButton from './AppButton.vue'
+import { Icons } from './Icons'
+import Popover from './Popover.vue'
 
 withDefaults(defineProps<Props>(), {
-  context: () => [],
+  context: () => mockListData,
 })
 
 const dialogVisible = ref(false)
@@ -65,12 +69,48 @@ const dialogVisible = ref(false)
     :context="item"
   />
 
-  <SettingsSilentHoursAddButton @click="dialogVisible = true" />
+  <SettingsSilentHoursAddButton
+    :style="context.length > 0 ? 'margin-top: 20px;' : undefined"
+    @click="dialogVisible = true"
+  />
 
   <Dialog
     v-model:visible="dialogVisible"
     title="Add Silent Hour"
   >
-    Bruh
+    <div>
+      <input
+        placeholder="Name"
+        type="text"
+      >
+
+      <br>
+
+      <input
+        placeholder="hours"
+        type="text"
+      >
+
+      <SlotRef>
+        <template #default>
+          <AppButton>
+            Select Days
+
+            <template #icon>
+              <Icons.ChevronDown />
+            </template>
+          </AppButton>
+        </template>
+
+        <template #ref="{ el }">
+          <Popover
+            :target="el"
+            :wowerlayOptions="{ position: 'bottom-end', syncSize: true }"
+          >
+            Hello
+          </Popover>
+        </template>
+      </SlotRef>
+    </div>
   </Dialog>
 </template>

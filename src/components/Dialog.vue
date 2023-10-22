@@ -6,7 +6,7 @@ function transitionHandle(bg: HTMLElement, done: () => void, enter = true) {
     { backgroundColor: 'rgba(0, 0, 0, 0)' },
     { backgroundColor: bg.style.backgroundColor },
   ], {
-    duration: 250,
+    duration: 150,
     fill: 'forwards',
     direction: enter ? 'normal' : 'reverse',
   })
@@ -15,11 +15,15 @@ function transitionHandle(bg: HTMLElement, done: () => void, enter = true) {
     { transform: 'scale(0.9)', opacity: 0 },
     { transform: 'scale(1)', opacity: 1 },
   ], {
-    duration: 250,
+    duration: 150,
     fill: 'forwards',
     direction: enter ? 'normal' : 'reverse',
+    easing: 'ease',
   }).onfinish = done
 }
+
+const transitionEnterHandle = (el: any, done: any) => transitionHandle(el, done, true)
+const transitionLeaveHandle = (el: any, done: any) => transitionHandle(el, done, false)
 </script>
 
 <script lang="ts" setup>
@@ -40,8 +44,8 @@ const emit = defineEmits<Emits>()
   <Teleport to="body">
     <Transition
       appear
-      @enter="(el, done) => transitionHandle(el as HTMLElement, done, true)"
-      @leave="(el, done) => transitionHandle(el as HTMLElement, done, false)"
+      @enter="transitionEnterHandle"
+      @leave="transitionLeaveHandle"
     >
       <div
         v-if="props.visible"
@@ -72,14 +76,29 @@ const emit = defineEmits<Emits>()
   z-index: 1000;
   padding: 25px;
 
-  .dialog-content {
+  .dialog-body {
     background-color: var(--content-bg);
     border-radius: 8px;
-    min-width: 33%;
+    min-width: 400px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     box-shadow: 0px 3px 8px -5px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .dialog-title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid var(--item-bg);
+    color: var(--text);
+  }
+
+  .dialog-content {
+    padding: 10px;
+    display: flex;
   }
 }
 </style>

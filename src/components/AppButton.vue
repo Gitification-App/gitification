@@ -49,11 +49,18 @@ function handleClick(e: MouseEvent) {
       <div class="button-loading-indicator-inner" />
     </div>
 
-    <div class="button-content">
+    <div
+      v-if="$slots.default"
+      class="button-content"
+    >
       <slot name="default" />
     </div>
 
-    <div class="button-icon">
+    <div
+      v-if="$slots.icon"
+      class="button-icon"
+      :class="{ 'button-icon-no-margin': $slots.default == null }"
+    >
       <slot name="icon" />
     </div>
   </button>
@@ -68,6 +75,9 @@ function handleClick(e: MouseEvent) {
   overflow: hidden;
   color: var(--text);
   border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &,
   &-icon {
@@ -78,6 +88,9 @@ function handleClick(e: MouseEvent) {
 
   &-icon :deep(.icon) {
     color: currentColor;
+  }
+
+  &-icon:not(.button-icon-no-margin) :deep(.icon) {
     margin-left: 5px;
   }
 
