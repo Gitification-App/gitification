@@ -22,6 +22,7 @@ import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
 import { Page, useRoute } from '../stores/route'
 import { useI18n } from '../composables/useI18n'
+import SettingsSilentHours from '../components/SettingsSilentHours.vue'
 
 const route = useRoute()
 const { t, currentLanguage } = useI18n()
@@ -303,6 +304,8 @@ function handleScroll(e: Event) {
       >
         <Switch v-model="markAsReadOnOpen" />
       </SettingItem>
+
+      <SettingsSilentHours />
     </div>
   </div>
 </template>
@@ -313,7 +316,6 @@ function handleScroll(e: Event) {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-flow: column nowrap;
 

@@ -1,7 +1,8 @@
-import { createSharedComposable, reactiveComputed } from '@vueuse/core'
+import { reactiveComputed } from '@vueuse/core'
 import { Fragment, customRef, h } from 'vue'
 import { AppStorage } from '../storage'
 import { type NotificationReason } from '../constants'
+import { singleton } from '../utils/common'
 
 export type Locale = 'en' | 'tr'
 
@@ -141,7 +142,7 @@ const tr: typeof en = {
 
 const localeMap: Record<Locale, typeof en> = { en, tr }
 
-export const useI18n = createSharedComposable(() => {
+export const useI18n = singleton(() => {
   const currentLanguage = customRef<Locale>((track, trigger) => {
     let locale: Locale = AppStorage.get('language')
 

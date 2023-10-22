@@ -39,7 +39,7 @@ defineProps<Props>()
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .setting-item {
     display: flex;
     flex-direction: row;

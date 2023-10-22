@@ -1,7 +1,12 @@
 <script lang="ts" setup>
+import { Icons } from './Icons'
+import SlotRef from './SlotRef.vue'
+import Tooltip from './Tooltip.vue'
+
 interface Props {
   inline?: boolean
   dot?: boolean
+  info?: string
 }
 
 withDefaults(defineProps<Props>(), {
@@ -20,6 +25,23 @@ withDefaults(defineProps<Props>(), {
     />
 
     <slot />
+
+    <SlotRef v-if="info != null">
+      <template #default>
+        <div class="header-info">
+          <Icons.Question />
+        </div>
+      </template>
+
+      <template #ref="{ el }">
+        <Tooltip
+          style="width: 275px; text-align: left"
+          :text="info"
+          :target="el"
+          position="top"
+        />
+      </template>
+    </SlotRef>
   </header>
 </template>
 
@@ -42,6 +64,14 @@ withDefaults(defineProps<Props>(), {
 
   &-inline {
     display: inline-block;
+  }
+
+  &-info {
+    margin-left: 5px;
+    color: var(--accent-color);
+    font-size: 14px;
+    vertical-align: middle;
+    display: inline-flex;
   }
 }
 </style>

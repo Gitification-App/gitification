@@ -7,6 +7,8 @@ module.exports = {
     'vue/v-on-event-hyphenation': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     'vue/custom-event-name-casing': 'off',
+    // Breaks vue's multiple script tags
+    'import/first': 'off',
     'vue/max-attributes-per-line': ['error', {
       singleline: {
         max: 1,

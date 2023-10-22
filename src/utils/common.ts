@@ -1,8 +1,19 @@
-import { type Ref, type UnwrapRef } from 'vue'
-
 /**
- * Just returns value of passed ref, used for reactivity tracking.
+ * Used for singleton composable functions
+ *
+ * @example
+ * ```ts
+ * const fn = singletonFn(() => {
+ *  const state = reactive({ count: 0 })
+ *  const increment = () => state.count++
+ *  const decrement = () => state.count--
+ *  return { state, increment, decrement }
+ * })
+ *
+ * const { state, increment, decrement } = fn()
+ * ```
  */
-export function trackRef<T extends Ref<any>>(ref: T): UnwrapRef<T> {
-  return ref.value
+export function singleton<T>(fn: () => T): () => T {
+  const context = fn()
+  return () => context
 }
