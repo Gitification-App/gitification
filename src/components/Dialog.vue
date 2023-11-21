@@ -11,6 +11,9 @@ function transitionHandle(bg: HTMLElement, done: () => void, enter = true) {
     direction: enter ? 'normal' : 'reverse',
   })
 
+  if (!enter)
+    bg.style.pointerEvents = 'none'
+
   content.animate([
     { transform: 'scale(0.9)', opacity: 0 },
     { transform: 'scale(1)', opacity: 1 },

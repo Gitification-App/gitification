@@ -3,7 +3,7 @@
  *
  * @example
  * ```ts
- * const fn = singletonFn(() => {
+ * const fn = singleton(() => {
  *  const state = reactive({ count: 0 })
  *  const increment = () => state.count++
  *  const decrement = () => state.count--
