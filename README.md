@@ -30,9 +30,6 @@ An app to view your notifications easily on your menubar.
   <img width="400" src="images/contextmenu.png" />
 </div>
 
-# Known Problems
--  Gitification is not certificated by an apple developer account, after you download it you have to allow it in `Preference/Privacy & Securiy`. I don't earn money from open source, but if I earn `50$` per year from github sponsorships, I will sign the app.
-
 # Building The App
 If you want to build Gitification by yourself:
 
