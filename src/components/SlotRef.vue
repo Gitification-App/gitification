@@ -5,12 +5,12 @@ defineOptions({
   inheritAttrs: false,
 })
 
-interface Slots {
+defineSlots<Slots>()
+
+type Slots = {
   default: () => any
   ref: (props: { el: HTMLElement | null }) => any
 }
-
-defineSlots<Slots>()
 
 const { renderSlot, element } = useSlotWithRef()
 </script>

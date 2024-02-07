@@ -4,7 +4,7 @@ import type { AppStorageContext } from '../types'
 import { createBaseGithubApiHeaders } from '../utils/api'
 import type { User } from './user'
 
-export interface Thread {
+export type Thread = {
   id: string
   repository: MinimalRepository
   subject: {
@@ -21,7 +21,7 @@ export interface Thread {
   subscription_url: string
 }
 
-export interface MinimalRepository {
+export type MinimalRepository = {
   id: number
   node_id: string
   name: string
@@ -135,7 +135,7 @@ export interface MinimalRepository {
     }
   } | null
 }
-export interface CodeOfConduct {
+export type CodeOfConduct = {
   key: string
   name: string
   url: string
@@ -143,7 +143,7 @@ export interface CodeOfConduct {
   html_url: string | null
 }
 
-export interface GetNotificationsArgs {
+export type GetNotificationsArgs = {
   accessToken: string
   showOnlyParticipating: boolean
   showReadNotifications: boolean

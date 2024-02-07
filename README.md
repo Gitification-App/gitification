@@ -3,11 +3,10 @@
 </div>
 
 <div align="center">
-  
+
   [Download page](https://gitification.app/)
 
 </div>
-
 
 # Gitification (Beta)
 An app to view your notifications easily on your menubar.
@@ -22,7 +21,6 @@ An app to view your notifications easily on your menubar.
 <div align="center">
   <img style="border-radius: 30px" src="images/size_comparison.png" />
 </div>
-
 
 # Screenshots
 <div align="center">
@@ -49,16 +47,47 @@ If you want to contribute you should install these extensions and set-up these s
 
   ```json
   {
+    "prettier.enable": false,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "never"
+    },
+    "eslint.rules.customizations": [
+      { "rule": "style/*", "severity": "off" },
+      { "rule": "format/*", "severity": "off" },
+      { "rule": "*-indent", "severity": "off" },
+      { "rule": "*-spacing", "severity": "off" },
+      { "rule": "*-spaces", "severity": "off" },
+      { "rule": "*-order", "severity": "off" },
+      { "rule": "*-dangle", "severity": "off" },
+      { "rule": "*-newline", "severity": "off" },
+      { "rule": "*quotes", "severity": "off" },
+      { "rule": "*semi", "severity": "off" }
+    ],
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "vue",
+      "html",
+      "markdown",
+      "json",
+      "jsonc",
+      "yaml",
+      "toml"
+    ],
     "[rust]": {
       "editor.defaultFormatter": "rust-lang.rust-analyzer"
     },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "eslint.enable": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    },
+    "eslint.experimental.useFlatConfig": true,
     "vue.complete.casing.props": "camel",
     "vue.complete.casing.tags": "pascal",
-    "vue.complete.normalizeComponentImportName": true
+    "vue.complete.normalizeComponentImportName": true,
+    "typescript.tsdk": "node_modules/typescript/lib"
   }
   ```
 - And lastly in extensions page search `@builtin typescript` then disable TypeScript LSP for your workspace, after reloading vscode you're good to go.

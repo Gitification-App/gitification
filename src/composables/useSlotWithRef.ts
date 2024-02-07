@@ -1,5 +1,5 @@
 import { ref, useSlots, withDirectives } from 'vue'
-import { type Directive, type Ref } from 'vue'
+import type { Directive, Ref } from 'vue'
 
 const vRef: Directive<HTMLElement, (el: HTMLElement) => void> = (el, { value }) => value(el)
 

@@ -1,7 +1,7 @@
 import { createSharedComposable, reactiveComputed } from '@vueuse/core'
 import { Fragment, customRef, h } from 'vue'
 import { AppStorage } from '../storage'
-import { type NotificationReason } from '../constants'
+import type { NotificationReason } from '../constants'
 
 export type Locale = 'en' | 'tr'
 

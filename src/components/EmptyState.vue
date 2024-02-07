@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Option } from '../types'
-import { type IconComponent } from './Icons'
+import type { IconComponent } from './Icons'
 import PageHeader from './PageHeader.vue'
 
 export enum EmptyStateIconSize {
@@ -10,7 +10,7 @@ export enum EmptyStateIconSize {
 </script>
 
 <script lang="ts" setup>
-interface Props {
+type Props = {
   icon?: Option<IconComponent>
   description: string
   iconSize?: Option<EmptyStateIconSize>

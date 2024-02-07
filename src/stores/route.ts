@@ -1,6 +1,6 @@
 import { readonly, ref, shallowRef } from 'vue'
 import { defineStore } from 'pinia'
-import { type Option } from '../types'
+import type { Option } from '../types'
 
 export enum Page {
   Settings = 'Settings',
@@ -8,7 +8,7 @@ export enum Page {
   Landing = 'Landing',
 }
 
-export interface PageState {
+export type PageState = {
   fetchOnEnter?: boolean
 }
 

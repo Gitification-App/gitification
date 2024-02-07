@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-interface Props {
+type Props = {
   disabled?: boolean
   highlight?: boolean
 }

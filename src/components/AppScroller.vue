@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue'
 import { type OverlayScrollbarsComponentRef, OverlayScrollbarsComponent as ScrollView } from 'overlayscrollbars-vue'
-import { type PartialOptions as OverlayScrollbarsOptions } from 'overlayscrollbars'
+import type { PartialOptions as OverlayScrollbarsOptions } from 'overlayscrollbars'
 import { computedEager } from '@vueuse/core'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { useStore } from '../stores/store'

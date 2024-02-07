@@ -1,6 +1,6 @@
 import type { Option } from '../types'
 
-interface CreateURLArgs {
+type CreateURLArgs = {
   url: string
   query?: Option<Record<string, string>>
 }

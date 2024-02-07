@@ -1,9 +1,9 @@
 <script lang="ts">
-interface Props {
+type Props = {
   modelValue: boolean
 }
 
-interface Emits {
+type Emits = {
   (e: 'update:modelValue', value: boolean): void
 }
 </script>

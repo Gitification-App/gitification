@@ -1,4 +1,4 @@
-import { type Ref, type UnwrapRef } from 'vue'
+import type { Ref, UnwrapRef } from 'vue'
 
 /**
  * Just returns value of passed ref, used for reactivity tracking.

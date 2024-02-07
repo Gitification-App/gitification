@@ -3,7 +3,7 @@ import { Icons } from './Icons'
 import SlotRef from './SlotRef.vue'
 import Tooltip from './Tooltip.vue'
 
-interface Props {
+type Props = {
   title: string
   description?: string
 }

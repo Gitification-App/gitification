@@ -1,12 +1,12 @@
 import { Body, ResponseType, fetch } from '@tauri-apps/api/http'
 
-export interface GetAccessTokenArgs {
+export type GetAccessTokenArgs = {
   clientId: string
   clientSecret: string
   code: string
 }
 
-export interface GetAccessTokenResponse {
+export type GetAccessTokenResponse = {
   access_token: string
   expires_in: number
   refresh_token: string

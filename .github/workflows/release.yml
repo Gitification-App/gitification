@@ -1,4 +1,4 @@
-name: 'Release'
+name: Release
 on:
   push:
     branches:
@@ -37,7 +37,7 @@ jobs:
         env:
           RUNS_ON: '${{ matrix.platform }}'
         with:
-          script: "return process.env.RUNS_ON === 'macos-latest' ? '--target universal-apple-darwin' : ''"
+          script: 'return process.env.RUNS_ON === ''macos-latest'' ? ''--target universal-apple-darwin'' : '''''
           result-encoding: string
 
       - uses: actions/github-script@v6
@@ -54,16 +54,16 @@ jobs:
 
       - name: install aarch64-apple-darwin
         if: matrix.platform == 'macos-latest'
-        run: 'rustup target add aarch64-apple-darwin'
-      
+        run: rustup target add aarch64-apple-darwin
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: __VERSION__ 
-          releaseName: '__VERSION__'
+          tagName: __VERSION__
+          releaseName: __VERSION__
           releaseDraft: false
           prerelease: false
           args: ${{ steps.set-args.outputs.result }}

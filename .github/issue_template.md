@@ -1,5 +1,5 @@
 **`Environment (Required):`**
-  - **`OS:`**: <!--EXAMPLE--> Windows 
+  - **`OS:`**: <!--EXAMPLE--> Windows
   - **`Version:`**: <!--EXAMPLE--> 10
 
 **`Issue explanation (Required):`**

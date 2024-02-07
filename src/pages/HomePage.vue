@@ -2,7 +2,7 @@
 import { open } from '@tauri-apps/api/shell'
 import { onScopeDispose, ref } from 'vue'
 import { whenever } from '@vueuse/core'
-import { type ItemRenderList } from 'vue-selectable-items'
+import type { ItemRenderList } from 'vue-selectable-items'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
 import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
