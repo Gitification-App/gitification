@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-interface Props {
+type Props = {
   inline?: boolean
   dot?: boolean
 }

@@ -4,11 +4,11 @@ import { type AlignedPlacement, type ReferenceElement, type Side, Wowerlay, type
 import { useEventListener } from '@vueuse/core'
 import { useKey } from '../composables/useKey'
 
-interface PopoverContext {
+type PopoverContext = {
   visible: Ref<boolean>
 }
 
-interface SlotProps {
+type SlotProps = {
   visible: boolean
 }
 
@@ -92,12 +92,12 @@ export function onPopoverVisible(cb: (el: ReferenceElement) => void) {
 </script>
 
 <script lang="ts" setup>
-interface Props {
+type Props = {
   wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
   target?: InstanceType<typeof Wowerlay>['$props']['target']
 }
 
-interface Emits {
+type Emits = {
   (e: 'visibilityChange', visible: boolean): void
 }
 

@@ -1,4 +1,4 @@
-import { type AlignedPlacement, type Side, type WowerlayTransitionFn } from 'wowerlay'
+import type { AlignedPlacement, Side, WowerlayTransitionFn } from 'wowerlay'
 
 export const transformOriginMap: Record<AlignedPlacement | Side, string> = {
   'bottom-end': 'right top',

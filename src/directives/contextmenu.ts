@@ -1,4 +1,4 @@
-import { type Directive, type DirectiveBinding } from 'vue'
+import type { Directive, DirectiveBinding } from 'vue'
 import { type ContextmenuState, useContextmenu } from '../stores/contextmenu'
 
 const registeredElements = new WeakSet<HTMLElement>()

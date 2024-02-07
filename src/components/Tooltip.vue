@@ -5,7 +5,7 @@ import { useEventListener } from '@vueuse/core'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { onPopoverVisible } from './Popover.vue'
 
-interface Props {
+type Props = {
   text: string
   position?: WowerlayProps['position']
   target?: HTMLElement | null

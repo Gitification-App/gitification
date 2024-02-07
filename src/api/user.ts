@@ -6,7 +6,7 @@ export type User = PrivateUser | PublicUser
 /**
  * Private User
  */
-interface PrivateUser {
+type PrivateUser = {
   login: string
   id: number
   node_id: string
@@ -56,7 +56,7 @@ interface PrivateUser {
   business_plus?: boolean
   ldap_dn?: string
 }
-export interface PublicUser {
+export type PublicUser = {
   login: string
   id: number
   node_id: string

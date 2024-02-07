@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-interface Props {
+type Props = {
   loading?: boolean
   paddingless?: boolean
   square?: boolean
   ghost?: boolean
 }
-interface Emits {
+type Emits = {
   (name: 'click', event: MouseEvent): void
 }
 

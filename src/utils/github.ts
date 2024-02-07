@@ -13,7 +13,7 @@ export function createNotificationReferrerId(
   return window.btoa(`018:NotificationThread${notificationId}:${userId}`)
 }
 
-export interface ToGithubWebURLArgs {
+export type ToGithubWebURLArgs = {
   notification: Thread
   userId: number
 }

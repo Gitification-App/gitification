@@ -3,7 +3,7 @@ import { onMounted, onUpdated, shallowRef, toValue } from 'vue'
 import type { Option } from '../types'
 import { type UseKeyOptions, useKey } from './useKey'
 
-export interface UseElementNavigationOptions {
+export type UseElementNavigationOptions = {
   target: MaybeRefOrGetter<Option<HTMLElement>>
   targetQuery: string
   navigateNextHotkey: string

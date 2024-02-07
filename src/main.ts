@@ -14,7 +14,6 @@ import { checkUpdate } from '@tauri-apps/api/updater'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
-import { initDevtools } from './utils/initDevtools'
 import { useKey } from './composables/useKey'
 import { Page, useRoute } from './stores/route'
 import 'dayjs/locale/en'
@@ -22,8 +21,12 @@ import 'dayjs/locale/tr'
 
 async function main() {
   if (import.meta.env.DEV) {
-    initDevtools()
     useKey('command+r', () => location.reload(), { prevent: true })
+
+    const scriptElement = document.createElement('script')
+    scriptElement.type = 'text/javascript'
+    scriptElement.src = 'http://localhost:8098'
+    document.head.appendChild(scriptElement)
   }
 
   dayjs.extend(relativeTime)

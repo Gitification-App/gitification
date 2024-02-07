@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { shallowRef } from 'vue'
-import { type ItemRenderList } from 'vue-selectable-items'
-import { type ItemMeta } from '../components/MenuItems.vue'
-import { type Option } from '../types'
+import type { ItemRenderList } from 'vue-selectable-items'
+import type { ItemMeta } from '../components/MenuItems.vue'
+import type { Option } from '../types'
 
-export interface ContextmenuState {
+export type ContextmenuState = {
   targetRectFn: () => DOMRect
   itemsFn: () => ItemRenderList<ItemMeta>
   currentTarget: HTMLElement | null

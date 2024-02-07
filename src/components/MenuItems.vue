@@ -2,14 +2,18 @@
 import {
   type Context,
   type Item,
-  type ItemRenderList, SelectableItems, createItemDefaults, filterSelectableItems, item,
+  type ItemRenderList,
+  SelectableItems,
+  createItemDefaults,
+  filterSelectableItems,
+  item,
 } from 'vue-selectable-items'
 import { onMounted } from 'vue'
 import { useKey } from '../composables/useKey'
-import { type Icons } from './Icons'
+import type { Icons } from './Icons'
 import { usePopoverContext } from './Popover.vue'
 
-export interface ItemMeta {
+export type ItemMeta = {
   text: string
   icon?: typeof Icons[keyof typeof Icons]
   key?: string
@@ -28,13 +32,17 @@ const itemDefaults = createItemDefaults<ItemMeta>(({ disabled, meta }) => ({
   },
 }))
 
-interface Props {
+type Props = {
   items: ItemRenderList<ItemMeta>
   setup?: (ctx: Context) => void
 }
 </script>
 
 <script lang="ts" setup>
+defineOptions({
+  inheritAttrs: false,
+})
+
 const props = withDefaults(defineProps<Props>(), {
   items: () => [],
   setup: () => {},
@@ -43,10 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits<{
   (e: 'select', meta: ItemMeta): void
 }>()
-
-defineOptions({
-  inheritAttrs: false,
-})
 
 function setupHandle(ctx: Context) {
   useKey('up,shift+tab', () => ctx.focusPrevious(), { input: true, repeat: true, prevent: true })

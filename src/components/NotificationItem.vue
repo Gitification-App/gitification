@@ -6,7 +6,7 @@ import { useI18n } from '../composables/useI18n'
 import { fromNow } from '../utils/date'
 import Separator from './Separator.vue'
 
-interface Props {
+type Props = {
   value: NotificationList[number]
   checked?: boolean
   checkable?: boolean
@@ -14,7 +14,7 @@ interface Props {
   indeterminate?: boolean
 }
 
-interface Emits {
+type Emits = {
   (e: 'click:notification', notification: Thread): void
   (e: 'click:repo', repoFullName: string): void
   (e: 'update:checked', value: boolean): void

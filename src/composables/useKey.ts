@@ -4,7 +4,7 @@ import { type Ref, isRef, unref, watch } from 'vue'
 
 type MaybeRef<T> = T | Ref<T>
 
-export interface UseKeyOptions {
+export type UseKeyOptions = {
   prevent?: MaybeRef<boolean>
   stop?: MaybeRef<boolean>
   repeat?: MaybeRef<boolean>
@@ -18,9 +18,9 @@ const getLast = <T>(arr: T[]) => arr[arr.length - 1]
 
 function isInputing() {
   return document.activeElement instanceof HTMLTextAreaElement
-  || document.activeElement?.hasAttribute('contenteditable')
-  || document.activeElement instanceof HTMLInputElement
-  || document.activeElement instanceof HTMLSelectElement
+    || document.activeElement?.hasAttribute('contenteditable')
+    || document.activeElement instanceof HTMLInputElement
+    || document.activeElement instanceof HTMLSelectElement
 }
 
 hotkeys.filter = () => true
