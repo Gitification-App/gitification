@@ -20,7 +20,7 @@ import 'dayjs/locale/en'
 import 'dayjs/locale/tr'
 
 async function main() {
-  if (import.meta.env.DEV) {
+  if (import.meta.env.MODE !== 'production') {
     useKey('command+r', () => location.reload(), { prevent: true })
 
     const scriptElement = document.createElement('script')
@@ -38,7 +38,6 @@ async function main() {
   app.use(pinia)
 
   await cacheStorageFromDisk()
-
   const store = useStore(pinia)
   const route = useRoute()
   const token = AppStorage.get('accessToken')
