@@ -3,6 +3,7 @@ import { type InjectionKey, type Ref, inject, onScopeDispose, provide, ref, watc
 import { type AlignedPlacement, type ReferenceElement, type Side, Wowerlay, type WowerlayTransitionFn } from 'wowerlay'
 import { useEventListener } from '@vueuse/core'
 import { useKey } from '../composables/useKey'
+import { useCustomHook } from '../composables/useCustomHook'
 
 type PopoverContext = {
   visible: Ref<boolean>
@@ -75,20 +76,7 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
   }
 }
 
-const popoverVisibleHooks = new Set<(el: ReferenceElement) => void>()
-
-function runPopoverVisibleHooks(el: ReferenceElement) {
-  for (const cb of popoverVisibleHooks)
-    cb(el)
-}
-
-export function onPopoverVisible(cb: (el: ReferenceElement) => void) {
-  popoverVisibleHooks.add(cb)
-  const cleanup = () => popoverVisibleHooks.delete(cb)
-  onScopeDispose(cleanup)
-
-  return cleanup
-}
+export const [onPopoverVisible, emitPopoverVisible] = useCustomHook<[el: ReferenceElement]>()
 </script>
 
 <script lang="ts" setup>
@@ -140,7 +128,7 @@ watch(visible, (value) => {
     setTimeout(() => {
       popoverEl.value?.focus()
     })
-    runPopoverVisibleHooks(props.target as ReferenceElement)
+    emitPopoverVisible(props.target as ReferenceElement)
   }
   else {
     setTimeout(() => lastFocusedElement instanceof HTMLElement && lastFocusedElement.focus())
