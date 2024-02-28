@@ -9,13 +9,13 @@ import { useStore } from './stores/store'
 import LandingPage from './pages/LandingPage.vue'
 import { useInterval } from './composables/useInterval'
 import { AppStorage } from './storage'
-import { Page, useRoute } from './stores/route'
 import ContextMenu from './components/ContextMenu.vue'
 import { useContextmenu } from './stores/contextmenu'
 import { useTheme } from './composables/useTheme'
+import { Page, useRoute } from './composables/useRoute'
 
 const store = useStore()
-const route = useRoute()
+const { currentPage } = useRoute()
 const contextmenu = useContextmenu()
 
 useInterval(() => {
@@ -41,9 +41,9 @@ watchEffect(() => {
   <AppSidebar />
 
   <AppScroller>
-    <HomePage v-if="route.currentPage === Page.Home" />
-    <SettingsPage v-else-if="route.currentPage === Page.Settings" />
-    <LandingPage v-else-if="route.currentPage === Page.Landing" />
+    <HomePage v-if="currentPage === Page.Home" />
+    <SettingsPage v-else-if="currentPage === Page.Settings" />
+    <LandingPage v-else-if="currentPage === Page.Landing" />
   </AppScroller>
 
   <ContextMenu

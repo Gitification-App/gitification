@@ -1,6 +1,7 @@
 import { readonly, ref, shallowRef } from 'vue'
 import { defineStore } from 'pinia'
 import type { Option } from '../types'
+import { singleton } from '../utils/common'
 
 export enum Page {
   Settings = 'Settings',
@@ -12,7 +13,7 @@ export type PageState = {
   fetchOnEnter?: boolean
 }
 
-export const useRoute = defineStore('route', () => {
+export const useRoute = singleton(() => {
   const currentPage = ref(Page.Landing)
   const pageFrom = ref<Option<Page>>(null)
   const state = shallowRef<PageState>({})

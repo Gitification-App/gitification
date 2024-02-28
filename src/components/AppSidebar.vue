@@ -6,8 +6,8 @@ import { REPO_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
 import { useKey } from '../composables/useKey'
-import { Page, useRoute } from '../stores/route'
 import { useI18n } from '../composables/useI18n'
+import { Page, useRoute } from '../composables/useRoute'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
@@ -49,7 +49,7 @@ const moreItems = computed(() => [
 
 useKey('r', () => {
   store.fetchNotifications(true)
-}, { source: () => route.currentPage === Page.Home })
+}, { source: () => route.currentPage.value === Page.Home })
 </script>
 
 <template>
@@ -109,7 +109,7 @@ useKey('r', () => {
       <SlotRef>
         <template #default>
           <SidebarButton
-            :disabled="route.currentPage !== Page.Home"
+            :disabled="route.currentPage.value !== Page.Home"
             @click="store.fetchNotifications(true)"
           >
             <Icons.Sync16 />

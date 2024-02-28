@@ -10,8 +10,8 @@ import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from 
 import { AppStorage } from '../storage'
 import type { NotificationList, Option } from '../types'
 import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
-import { Page, useRoute } from '../stores/route'
 import { everySome } from '../utils/array'
+import { Page, useRoute } from '../composables/useRoute'
 
 export const useStore = defineStore('store', () => {
   const notifications = shallowRef<NotificationList>([])

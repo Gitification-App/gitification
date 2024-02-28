@@ -20,8 +20,8 @@ import MenuItems, { menuItem } from '../components/MenuItems.vue'
 import Popover from '../components/Popover.vue'
 import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
-import { Page, useRoute } from '../stores/route'
 import { useI18n } from '../composables/useI18n'
+import { Page, useRoute } from '../composables/useRoute'
 
 const route = useRoute()
 const { t, currentLanguage } = useI18n()

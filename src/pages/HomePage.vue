@@ -17,15 +17,15 @@ import { isRepository } from '../utils/notification'
 import { type ItemMeta, menuItem } from '../components/MenuItems.vue'
 import { useKey } from '../composables/useKey'
 import { CheckedNotificationProcess } from '../constants'
-import { useRoute } from '../stores/route'
 import { vContextmenu } from '../directives/contextmenu'
 import { useI18n } from '../composables/useI18n'
+import { useRoute } from '../composables/useRoute'
 
 const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
 
-if (route.state.fetchOnEnter)
+if (route.state.value.fetchOnEnter)
   store.fetchNotifications(true)
 
 function handleOpenNotification(thread: Thread) {

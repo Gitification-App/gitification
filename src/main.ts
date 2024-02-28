@@ -15,9 +15,9 @@ import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
 import { useKey } from './composables/useKey'
-import { Page, useRoute } from './stores/route'
 import 'dayjs/locale/en'
 import 'dayjs/locale/tr'
+import { Page, useRoute } from './composables/useRoute'
 
 async function main() {
   if (import.meta.env.MODE !== 'production') {

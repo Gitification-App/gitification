@@ -13,8 +13,8 @@ import EmptyState from '../components/EmptyState.vue'
 import { createAuthURL } from '../utils/github'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { getServerPort } from '../api/app'
-import { Page, useRoute } from '../stores/route'
 import { useI18n } from '../composables/useI18n'
+import { Page, useRoute } from '../composables/useRoute'
 
 const store = useStore()
 const route = useRoute()
