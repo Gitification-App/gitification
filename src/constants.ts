@@ -1,8 +1,5 @@
 import { Mutex } from 'async-mutex'
-import { useMediaQuery } from '@vueuse/core'
 import { Icons } from './components/Icons'
-
-export const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 
 export enum CheckedNotificationProcess {
   Unsubscribe,

@@ -9,8 +9,8 @@ import type { Option } from '../types'
 import { batchFn } from '../utils/batch'
 import { ColorPreference } from '../constants'
 import { useRoute } from '../stores/route'
+import { useTheme } from '../composables/useTheme'
 
-const store = useStore()
 const route = useRoute()
 const scrollView = ref<Option<OverlayScrollbarsComponentRef>>(null)
 
@@ -28,10 +28,12 @@ watch(() => route.currentPage, () => {
     element.scrollTop = 0
 }, { flush: 'post' })
 
+const { theme } = useTheme()
+
 const options = computedEager<OverlayScrollbarsOptions>(() => ({
   scrollbars: {
     autoHide: 'scroll',
-    theme: store.theme === ColorPreference.Dark ? 'os-theme-light' : 'os-theme-dark',
+    theme: theme.value === ColorPreference.Dark ? 'os-theme-light' : 'os-theme-dark',
   },
 }))
 </script>

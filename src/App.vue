@@ -12,6 +12,7 @@ import { AppStorage } from './storage'
 import { Page, useRoute } from './stores/route'
 import ContextMenu from './components/ContextMenu.vue'
 import { useContextmenu } from './stores/contextmenu'
+import { useTheme } from './composables/useTheme'
 
 const store = useStore()
 const route = useRoute()
@@ -22,8 +23,10 @@ useInterval(() => {
     store.fetchNotifications()
 }, FETCH_INTERVAL_DURATION)
 
+const { theme } = useTheme()
+
 watchEffect(() => {
-  if (store.theme === ColorPreference.Dark)
+  if (theme.value === ColorPreference.Dark)
     document.documentElement.classList.remove('light-theme')
   else
     document.documentElement.classList.add('light-theme')
