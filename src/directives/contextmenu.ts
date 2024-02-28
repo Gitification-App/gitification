@@ -1,17 +1,18 @@
 import type { Directive, DirectiveBinding } from 'vue'
-import { type ContextmenuState, useContextmenu } from '../stores/contextmenu'
+import type { ContextMenuState } from '../composables/useContextMenu'
+import { useContextMenu } from '../composables/useContextMenu'
 
 const registeredElements = new WeakSet<HTMLElement>()
 
-function directiveHandler(el: HTMLElement, binding: DirectiveBinding<ContextmenuState['itemsFn']>) {
+function directiveHandler(el: HTMLElement, binding: DirectiveBinding<ContextMenuState['itemsFn']>) {
   if (!registeredElements.has(el)) {
     registeredElements.add(el)
 
-    const contextmenu = useContextmenu()
+    const contextmenu = useContextMenu()
 
     el.addEventListener('contextmenu', (event) => {
       event.preventDefault()
-      contextmenu.state = {
+      contextmenu.state.value = {
         currentTarget: el,
         itemsFn: binding.value,
         targetRectFn: () => ({
@@ -31,13 +32,13 @@ function directiveHandler(el: HTMLElement, binding: DirectiveBinding<Contextmenu
 }
 
 function unmountHandler(el: HTMLElement) {
-  const contextmenu = useContextmenu()
+  const contextmenu = useContextMenu()
 
-  if (contextmenu.state?.currentTarget === el)
-    contextmenu.state = null
+  if (contextmenu.state.value?.currentTarget === el)
+    contextmenu.clear()
 }
 
-export const vContextmenu: Directive<HTMLElement, ContextmenuState['itemsFn']> = {
+export const vContextmenu: Directive<HTMLElement, ContextMenuState['itemsFn']> = {
   mounted: directiveHandler,
   updated: directiveHandler,
   unmounted: unmountHandler,

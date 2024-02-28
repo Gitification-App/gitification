@@ -3,14 +3,15 @@ import { Wowerlay } from 'wowerlay'
 import { type Context, filterSelectableItems } from 'vue-selectable-items'
 import { useKey } from '../composables/useKey'
 import { handleTransition } from '../utils/wowerlay'
-import type { ContextmenuState } from '../stores/contextmenu'
+
 import type { Option } from '../types'
+import type { ContextMenuState } from '../composables/useContextMenu'
 import MenuItems from './MenuItems.vue'
 </script>
 
 <script lang="ts" setup>
 type Props = {
-  state: Option<ContextmenuState>
+  state: Option<ContextMenuState>
 }
 
 const props = defineProps<Props>()

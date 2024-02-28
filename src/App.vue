@@ -10,13 +10,13 @@ import LandingPage from './pages/LandingPage.vue'
 import { useInterval } from './composables/useInterval'
 import { AppStorage } from './storage'
 import ContextMenu from './components/ContextMenu.vue'
-import { useContextmenu } from './stores/contextmenu'
 import { useTheme } from './composables/useTheme'
 import { Page, useRoute } from './composables/useRoute'
+import { useContextMenu } from './composables/useContextMenu'
 
 const store = useStore()
 const { currentPage } = useRoute()
-const contextmenu = useContextmenu()
+const contextmenu = useContextMenu()
 
 useInterval(() => {
   if (AppStorage.get('accessToken') && AppStorage.get('user'))
@@ -47,7 +47,7 @@ watchEffect(() => {
   </AppScroller>
 
   <ContextMenu
-    :state="contextmenu.state"
-    @close="contextmenu.clear"
+    :state="contextmenu.state.value"
+    @close="contextmenu.clear()"
   />
 </template>
