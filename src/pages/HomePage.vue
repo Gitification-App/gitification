@@ -6,7 +6,7 @@ import type { ItemRenderList } from 'vue-selectable-items'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
 import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { toGithubWebURL } from '../utils/github'
+import { createGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
 import { useElementNavigation } from '../composables/useElementNavigation'
@@ -29,7 +29,7 @@ if (route.state.fetchOnEnter)
   store.fetchNotifications(true)
 
 function handleOpenNotification(thread: Thread) {
-  const url = toGithubWebURL({ notification: thread, userId: AppStorage.get('user')!.id })
+  const url = createGithubWebURL({ notification: thread, userId: AppStorage.get('user')!.id })
   open(url)
 }
 

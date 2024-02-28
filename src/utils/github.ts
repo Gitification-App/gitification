@@ -1,6 +1,6 @@
 import { GITHUB_AUTHORIZE_ENDPOINT, GITHUB_AUTH_SCOPES } from '../api/constants'
 import type { Thread } from '../api/notifications'
-import { NotificationSubject } from '../constants'
+import { NotificationReason, NotificationSubject } from '../constants'
 import { createURL } from './url'
 
 const NOTIFICATION_REFERRER_ID_KEY = 'notification_referrer_id'
@@ -13,33 +13,42 @@ export function createNotificationReferrerId(
   return window.btoa(`018:NotificationThread${notificationId}:${userId}`)
 }
 
-export type ToGithubWebURLArgs = {
+export type CreateGithubWebUrlParams = {
   notification: Thread
   userId: number
 }
 
-export function toGithubWebURL({ notification, userId }: ToGithubWebURLArgs) {
+export function createGithubWebURL({ notification, userId }: CreateGithubWebUrlParams) {
   const notificationReferrerId = createNotificationReferrerId(notification.id, userId)
 
+  let url: string
+
   if (notification.subject.type === NotificationSubject.Discussion) {
-    let newURL = `https://github.com/${notification.repository.full_name}/discussions`
+    url = `https://github.com/${notification.repository.full_name}/discussions`
+    url += `?${DISCUSSIONS_QUERY_KEY}=${decodeURIComponent(notification.subject.title)}`
+  }
+  else if (notification.reason === NotificationReason.CiActivity) {
+    // We cannot produce link to CiActivity so target to repo name
+    url = `https://github.com/${notification.repository.full_name}`
+  }
+  else {
+    url = notification.subject.url.replace('api.github.com/repos', 'github.com')
 
-    newURL = `?${newURL}&${DISCUSSIONS_QUERY_KEY}=${decodeURIComponent(notification.subject.title)}`
+    if (url.includes('/pulls/'))
+      url = url.replace('/pulls/', '/pull/')
 
-    return newURL
+    if (url.includes('/releases/')) {
+      url = url.replace('/repos', '')
+      url = url.slice(0, url.lastIndexOf('/'))
+    }
   }
 
-  let newUrl = notification.subject.url.replace('api.github.com/repos', 'github.com')
+  const refer = `${NOTIFICATION_REFERRER_ID_KEY}=${notificationReferrerId}`
 
-  if (newUrl.includes('/pulls/'))
-    newUrl = newUrl.replace('/pulls/', '/pull/')
+  if (url.includes('?'))
+    return `${url}&${refer}`
 
-  if (newUrl.includes('/releases/')) {
-    newUrl = newUrl.replace('/repos', '')
-    newUrl = newUrl.slice(0, newUrl.lastIndexOf('/'))
-  }
-
-  return `${newUrl}?${NOTIFICATION_REFERRER_ID_KEY}=${notificationReferrerId}`
+  return `${url}?${refer}`
 }
 
 export function createAuthURL(port: number) {
