@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { type as osType } from '@tauri-apps/api/os'
 import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
 import { isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
@@ -32,8 +33,27 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
   return e.target instanceof HTMLElement && e.target.closest('.notification-checkbox') != null
 }
 
-function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
+async function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
   if ((event instanceof KeyboardEvent && event.repeat)) {
+    return
+  }
+
+  const os = await osType()
+
+  if (os === 'Darwin' && event.ctrlKey) {
+    queueMicrotask(() => {
+      const el = event.target as HTMLElement
+      const bounds = el.getBoundingClientRect()
+      const [x, y] = [bounds.left + bounds.width / 2, bounds.top + bounds.height / 2]
+      el.dispatchEvent(new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        screenX: x,
+        screenY: y,
+        clientX: x,
+        clientY: y,
+      }))
+    })
     return
   }
 
