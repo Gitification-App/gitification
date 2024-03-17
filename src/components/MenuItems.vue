@@ -56,12 +56,6 @@ function setupHandle(ctx: Context) {
   useKey('up,shift+tab', () => ctx.focusPrevious(), { input: true, repeat: true, prevent: true })
   useKey('down,tab', () => ctx.focusNext(), { input: true, repeat: true, prevent: true })
 
-  useKey(
-    'enter',
-    () => ctx.selectFocusedItem(),
-    { input: true },
-  )
-
   ctx.onFocus((meta, item, el) => {
     el?.focus()
   })
