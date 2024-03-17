@@ -19,16 +19,17 @@ const focus = batchFn(() => {
   scrollView.value?.getElement()?.focus()
 })
 
-provide(scrollElementInjectionKey, computed(() => scrollView.value?.osInstance()?.elements()?.viewport as HTMLElement))
+const scrollElement = computed(() => scrollView.value?.osInstance()?.elements()?.scrollOffsetElement as HTMLElement)
+
+provide(scrollElementInjectionKey, scrollElement)
 
 useTauriEvent('window:hidden', focus)
 onMounted(focus)
 watch(route.currentPage, () => {
   focus()
 
-  const element = scrollView.value?.osInstance()?.elements().scrollOffsetElement
-  if (element) {
-    element.scrollTop = 0
+  if (scrollElement.value) {
+    scrollElement.value.scrollTop = 0
   }
 }, { flush: 'post' })
 
