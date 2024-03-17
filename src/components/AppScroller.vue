@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import { type OverlayScrollbarsComponentRef, OverlayScrollbarsComponent as ScrollView } from 'overlayscrollbars-vue'
 import type { PartialOptions as OverlayScrollbarsOptions } from 'overlayscrollbars'
 import { computedEager } from '@vueuse/core'
@@ -10,6 +10,7 @@ import { batchFn } from '../utils/batch'
 import { ColorPreference } from '../constants'
 import { useTheme } from '../composables/useTheme'
 import { useRoute } from '../composables/useRoute'
+import { scrollElementInjectionKey } from '../composables/useScrollElement'
 
 const route = useRoute()
 const scrollView = ref<Option<OverlayScrollbarsComponentRef>>(null)
@@ -17,6 +18,8 @@ const scrollView = ref<Option<OverlayScrollbarsComponentRef>>(null)
 const focus = batchFn(() => {
   scrollView.value?.getElement()?.focus()
 })
+
+provide(scrollElementInjectionKey, computed(() => scrollView.value?.osInstance()?.elements()?.viewport as HTMLElement))
 
 useTauriEvent('window:hidden', focus)
 onMounted(focus)

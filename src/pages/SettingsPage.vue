@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
-import { computedEager, watchDebounced } from '@vueuse/core'
+import { computedEager, useEventListener, watchDebounced } from '@vueuse/core'
 
 import { invoke } from '@tauri-apps/api/tauri'
 import { requestPermission } from '@tauri-apps/api/notification'
@@ -22,6 +22,7 @@ import Switch from '../components/Switch.vue'
 import SettingItem from '../components/SettingItem.vue'
 import { useI18n } from '../composables/useI18n'
 import { Page, useRoute } from '../composables/useRoute'
+import { useScrollElement } from '../composables/useScrollElement'
 
 const route = useRoute()
 const { t, currentLanguage } = useI18n()
@@ -165,16 +166,16 @@ const selectLanguageItems = computed(() => [
 ])
 
 const scrollTop = ref(0)
-function handleScroll(e: Event) {
+const scrollElement = useScrollElement()
+
+useEventListener(scrollElement, 'scroll', (e) => {
+  console.log(e)
   scrollTop.value = (e.target as HTMLElement).scrollTop
-}
+})
 </script>
 
 <template>
-  <div
-    class="settings"
-    @scroll="handleScroll"
-  >
+  <div class="settings">
     <div
       class="settings-header"
       :class="{ 'settings-header-with-border': scrollTop > 0 }"
