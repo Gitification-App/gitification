@@ -6,6 +6,7 @@ import { handleTransition } from '../utils/wowerlay'
 
 import type { Option } from '../types'
 import type { ContextMenuState } from '../composables/useContextMenu'
+import type { ItemMeta } from './MenuItems.vue'
 import MenuItems from './MenuItems.vue'
 </script>
 
@@ -33,8 +34,8 @@ function handleSetup(ctx: Context) {
       useKey(
         shortcut,
         () => {
-          ctx.setFocusByKey(item.key)
-          ctx.selectFocusedItem()
+          item.onSelect?.(item.meta as ItemMeta, item, ctx.getItemElementByKey(item.key)!)
+          emit('close')
         },
         { prevent: true },
       )
