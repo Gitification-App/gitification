@@ -5,7 +5,7 @@ import { useCustomHook } from './useCustomHook'
 export const useAppHooks = singleton(() => {
   const [onMarkAsRead, emitMarkAsRead] = useCustomHook<[target: MinimalRepository | Thread | Thread[]]>()
   const [onOpen, emitOpen] = useCustomHook<[target: MinimalRepository | Thread]>()
-  const [onRefetch, emitRefetch] = useCustomHook()
+  const [onRefetch, emitRefetch] = useCustomHook<[withSkeletons: boolean]>()
   const [onUnsubscribe, emitUnsubscribe] = useCustomHook<[target: MinimalRepository | Thread]>()
 
   return {

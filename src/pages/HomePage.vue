@@ -24,9 +24,10 @@ import { useAppHooks } from '../composables/useAppHooks'
 const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
+const { emitRefetch } = useAppHooks()
 
 if (route.state.value.fetchOnEnter) {
-  store.fetchNotifications(true)
+  emitRefetch(true)
 }
 
 const { emitOpen, emitUnsubscribe, emitMarkAsRead } = useAppHooks()
@@ -166,12 +167,6 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
   ]
 }
 
-// Edge-Case
-// If user reloaded in the middle of selecting notifications, clear the selection
-whenever(() => store.skeletonVisible, () => {
-  store.checkedItems = []
-})
-
 function handleClickRepo(repo: MinimalRepository) {
   open(`https://github.com/${repo.full_name}`)
 }
@@ -191,7 +186,7 @@ function handleClickRepo(repo: MinimalRepository) {
       :description="t.oopsieCouldntLoad"
     >
       <template #footer>
-        <AppButton @click="store.fetchNotifications(true)">
+        <AppButton @click="emitRefetch(true)">
           {{ t.refresh }}
         </AppButton>
       </template>

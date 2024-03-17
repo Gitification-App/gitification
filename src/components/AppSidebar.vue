@@ -8,6 +8,7 @@ import { AppStorage } from '../storage'
 import { useKey } from '../composables/useKey'
 import { useI18n } from '../composables/useI18n'
 import { Page, useRoute } from '../composables/useRoute'
+import { useAppHooks } from '../composables/useAppHooks'
 import { Icons } from './Icons'
 import SidebarButton from './SidebarButton.vue'
 import Popover from './Popover.vue'
@@ -47,8 +48,10 @@ const moreItems = computed(() => [
   }),
 ])
 
+const { emitRefetch } = useAppHooks()
+
 useKey('r', () => {
-  store.fetchNotifications(true)
+  emitRefetch(true)
 }, { source: () => route.currentPage.value === Page.Home })
 
 const morePopover = ref<InstanceType<typeof Popover> | null>(null)
@@ -116,7 +119,7 @@ useKey('.', () => {
         <template #default>
           <SidebarButton
             :disabled="route.currentPage.value !== Page.Home"
-            @click="store.fetchNotifications(true)"
+            @click="emitRefetch(true)"
           >
             <Icons.Sync16 />
           </SidebarButton>

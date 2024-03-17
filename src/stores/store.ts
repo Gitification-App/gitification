@@ -10,7 +10,7 @@ import { type MinimalRepository, type Thread, getNotifications, markNotification
 import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
 import { AppStorage } from '../storage'
 import type { NotificationList, Option } from '../types'
-import { filterNewThreads, isRepository, isThread, toNotificationList } from '../utils/notification'
+import { isRepository, isThread, toNotificationList } from '../utils/notification'
 import { everySome } from '../utils/array'
 import { Page, useRoute } from '../composables/useRoute'
 
@@ -32,71 +32,7 @@ export const useStore = defineStore('store', () => {
     }
   }
 
-  let threadsRaw: Thread[] = []
-  let threadsPreviousRaw: Thread[] = []
-
   const checkedItems = ref<Thread[]>([])
-
-  async function fetchNotifications(withSkeletons = false) {
-    if (loadingNotifications.value) {
-      return
-    }
-
-    const accessToken = AppStorage.get('accessToken')
-
-    if (accessToken == null) {
-      return
-    }
-
-    if (withSkeletons) {
-      skeletonVisible.value = true
-      notifications.value = []
-    }
-
-    loadingNotifications.value = true
-    failedLoadingNotifications.value = false
-
-    try {
-      const checkedThreads = checkedItems.value
-
-      const { data } = await getNotifications({
-        accessToken,
-        showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
-        showReadNotifications: AppStorage.get('showReadNotifications'),
-      })
-
-      threadsPreviousRaw = threadsRaw
-      threadsRaw = data
-
-      notifications.value = toNotificationList(data)
-      checkedItems.value = checkedThreads.filter(checkedItem => (
-        threadsRaw.some(thread => thread.id === checkedItem.id)
-      ))
-    }
-    catch (error) {
-      notifications.value = []
-      failedLoadingNotifications.value = true
-      checkedItems.value = []
-    }
-
-    loadingNotifications.value = false
-    skeletonVisible.value = false
-
-    const newNotifications = filterNewThreads(threadsRaw, threadsPreviousRaw)
-
-    if (newNotifications.length > 0) {
-      if (AppStorage.get('soundsEnabled')) {
-        invoke(InvokeCommand.PlayNotificationSound)
-      }
-
-      if (AppStorage.get('showSystemNotifications')) {
-        sendNotification({
-          title: newNotifications[0].repository.full_name,
-          body: newNotifications[0].subject.title,
-        })
-      }
-    }
-  }
 
   const route = useRoute()
 
@@ -303,7 +239,6 @@ export const useStore = defineStore('store', () => {
     runWithSnapshot,
     updateAndRestart,
     removeNotificationById,
-    fetchNotifications,
     processCheckedNotifications,
     logout,
   }

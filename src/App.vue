@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
+import { onMounted, watchEffect } from 'vue'
 import { open } from '@tauri-apps/api/shell'
+import { invoke } from '@tauri-apps/api'
+import { sendNotification } from '@tauri-apps/api/notification'
 import AppScroller from './components/AppScroller.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import HomePage from './pages/HomePage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
-import { ColorPreference, FETCH_INTERVAL_DURATION } from './constants'
+import { ColorPreference, FETCH_INTERVAL_DURATION, InvokeCommand } from './constants'
 import { useStore } from './stores/store'
 import LandingPage from './pages/LandingPage.vue'
 import { useInterval } from './composables/useInterval'
@@ -15,18 +17,19 @@ import { useTheme } from './composables/useTheme'
 import { Page, useRoute } from './composables/useRoute'
 import { useContextMenu } from './composables/useContextMenu'
 import { useAppHooks } from './composables/useAppHooks'
-import { isRepository, isThread } from './utils/notification'
+import { filterNewNotifications, isRepository, isThread, toNotificationList } from './utils/notification'
 import { createGithubWebURL } from './utils/github'
 import type { MinimalRepository, Thread } from './api/notifications'
-import { markNotificationAsRead, unsubscribeNotification } from './api/notifications'
+import { getNotifications, markNotificationAsRead, unsubscribeNotification } from './api/notifications'
 
 const store = useStore()
 const { currentPage } = useRoute()
 const contextmenu = useContextMenu()
+const { onOpen, onUnsubscribe, onMarkAsRead, emitMarkAsRead, onRefetch, emitRefetch } = useAppHooks()
 
 useInterval(() => {
   if (AppStorage.get('accessToken') && AppStorage.get('user')) {
-    store.fetchNotifications()
+    emitRefetch(false)
   }
 }, FETCH_INTERVAL_DURATION)
 
@@ -57,8 +60,6 @@ function getThreadsToProcess(target: Thread | MinimalRepository) {
 
   return threads
 }
-
-const { onOpen, onUnsubscribe, onMarkAsRead, emitMarkAsRead } = useAppHooks()
 
 onMarkAsRead((target) => {
   let threads = [] as Thread[]
@@ -108,6 +109,71 @@ onUnsubscribe((target) => {
 
   emitMarkAsRead(threads)
 })
+
+onRefetch(async (withSkeletons) => {
+  if (store.loadingNotifications) {
+    return
+  }
+
+  const accessToken = AppStorage.get('accessToken')
+
+  if (accessToken == null) {
+    return
+  }
+
+  const previousThreads = store.notifications.filter(isThread)
+
+  if (withSkeletons) {
+    store.skeletonVisible = true
+    store.notifications = []
+  }
+
+  store.loadingNotifications = true
+  store.failedLoadingNotifications = false
+
+  try {
+    const { data } = await getNotifications({
+      accessToken,
+      showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
+      showReadNotifications: AppStorage.get('showReadNotifications'),
+    })
+
+    const threadSet = new Set(data.map(thread => thread.id))
+
+    store.checkedItems = store.checkedItems.filter(thread => threadSet.has(thread.id))
+    store.notifications = toNotificationList(data)
+  }
+  catch (error) {
+    store.notifications = []
+    store.failedLoadingNotifications = true
+    store.checkedItems = []
+  }
+
+  store.loadingNotifications = false
+  store.skeletonVisible = false
+
+  const newNotifications = filterNewNotifications(previousThreads, store.notifications.filter(isThread))
+
+  if (newNotifications.length > 0) {
+    if (AppStorage.get('soundsEnabled')) {
+      invoke(InvokeCommand.PlayNotificationSound)
+    }
+
+    if (AppStorage.get('showSystemNotifications')) {
+      sendNotification({
+        title: newNotifications[0].repository.full_name,
+        body: newNotifications[0].subject.title,
+      })
+    }
+  }
+})
+
+const token = AppStorage.get('accessToken')
+const user = AppStorage.get('user')
+
+if (token && user) {
+  emitRefetch(true)
+}
 </script>
 
 <template>

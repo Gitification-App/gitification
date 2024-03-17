@@ -43,17 +43,16 @@ async function main() {
   const token = AppStorage.get('accessToken')
   const user = AppStorage.get('user')
 
+  if (token && user) {
+    route.go(Page.Home)
+  }
+
   const [autoStartEnabled, notificationsGranted] = await Promise.all([isAutostartEnabled(), isPermissionGranted()])
 
   AppStorage.set('openAtStartup', autoStartEnabled)
 
   if (!notificationsGranted) {
     AppStorage.set('showSystemNotifications', false)
-  }
-
-  if (token && user) {
-    route.go(Page.Home)
-    store.fetchNotifications(true)
   }
 
   try {

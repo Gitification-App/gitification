@@ -36,10 +36,13 @@ export function isRepository(value: any): value is MinimalRepository {
   return isObject<MinimalRepository>(value) && 'teams_url' in value
 }
 
-export function filterNewThreads(newThreads: Thread[], previousThreads: Thread[]) {
-  const newUnread = newThreads.filter(t => t.unread)
-  const previousUnread = previousThreads.filter(t => t.unread)
+export function filterNewNotifications(previousThreads: Thread[], newThreads: Thread[]) {
+  const newUnreadThreads = newThreads.filter(thread => thread.unread)
+  const previousUnreadThreadIds = new Set(
+    previousThreads
+      .filter(thread => thread.unread)
+      .map(thread => thread.id),
+  )
 
-  return newUnread.filter(t => t.unread)
-    .filter(thread => !previousUnread.some(pThread => pThread.id === thread.id))
+  return newUnreadThreads.filter(thread => !previousUnreadThreadIds.has(thread.id))
 }

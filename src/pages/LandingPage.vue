@@ -15,11 +15,12 @@ import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { getServerPort } from '../api/app'
 import { useI18n } from '../composables/useI18n'
 import { Page, useRoute } from '../composables/useRoute'
+import { useAppHooks } from '../composables/useAppHooks'
 
-const store = useStore()
 const route = useRoute()
 const processing = ref(true)
 const { t } = useI18n()
+const { emitRefetch } = useAppHooks()
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value) {
@@ -41,7 +42,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
     AppStorage.set('user', user)
     invoke(InvokeCommand.StopServer)
     route.go(Page.Home)
-    store.fetchNotifications(true)
+    emitRefetch(true)
   }
   finally {
     processing.value = false
