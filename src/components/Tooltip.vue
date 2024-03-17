@@ -88,8 +88,9 @@ useEventListener(targetGetter, 'mouseenter', handleTargetInteractionStart)
 useEventListener(targetGetter, 'mouseleave', handleTargetInteractionEnd)
 useEventListener(targetGetter, 'blur', handleTargetInteractionEnd)
 useEventListener(targetGetter, 'focus', (e) => {
-  if (!(e.target instanceof HTMLElement) || !e.target.hasAttribute('data-focus-visible-added'))
+  if (!(e.target instanceof HTMLElement) || !e.target.hasAttribute('data-focus-visible-added')) {
     return
+  }
 
   handleTargetInteractionStart()
 })

@@ -6,7 +6,6 @@ import type { ItemRenderList } from 'vue-selectable-items'
 import { useStore } from '../stores/store'
 import NotificationItem from '../components/NotificationItem.vue'
 import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { createGithubWebURL } from '../utils/github'
 import { AppStorage } from '../storage'
 import NotificationSkeleton from '../components/NotificationSkeleton.vue'
 import { useElementNavigation } from '../composables/useElementNavigation'
@@ -20,38 +19,17 @@ import { CheckedNotificationProcess } from '../constants'
 import { vContextmenu } from '../directives/contextmenu'
 import { useI18n } from '../composables/useI18n'
 import { useRoute } from '../composables/useRoute'
+import { useAppHooks } from '../composables/useAppHooks'
 
 const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
 
-if (route.state.value.fetchOnEnter)
+if (route.state.value.fetchOnEnter) {
   store.fetchNotifications(true)
-
-function handleOpenNotification(thread: Thread) {
-  const url = createGithubWebURL({ notification: thread, userId: AppStorage.get('user')!.id })
-  open(url)
 }
 
-function handleClickNotification(thread: Thread) {
-  handleOpenNotification(thread)
-
-  if (AppStorage.get('markAsReadOnOpen')) {
-    store.setChecked(thread, false)
-    store.runWithSnapshot(async () => {
-      if (!AppStorage.get('showReadNotifications'))
-        store.removeNotificationById(thread.id)
-      else
-        store.mutateNotifications(() => thread.unread = false)
-
-      await markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
-    })
-  }
-}
-
-function handleRepoClick(repoFullName: string) {
-  open(`https://github.com/${repoFullName}`)
-}
+const { emitOpen, emitUnsubscribe, emitMarkAsRead } = useAppHooks()
 
 const home = ref<HTMLElement | null>(null)
 useElementNavigation({
@@ -70,109 +48,28 @@ useKey('esc', () => {
 }, { prevent: true })
 
 useKey('m', () => {
-  if (store.checkedItems.length === 0)
+  if (store.checkedItems.length === 0) {
     return
+  }
 
-  handleSelectMarkAsRead(store.checkedItems[0])
+  emitMarkAsRead(store.checkedItems[0])
 })
 
 useKey('o', () => {
-  if (store.checkedItems.length === 0)
+  if (store.checkedItems.length === 0) {
     return
+  }
 
-  handleSelectOpen(store.checkedItems[0])
+  emitOpen(store.checkedItems[0])
 })
 
 useKey('u', () => {
-  if (store.checkedItems.length === 0)
+  if (store.checkedItems.length === 0) {
     return
+  }
 
-  handleSelectUnsubscribe(store.checkedItems[0])
+  emitUnsubscribe(store.checkedItems[0])
 })
-
-async function handleSelectMarkAsRead(thread: Thread) {
-  if (!thread.unread)
-    return
-
-  if (store.isChecked(thread)) {
-    store.processCheckedNotifications(CheckedNotificationProcess.MarkAsRead)
-    return
-  }
-
-  store.checkedItems = []
-
-  store.runWithSnapshot(async () => {
-    if (!AppStorage.get('showReadNotifications'))
-      store.removeNotificationById(thread.id)
-    else
-      store.mutateNotifications(() => thread.unread = false)
-
-    await markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
-  })
-}
-
-function handleSelectOpen(thread: Thread) {
-  if (!thread.unread) {
-    handleOpenNotification(thread)
-    return
-  }
-
-  if (store.isChecked(thread)) {
-    store.checkedItems.forEach(handleOpenNotification)
-  }
-  else {
-    store.checkedItems = []
-    handleOpenNotification(thread)
-  }
-
-  if (AppStorage.get('markAsReadOnOpen'))
-    handleSelectMarkAsRead(thread)
-}
-
-async function handleSelectUnsubscribe(thread: Thread) {
-  if (store.isChecked(thread)) {
-    store.processCheckedNotifications(CheckedNotificationProcess.Unsubscribe)
-    return
-  }
-
-  store.checkedItems = []
-
-  store.runWithSnapshot(async () => {
-    if (thread.unread && !AppStorage.get('showReadNotifications'))
-      store.removeNotificationById(thread.id)
-    else
-      store.mutateNotifications(() => thread.unread = false)
-
-    await unsubscribeNotification(thread.id, AppStorage.get('accessToken')!)
-  })
-}
-
-function handleSelectOpenAll(repository: MinimalRepository) {
-  if (store.isCheckable(repository)) {
-    store.setChecked(repository, true)
-    handleSelectOpen(store.checkedItems[0])
-  }
-  else {
-    const threads = store.getThreadsOfRepository(repository)
-    threads.forEach(handleOpenNotification)
-  }
-}
-
-function handleMarkAllAsRead(repository: MinimalRepository) {
-  store.setChecked(repository, true)
-  handleSelectMarkAsRead(store.checkedItems[0])
-}
-
-function handleUnsubscribeAll(repository: MinimalRepository) {
-  if (store.isCheckable(repository)) {
-    store.setChecked(repository, true)
-    handleSelectUnsubscribe(store.checkedItems[0])
-    return
-  }
-
-  const threads = store.getThreadsOfRepository(repository)
-  threads.forEach(handleSelectUnsubscribe)
-}
 
 function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderList<ItemMeta> {
   const checked = store.isChecked(item)
@@ -199,21 +96,21 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
         key: 'mark:all',
         meta: { text: t.markAllAsRead, icon: Icons.Check16, key: 'M' },
         onSelect() {
-          handleMarkAllAsRead(item)
+          emitMarkAsRead(item)
         },
       }),
       menuItem({
         key: 'open:all',
         meta: { text: t.openAll, icon: Icons.LinkExternal16, key: 'O' },
         onSelect() {
-          handleSelectOpenAll(item)
+          emitOpen(item)
         },
       }),
       menuItem({
         key: 'unsubscribe:all',
         meta: { text: t.unsubscribeAll, icon: Icons.BellSlash16, key: 'U' },
         onSelect() {
-          handleUnsubscribeAll(item)
+          emitUnsubscribe(item)
         },
       }),
       checked && menuItem({
@@ -239,7 +136,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'read',
       meta: { text: t.markAsRead, icon: Icons.Check16, key: 'M' },
       onSelect() {
-        handleSelectMarkAsRead(item)
+        emitMarkAsRead(item)
       },
     }),
 
@@ -247,7 +144,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'open',
       meta: { text: t.open, icon: Icons.LinkExternal16, key: 'O' },
       onSelect() {
-        handleSelectOpen(item)
+        emitOpen(item)
       },
     }),
 
@@ -255,7 +152,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'unsubscribe',
       meta: { text: t.unsubscribe, icon: Icons.BellSlash16, key: 'U' },
       onSelect() {
-        handleSelectUnsubscribe(item)
+        emitUnsubscribe(item)
       },
     }),
 
@@ -274,6 +171,10 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
 whenever(() => store.skeletonVisible, () => {
   store.checkedItems = []
 })
+
+function handleClickRepo(repo: MinimalRepository) {
+  open(`https://github.com/${repo.full_name}`)
+}
 </script>
 
 <template>
@@ -312,8 +213,8 @@ whenever(() => store.skeletonVisible, () => {
       :checkable="store.isCheckable(item)"
       :indeterminate="store.isIndeterminate(item)"
       :checkboxVisible="store.checkedItems.length > 0"
-      @click:notification="handleClickNotification"
-      @click:repo="handleRepoClick"
+      @click:notification="emitOpen"
+      @click:repo="handleClickRepo"
       @update:checked="(value) => store.setChecked(item, value)"
     />
   </div>

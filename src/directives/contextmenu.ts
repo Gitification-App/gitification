@@ -34,8 +34,9 @@ function directiveHandler(el: HTMLElement, binding: DirectiveBinding<ContextMenu
 function unmountHandler(el: HTMLElement) {
   const contextmenu = useContextMenu()
 
-  if (contextmenu.state.value?.currentTarget === el)
+  if (contextmenu.state.value?.currentTarget === el) {
     contextmenu.clear()
+  }
 }
 
 export const vContextmenu: Directive<HTMLElement, ContextMenuState['itemsFn']> = {

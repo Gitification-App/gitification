@@ -19,16 +19,19 @@ export function useCustomHook<const T extends readonly unknown[] = []>() {
   })
 
   function emit(...args: T) {
-    if (disposed)
+    if (disposed) {
       return
+    }
 
-    for (const hook of hooks)
+    for (const hook of hooks) {
       hook(...args)
+    }
   }
 
   function on(hook: (...args: T) => void) {
-    if (disposed)
+    if (disposed) {
       return () => {}
+    }
 
     hooks.add(hook)
     tryOnScopeDispose(() => hooks.delete(hook))

@@ -8,7 +8,7 @@ export type Locale = 'en' | 'tr'
 const en = {
   navigateToRepository: 'Navigate to repository',
   reloadNotifications: (shortcut: string) => `Reload notifications (${shortcut})`,
-  more: 'More',
+  more: 'More ( . )',
   changelog: 'Changelog',
   aNewVersionIsAvailable: 'A new version is available!',
   settings: 'Settings',

@@ -17,13 +17,14 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 defineSlots<{
-  default: (props: {}) => any
-  icon: (props: {}) => any
+  default: (props: Record<string, never>) => any
+  icon: (props: Record<string, never>) => any
 }>()
 
 function handleClick(e: MouseEvent) {
-  if (props.loading)
+  if (props.loading) {
     return
+  }
 
   emit('click', e)
 }

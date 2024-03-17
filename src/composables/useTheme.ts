@@ -12,12 +12,15 @@ export const useTheme = singleton(() => {
 
     let theme: ColorPreference.Dark | ColorPreference.Light
 
-    if (preference === ColorPreference.Dark)
+    if (preference === ColorPreference.Dark) {
       theme = ColorPreference.Dark
-    else if (preference === ColorPreference.Light)
+    }
+    else if (preference === ColorPreference.Light) {
       theme = ColorPreference.Light
-    else
+    }
+    else {
       theme = prefersDark.value ? ColorPreference.Dark : ColorPreference.Light
+    }
 
     return theme
   })

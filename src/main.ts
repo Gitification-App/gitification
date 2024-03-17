@@ -47,8 +47,9 @@ async function main() {
 
   AppStorage.set('openAtStartup', autoStartEnabled)
 
-  if (!notificationsGranted)
+  if (!notificationsGranted) {
     AppStorage.set('showSystemNotifications', false)
+  }
 
   if (token && user) {
     route.go(Page.Home)
@@ -58,16 +59,18 @@ async function main() {
   try {
     const { shouldUpdate, manifest } = await checkUpdate()
 
-    if (shouldUpdate)
+    if (shouldUpdate) {
       store.newRelease = manifest!
+    }
   }
   catch (error) {
     console.error(error)
   }
 
   const os = await osType()
-  if (os === 'Darwin')
+  if (os === 'Darwin') {
     document.documentElement.setAttribute('data-os-darwin', '')
+  }
 
   app.mount('#app')
 }

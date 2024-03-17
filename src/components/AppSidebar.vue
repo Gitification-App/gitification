@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { open } from '@tauri-apps/api/shell'
 import { exit } from '@tauri-apps/api/process'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { REPO_LINK } from '../constants'
 import { useStore } from '../stores/store'
 import { AppStorage } from '../storage'
@@ -50,6 +50,12 @@ const moreItems = computed(() => [
 useKey('r', () => {
   store.fetchNotifications(true)
 }, { source: () => route.currentPage.value === Page.Home })
+
+const morePopover = ref<InstanceType<typeof Popover> | null>(null)
+
+useKey('.', () => {
+  morePopover.value?.show()
+})
 </script>
 
 <template>
@@ -140,6 +146,7 @@ useKey('r', () => {
           />
 
           <Popover
+            ref="morePopover"
             :target="el"
             :wowerlayOptions="{ position: 'right-end' }"
           >

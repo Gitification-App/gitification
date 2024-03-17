@@ -24,8 +24,9 @@ watch(route.currentPage, () => {
   focus()
 
   const element = scrollView.value?.osInstance()?.elements().scrollOffsetElement
-  if (element)
+  if (element) {
     element.scrollTop = 0
+  }
 }, { flush: 'post' })
 
 const { theme } = useTheme()

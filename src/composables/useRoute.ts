@@ -19,8 +19,9 @@ export const useRoute = singleton(() => {
   const state = shallowRef<PageState>({})
 
   function go(page: Page, pageState: PageState = {}) {
-    if (page === currentPage.value)
+    if (page === currentPage.value) {
       return
+    }
 
     pageFrom.value = currentPage.value
     currentPage.value = page

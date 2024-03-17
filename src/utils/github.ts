@@ -34,8 +34,9 @@ export function createGithubWebURL({ notification, userId }: CreateGithubWebUrlP
   else {
     url = notification.subject.url.replace('api.github.com/repos', 'github.com')
 
-    if (url.includes('/pulls/'))
+    if (url.includes('/pulls/')) {
       url = url.replace('/pulls/', '/pull/')
+    }
 
     if (url.includes('/releases/')) {
       url = url.replace('/repos', '')
@@ -45,8 +46,9 @@ export function createGithubWebURL({ notification, userId }: CreateGithubWebUrlP
 
   const refer = `${NOTIFICATION_REFERRER_ID_KEY}=${notificationReferrerId}`
 
-  if (url.includes('?'))
+  if (url.includes('?')) {
     return `${url}&${refer}`
+  }
 
   return `${url}?${refer}`
 }

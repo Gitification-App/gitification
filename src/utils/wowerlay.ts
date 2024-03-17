@@ -49,8 +49,9 @@ export const handleTransition: WowerlayTransitionFn = (type, { popover }, done) 
   })
 
   animation.onfinish = () => {
-    if (type === 'enter')
+    if (type === 'enter') {
       popover.style.transformOrigin = oldTransformOrigin
+    }
 
     done()
   }

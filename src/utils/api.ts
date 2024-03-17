@@ -6,8 +6,9 @@ export function createBaseGithubApiHeaders(accessToken: AppStorageContext['acces
     'Content-Type': 'application/json',
   }
 
-  if (accessToken)
+  if (accessToken) {
     headers.Authorization = `token ${accessToken}`
+  }
 
   return headers
 }

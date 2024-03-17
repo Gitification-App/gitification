@@ -42,10 +42,12 @@ export function useElementNavigation({
   function focusItemInDirection(navigation: Navigation) {
     let currentIndex = getFocusedItemIndex(elements.value, targetQuery)
 
-    if (navigation === Navigation.Next && currentIndex < elements.value.length - 1)
+    if (navigation === Navigation.Next && currentIndex < elements.value.length - 1) {
       currentIndex++
-    else if (navigation === Navigation.Previous && currentIndex > 0)
+    }
+    else if (navigation === Navigation.Previous && currentIndex > 0) {
       currentIndex--
+    }
 
     const element = elements.value[currentIndex]
     element.focus()

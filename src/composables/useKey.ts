@@ -49,21 +49,26 @@ export function useKey(
     .filter(Boolean)
 
   const handler: UseKeyCallback = (event, hotkeysEvent) => {
-    if (!unref(input) && isInputing())
+    if (!unref(input) && isInputing()) {
       return
-    if (unref(prevent))
+    }
+    if (unref(prevent)) {
       event.preventDefault()
-    if (unref(stop))
+    }
+    if (unref(stop)) {
       event.stopPropagation()
-    if (!unref(repeat) && event.repeat)
+    }
+    if (!unref(repeat) && event.repeat) {
       return
+    }
 
     callback(event, hotkeysEvent)
   }
 
   const init = () => {
-    if (initialized)
+    if (initialized) {
       return
+    }
 
     initialized = true
 
@@ -82,8 +87,9 @@ export function useKey(
   }
 
   const destroy = () => {
-    if (!initialized)
+    if (!initialized) {
       return
+    }
 
     initialized = false
 
@@ -103,9 +109,12 @@ export function useKey(
     watch(
       source,
       (newSourceValue) => {
-        if (newSourceValue)
+        if (newSourceValue) {
           init()
-        else destroy()
+        }
+        else {
+          destroy()
+        }
       },
       { immediate: true, flush: 'post' },
     )

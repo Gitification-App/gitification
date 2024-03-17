@@ -31,8 +31,9 @@ export async function getAccessToken({ clientId, clientSecret, code }: GetAccess
     responseType: ResponseType.JSON,
   })
 
-  if (!res.ok)
+  if (!res.ok) {
     throw res
+  }
 
   return res
 }

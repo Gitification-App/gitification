@@ -35,8 +35,9 @@ export const AppStorage = {
    * Writes to storage and in next event loop, caches to disk
    */
   set<T extends keyof AppStorageContext>(key: T, value: AppStorageContext[T]) {
-    if (value === storage[key])
+    if (value === storage[key]) {
       return
+    }
 
     storage[key] = value
 
@@ -78,8 +79,9 @@ export async function cacheStorageFromDisk() {
   for (const key of Object.keys(storage)) {
     const value = values[key]
 
-    if (value != null)
+    if (value != null) {
       // @ts-expect-error Type issue
       storage[key] = value
+    }
   }
 }

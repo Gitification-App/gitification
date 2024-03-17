@@ -15,8 +15,9 @@ export function useTauriEvent<T>(key: EventName, callback: (payload: Event<T>) =
   }
 
   listen(key, callback).then((cleanup) => {
-    if (disposed)
+    if (disposed) {
       cleanup()
+    }
 
     unlistenFn = cleanup
   })

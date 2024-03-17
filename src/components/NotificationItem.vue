@@ -16,7 +16,7 @@ type Props = {
 
 type Emits = {
   (e: 'click:notification', notification: Thread): void
-  (e: 'click:repo', repoFullName: string): void
+  (e: 'click:repo', repo: MinimalRepository): void
   (e: 'update:checked', value: boolean): void
   (e: 'contextmenu', value: Thread, event: MouseEvent): void
 }
@@ -33,8 +33,9 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
 }
 
 function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
-  if ((event instanceof KeyboardEvent && event.repeat))
+  if ((event instanceof KeyboardEvent && event.repeat)) {
     return
+  }
 
   if (props.checkable && ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event))) {
     emit('update:checked', !props.checked)
@@ -45,8 +46,9 @@ function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
 }
 
 function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEvent) {
-  if ((event instanceof KeyboardEvent && event.repeat))
+  if ((event instanceof KeyboardEvent && event.repeat)) {
     return
+  }
 
   if (props.checkable && ((event.ctrlKey || event.metaKey) || isInteractedCheckbox(event))) {
     if (props.indeterminate) {
@@ -58,7 +60,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     return
   }
 
-  emit('click:repo', repo.full_name)
+  emit('click:repo', repo)
 }
 </script>
 

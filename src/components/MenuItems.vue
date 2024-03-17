@@ -63,8 +63,9 @@ function setupHandle(ctx: Context) {
   const popoverContext = usePopoverContext()
 
   ctx.onSelect((meta, item) => {
-    if (popoverContext)
+    if (popoverContext) {
       popoverContext.visible.value = false
+    }
   })
 
   onMounted(() => {

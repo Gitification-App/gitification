@@ -7,8 +7,9 @@ export function batchFn<T extends (...args: any[]) => void>(fn: T) {
   let timeout: Option<ReturnType<typeof setTimeout>> = null
 
   return (...args: Parameters<T>) => {
-    if (timeout)
+    if (timeout) {
       clearTimeout(timeout)
+    }
 
     timeout = setTimeout(() => {
       fn(...args)

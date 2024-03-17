@@ -1,10 +1,11 @@
 import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
 import { defineStore } from 'pinia'
-import { ref, shallowRef, triggerRef, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import pAll from 'p-all'
 import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
+import { klona } from 'klona'
 import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
 import { AppStorage } from '../storage'
@@ -14,7 +15,7 @@ import { everySome } from '../utils/array'
 import { Page, useRoute } from '../composables/useRoute'
 
 export const useStore = defineStore('store', () => {
-  const notifications = shallowRef<NotificationList>([])
+  const notifications = ref<NotificationList>([])
   const loadingNotifications = ref(false)
   const failedLoadingNotifications = ref(false)
   const skeletonVisible = ref(false)
@@ -29,8 +30,6 @@ export const useStore = defineStore('store', () => {
       const repoIndex = notifications.value.findIndex(item => isRepository(item) && item.id === thread.repository.id)
       notifications.value.splice(repoIndex, 1)
     }
-
-    triggerRef(notifications)
   }
 
   let threadsRaw: Thread[] = []
@@ -39,13 +38,15 @@ export const useStore = defineStore('store', () => {
   const checkedItems = ref<Thread[]>([])
 
   async function fetchNotifications(withSkeletons = false) {
-    if (loadingNotifications.value)
+    if (loadingNotifications.value) {
       return
+    }
 
     const accessToken = AppStorage.get('accessToken')
 
-    if (accessToken == null)
+    if (accessToken == null) {
       return
+    }
 
     if (withSkeletons) {
       skeletonVisible.value = true
@@ -58,11 +59,11 @@ export const useStore = defineStore('store', () => {
     try {
       const checkedThreads = checkedItems.value
 
-      const { data } = await notificationApiMutex.runExclusive(() => getNotifications({
+      const { data } = await getNotifications({
         accessToken,
         showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
         showReadNotifications: AppStorage.get('showReadNotifications'),
-      }))
+      })
 
       threadsPreviousRaw = threadsRaw
       threadsRaw = data
@@ -84,8 +85,9 @@ export const useStore = defineStore('store', () => {
     const newNotifications = filterNewThreads(threadsRaw, threadsPreviousRaw)
 
     if (newNotifications.length > 0) {
-      if (AppStorage.get('soundsEnabled'))
+      if (AppStorage.get('soundsEnabled')) {
         invoke(InvokeCommand.PlayNotificationSound)
+      }
 
       if (AppStorage.get('showSystemNotifications')) {
         sendNotification({
@@ -128,6 +130,10 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  function createSnapshot() {
+    return klona(notifications.value)
+  }
+
   function processCheckedNotifications(process: CheckedNotificationProcess) {
     return notificationApiMutex.runExclusive(async () => {
       const deletedThreads: Thread[] = []
@@ -135,22 +141,24 @@ export const useStore = defineStore('store', () => {
       const snapshot = notifications.value.slice(0)
       const accessToken = AppStorage.get('accessToken')!
 
-      mutateNotifications(() => {
-        if (AppStorage.get('showReadNotifications'))
-          checkedThreads.forEach(thread => thread.unread = false)
-        else
-          checkedThreads.forEach(thread => removeNotificationById(thread.id))
-      })
+      if (AppStorage.get('showReadNotifications')) {
+        checkedThreads.forEach(thread => thread.unread = false)
+      }
+      else {
+        checkedThreads.forEach(thread => removeNotificationById(thread.id))
+      }
 
       checkedItems.value = []
 
       try {
         await pAll(
           checkedThreads.map(thread => async () => {
-            if (process === CheckedNotificationProcess.MarkAsRead)
+            if (process === CheckedNotificationProcess.MarkAsRead) {
               await markNotificationAsRead(thread.id, accessToken)
-            else if (process === CheckedNotificationProcess.Unsubscribe)
+            }
+            else if (process === CheckedNotificationProcess.Unsubscribe) {
               await unsubscribeNotification(thread.id, accessToken)
+            }
 
             deletedThreads.push(thread)
           }),
@@ -161,15 +169,15 @@ export const useStore = defineStore('store', () => {
         )
       }
       catch (error) {
-        mutateNotifications(() => {
-          notifications.value = snapshot
+        notifications.value = snapshot
 
-          deletedThreads.forEach((thread) => {
-            if (!AppStorage.get('showReadNotifications'))
-              removeNotificationById(thread.id)
-            else
-              thread.unread = false
-          })
+        deletedThreads.forEach((thread) => {
+          if (!AppStorage.get('showReadNotifications')) {
+            removeNotificationById(thread.id)
+          }
+          else {
+            thread.unread = false
+          }
         })
       }
     })
@@ -179,8 +187,9 @@ export const useStore = defineStore('store', () => {
   const installingUpate = ref(false)
 
   async function updateAndRestart() {
-    if (newRelease.value == null)
+    if (newRelease.value == null) {
       return
+    }
 
     try {
       installingUpate.value = true
@@ -195,8 +204,9 @@ export const useStore = defineStore('store', () => {
   }
 
   function isChecked(item: MinimalRepository | Thread | null) {
-    if (item == null || !isCheckable(item))
+    if (item == null || !isCheckable(item)) {
       return false
+    }
 
     if (isRepository(item)) {
       return notifications.value
@@ -214,14 +224,16 @@ export const useStore = defineStore('store', () => {
   function setChecked(item: MinimalRepository | Thread, value: boolean) {
     const checked = isChecked(item)
 
-    if (value === checked)
+    if (value === checked) {
       return
+    }
 
     if (value) {
       if (isRepository(item)) {
         for (const notificationItem of notifications.value) {
-          if (isThread(notificationItem) && notificationItem.unread && notificationItem.repository.id === item.id)
+          if (isThread(notificationItem) && notificationItem.unread && notificationItem.repository.id === item.id) {
             checkedItems.value.push(notificationItem)
+          }
         }
         return
       }
@@ -242,8 +254,9 @@ export const useStore = defineStore('store', () => {
   }
 
   function isCheckable(item: MinimalRepository | Thread) {
-    if (isThread(item))
+    if (isThread(item)) {
       return item.unread
+    }
 
     return notifications.value
       .filter(isThread)
@@ -252,8 +265,9 @@ export const useStore = defineStore('store', () => {
   }
 
   function isIndeterminate(item: MinimalRepository | Thread): boolean {
-    if (isThread(item))
+    if (isThread(item)) {
       return false
+    }
 
     const repoThreads = notifications.value
       .filter(isThread)
@@ -272,11 +286,6 @@ export const useStore = defineStore('store', () => {
       .filter(thread => thread.repository.id === repository.id)
   }
 
-  function mutateNotifications(fn: () => void) {
-    fn()
-    triggerRef(notifications)
-  }
-
   return {
     newRelease,
     notifications,
@@ -285,7 +294,7 @@ export const useStore = defineStore('store', () => {
     failedLoadingNotifications,
     checkedItems,
     installingUpate,
-    mutateNotifications,
+    createSnapshot,
     getThreadsOfRepository,
     isChecked,
     setChecked,

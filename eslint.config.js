@@ -15,5 +15,9 @@ export default antfu({
         max: 1,
       },
     }],
+    // Require curly always for if statements
+    'curly': ['error', 'all'],
+    // if else statements should be separated by a newline
+    'brace-style': ['error', 'stroustrup', { allowSingleLine: false }],
   },
 })

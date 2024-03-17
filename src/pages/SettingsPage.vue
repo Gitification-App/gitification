@@ -40,15 +40,18 @@ const markAsReadOnOpen = AppStorage.asRef('markAsReadOnOpen')
 const accessToken = AppStorage.asComputed('accessToken')
 
 watch(soundsEnabled, (enabled) => {
-  if (enabled)
+  if (enabled) {
     invoke(InvokeCommand.PlayNotificationSound)
+  }
 })
 
 watchDebounced(openAtStartup, (enabled) => {
-  if (enabled)
+  if (enabled) {
     enableAutostart()
-  else
+  }
+  else {
     disableAutostart()
+  }
 }, { debounce: 350 })
 
 useTauriEvent('window:hidden', () => {
@@ -56,8 +59,9 @@ useTauriEvent('window:hidden', () => {
 })
 
 function handleBack() {
-  if (accessToken.value == null)
+  if (accessToken.value == null) {
     return route.go(Page.Landing)
+  }
 
   route.go(Page.Home, {
     fetchOnEnter: (
@@ -83,8 +87,9 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
       type: 'error',
     })
 
-    if (confirmed)
+    if (confirmed) {
       invoke(InvokeCommand.GoToNotificationSettings)
+    }
 
     return
   }

@@ -6,7 +6,7 @@ const vRef: Directive<HTMLElement, (el: HTMLElement) => void> = (el, { value }) 
 /**
  * @param slotName Target slot default value: "default"
  */
-export function useSlotWithRef<SlotProps extends Record<string, any> = {}>(key = 'default') {
+export function useSlotWithRef<SlotProps extends Record<string, any> = Record<string, never>>(slotName = 'default') {
   const slots = useSlots()
   const element: Ref<HTMLElement | null> = ref(null)
 
@@ -15,8 +15,8 @@ export function useSlotWithRef<SlotProps extends Record<string, any> = {}>(key =
   }
 
   function renderSlot(props?: SlotProps) {
-    if (key in slots) {
-      const [slot] = (slots as any)[key](props)
+    if (slotName in slots) {
+      const [slot] = (slots as any)[slotName](props)
       return withDirectives(slot, [[vRef, handleRef]])
     }
 

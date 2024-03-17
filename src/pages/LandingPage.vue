@@ -22,8 +22,9 @@ const processing = ref(true)
 const { t } = useI18n()
 
 useTauriEvent<string>('code', async ({ payload }) => {
-  if (processing.value)
+  if (processing.value) {
     return
+  }
 
   processing.value = true
 

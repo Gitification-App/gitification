@@ -7,11 +7,13 @@ export function everySome<T extends any[]>(array: T, callback: EverySomeCallback
   for (let i = 0; i < array.length; i += 1) {
     const result = callback(array[i], i, array)
 
-    if (every && !result)
+    if (every && !result) {
       every = false
+    }
 
-    if (!some && result)
+    if (!some && result) {
       some = true
+    }
   }
 
   return { every, some }

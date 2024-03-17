@@ -15,8 +15,9 @@ export function toNotificationList(threads: Thread[]): NotificationList {
   for (const thread of threads) {
     const { repository } = thread
 
-    if (!repoThreadsMap.has(repository.id))
+    if (!repoThreadsMap.has(repository.id)) {
       repoThreadsMap.set(repository.id, [])
+    }
 
     repoThreadsMap.get(repository.id)!.push(thread)
   }

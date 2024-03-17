@@ -13,8 +13,9 @@ export function createURL({ url, query }: CreateURLArgs) {
 
     const queries = [] as string[]
 
-    for (const [key, value] of Object.entries(query))
+    for (const [key, value] of Object.entries(query)) {
       queries.push(`${key}=${value}`)
+    }
 
     mURL += decodeURIComponent(queries.join('&'))
   }
