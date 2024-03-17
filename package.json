@@ -32,9 +32,9 @@
     "wowerlay": "1.1.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.6.4",
     "@iconify-json/octicon": "^1.1.52",
     "@iconify-json/ph": "^1.1.11",
+    "@kadiryazici/eslint-config": "^1.0.2",
     "@tauri-apps/cli": "^1.5.3",
     "@types/node": "^20.11.16",
     "@vitejs/plugin-vue": "5.0.3",
