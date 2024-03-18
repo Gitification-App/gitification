@@ -169,7 +169,6 @@ const scrollTop = ref(0)
 const scrollElement = useScrollElement()
 
 useEventListener(scrollElement, 'scroll', (e) => {
-  console.log(e)
   scrollTop.value = (e.target as HTMLElement).scrollTop
 })
 </script>
