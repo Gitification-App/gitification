@@ -19,18 +19,16 @@ import { CheckedNotificationProcess } from '../constants'
 import { vContextmenu } from '../directives/contextmenu'
 import { useI18n } from '../composables/useI18n'
 import { useRoute } from '../composables/useRoute'
-import { useAppHooks } from '../composables/useAppHooks'
+import { useCommonCalls } from '../composables/useCommonCalls'
 
 const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
-const { emitRefetch } = useAppHooks()
+const commonCalls = useCommonCalls()
 
 if (route.state.value.fetchOnEnter) {
-  emitRefetch(true)
+  commonCalls.fetchThreads(true)
 }
-
-const { emitOpen, emitUnsubscribe, emitMarkAsRead } = useAppHooks()
 
 const home = ref<HTMLElement | null>(null)
 useElementNavigation({
@@ -53,7 +51,7 @@ useKey('m', () => {
     return
   }
 
-  emitMarkAsRead(store.checkedItems[0])
+  commonCalls.markAsRead(store.checkedItems[0])
 })
 
 useKey('o', () => {
@@ -61,7 +59,7 @@ useKey('o', () => {
     return
   }
 
-  emitOpen(store.checkedItems[0])
+  commonCalls.open(store.checkedItems[0])
 })
 
 useKey('u', () => {
@@ -69,7 +67,7 @@ useKey('u', () => {
     return
   }
 
-  emitUnsubscribe(store.checkedItems[0])
+  commonCalls.unsubscribeThreadOrRepo(store.checkedItems[0])
 })
 
 function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderList<ItemMeta> {
@@ -97,21 +95,21 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
         key: 'mark:all',
         meta: { text: t.markAllAsRead, icon: Icons.Check16, key: 'M' },
         onSelect() {
-          emitMarkAsRead(item)
+          commonCalls.markAsRead(item)
         },
       }),
       menuItem({
         key: 'open:all',
         meta: { text: t.openAll, icon: Icons.LinkExternal16, key: 'O' },
         onSelect() {
-          emitOpen(item)
+          commonCalls.open(item)
         },
       }),
       menuItem({
         key: 'unsubscribe:all',
         meta: { text: t.unsubscribeAll, icon: Icons.BellSlash16, key: 'U' },
         onSelect() {
-          emitUnsubscribe(item)
+          commonCalls.unsubscribeThreadOrRepo(item)
         },
       }),
       checked && menuItem({
@@ -137,7 +135,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'read',
       meta: { text: t.markAsRead, icon: Icons.Check16, key: 'M' },
       onSelect() {
-        emitMarkAsRead(item)
+        commonCalls.markAsRead(item)
       },
     }),
 
@@ -145,7 +143,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'open',
       meta: { text: t.open, icon: Icons.LinkExternal16, key: 'O' },
       onSelect() {
-        emitOpen(item)
+        commonCalls.open(item)
       },
     }),
 
@@ -153,7 +151,7 @@ function createContextmenuItems(item: Thread | MinimalRepository): ItemRenderLis
       key: 'unsubscribe',
       meta: { text: t.unsubscribe, icon: Icons.BellSlash16, key: 'U' },
       onSelect() {
-        emitUnsubscribe(item)
+        commonCalls.unsubscribeThreadOrRepo(item)
       },
     }),
 
@@ -186,7 +184,7 @@ function handleClickRepo(repo: MinimalRepository) {
       :description="t.oopsieCouldntLoad"
     >
       <template #footer>
-        <AppButton @click="emitRefetch(true)">
+        <AppButton @click="commonCalls.fetchThreads(true)">
           {{ t.refresh }}
         </AppButton>
       </template>
@@ -208,7 +206,7 @@ function handleClickRepo(repo: MinimalRepository) {
       :checkable="store.isCheckable(item)"
       :indeterminate="store.isIndeterminate(item)"
       :checkboxVisible="store.checkedItems.length > 0"
-      @click:notification="emitOpen"
+      @click:notification="commonCalls.open"
       @click:repo="handleClickRepo"
       @update:checked="(value) => store.setChecked(item, value)"
     />

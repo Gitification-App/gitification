@@ -15,12 +15,12 @@ import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { getServerPort } from '../api/app'
 import { useI18n } from '../composables/useI18n'
 import { Page, useRoute } from '../composables/useRoute'
-import { useAppHooks } from '../composables/useAppHooks'
+import { useCommonCalls } from '../composables/useCommonCalls'
 
 const route = useRoute()
 const processing = ref(true)
 const { t } = useI18n()
-const { emitRefetch } = useAppHooks()
+const commonCalls = useCommonCalls()
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value) {
@@ -42,7 +42,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
     AppStorage.set('user', user)
     invoke(InvokeCommand.StopServer)
     route.go(Page.Home)
-    emitRefetch(true)
+    commonCalls.fetchThreads(true)
   }
   finally {
     processing.value = false

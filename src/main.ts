@@ -18,6 +18,7 @@ import { useKey } from './composables/useKey'
 import 'dayjs/locale/en'
 import 'dayjs/locale/tr'
 import { Page, useRoute } from './composables/useRoute'
+import { useCommonCalls } from './composables/useCommonCalls'
 
 async function main() {
   if (import.meta.env.MODE !== 'production') {
@@ -45,6 +46,7 @@ async function main() {
 
   if (token && user) {
     route.go(Page.Home)
+    useCommonCalls().fetchThreads()
   }
 
   const [autoStartEnabled, notificationsGranted] = await Promise.all([isAutostartEnabled(), isPermissionGranted()])

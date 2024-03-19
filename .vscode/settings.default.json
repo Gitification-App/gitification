@@ -27,8 +27,7 @@
     "markdown",
     "json",
     "jsonc",
-    "yaml",
-    "toml"
+    "yaml"
   ],
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
