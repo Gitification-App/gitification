@@ -34,7 +34,7 @@
   "devDependencies": {
     "@iconify-json/octicon": "^1.1.52",
     "@iconify-json/ph": "^1.1.11",
-    "@kadiryazici/eslint-config": "^1.0.2",
+    "@kadiryazici/eslint-config": "^1.0.3",
     "@tauri-apps/cli": "^1.5.3",
     "@types/node": "^20.11.16",
     "@vitejs/plugin-vue": "5.0.3",

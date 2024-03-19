@@ -34,10 +34,10 @@ dependencies:
     version: 0.5.1
   tauri-plugin-autostart-api:
     specifier: github:tauri-apps/tauri-plugin-autostart
-    version: github.com/tauri-apps/tauri-plugin-autostart/baadcffe9729f33c41baab7b23d83100960e22d5
+    version: github.com/tauri-apps/tauri-plugin-autostart/a8455f120ad801d828f91528f1b4ca47d00c8ba3
   tauri-plugin-store-api:
     specifier: github:tauri-apps/tauri-plugin-store
-    version: github.com/tauri-apps/tauri-plugin-store/e45849373b3a71168cc899aa7774f79f41aebfc0
+    version: github.com/tauri-apps/tauri-plugin-store/02243686d0507d2aeeb2924cd889dd0bcb47ecef
   vue:
     specifier: ^3.4.15
     version: 3.4.15(typescript@5.3.3)
@@ -56,8 +56,8 @@ devDependencies:
     specifier: ^1.1.11
     version: 1.1.11
   '@kadiryazici/eslint-config':
-    specifier: ^1.0.2
-    version: 1.0.2(@vue/compiler-sfc@3.4.15)(eslint@8.56.0)(typescript@5.3.3)
+    specifier: ^1.0.3
+    version: 1.0.3(@vue/compiler-sfc@3.4.15)(eslint@8.56.0)(typescript@5.3.3)
   '@tauri-apps/cli':
     specifier: ^1.5.3
     version: 1.5.4
@@ -634,8 +634,8 @@ packages:
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
 
-  /@kadiryazici/eslint-config@1.0.2(@vue/compiler-sfc@3.4.15)(eslint@8.56.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-7L2IUG3ABgvaP3aDH+T4Qk0fNflzebOjPJ4gNMRnNFUfQPIpNUBvt22Pt+WBBJLisIEw7/MLnFJ10mMPr/IXbw==}
+  /@kadiryazici/eslint-config@1.0.3(@vue/compiler-sfc@3.4.15)(eslint@8.56.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-FngCvMooF8BX8chA0IA2vHBKIKiUA0tpReLKtSrGVwn+WQmQNGaGjqfDe11uO4SRG4hWgoOxSpwPzwdzWljLsg==}
     dependencies:
       '@antfu/eslint-config': 2.8.3(@vue/compiler-sfc@3.4.15)(eslint@8.56.0)(typescript@5.3.3)
     transitivePeerDependencies:
@@ -5228,16 +5228,16 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  github.com/tauri-apps/tauri-plugin-autostart/baadcffe9729f33c41baab7b23d83100960e22d5:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/baadcffe9729f33c41baab7b23d83100960e22d5}
+  github.com/tauri-apps/tauri-plugin-autostart/a8455f120ad801d828f91528f1b4ca47d00c8ba3:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/a8455f120ad801d828f91528f1b4ca47d00c8ba3}
     name: tauri-plugin-autostart-api
     version: 0.0.0
     dependencies:
       '@tauri-apps/api': 1.5.3
     dev: false
 
-  github.com/tauri-apps/tauri-plugin-store/e45849373b3a71168cc899aa7774f79f41aebfc0:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/e45849373b3a71168cc899aa7774f79f41aebfc0}
+  github.com/tauri-apps/tauri-plugin-store/02243686d0507d2aeeb2924cd889dd0bcb47ecef:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/02243686d0507d2aeeb2924cd889dd0bcb47ecef}
     name: tauri-plugin-store-api
     version: 0.0.0
     dependencies:
