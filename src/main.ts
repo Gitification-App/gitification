@@ -4,7 +4,6 @@ import 'focus-visible'
 import 'overlayscrollbars/overlayscrollbars.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -34,12 +33,9 @@ async function main() {
   window.addEventListener('contextmenu', e => e.preventDefault())
 
   const app = createApp(App)
-  const pinia = createPinia()
-
-  app.use(pinia)
 
   await cacheStorageFromDisk()
-  const store = useStore(pinia)
+  const store = useStore()
   const route = useRoute()
   const token = AppStorage.get('accessToken')
   const user = AppStorage.get('user')

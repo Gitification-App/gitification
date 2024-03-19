@@ -1,5 +1,4 @@
 import { readonly, ref, shallowRef } from 'vue'
-import { defineStore } from 'pinia'
 import type { Option } from '../types'
 import { singleton } from '../utils/common'
 

@@ -1,7 +1,5 @@
-import { sendNotification } from '@tauri-apps/api/notification'
 import { invoke } from '@tauri-apps/api/tauri'
-import { defineStore } from 'pinia'
-import { ref, watchEffect } from 'vue'
+import { reactive, ref, watchEffect } from 'vue'
 import pAll from 'p-all'
 import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
@@ -13,8 +11,9 @@ import type { NotificationList, Option } from '../types'
 import { isRepository, isThread, toNotificationList } from '../utils/notification'
 import { everySome } from '../utils/array'
 import { Page, useRoute } from '../composables/useRoute'
+import { singleton } from '../utils/common'
 
-export const useStore = defineStore('store', () => {
+export const useStore = singleton(() => {
   const notifications = ref<NotificationList>([])
   const loadingNotifications = ref(false)
   const failedLoadingNotifications = ref(false)
@@ -222,7 +221,7 @@ export const useStore = defineStore('store', () => {
       .filter(thread => thread.repository.id === repository.id)
   }
 
-  return {
+  return reactive({
     newRelease,
     notifications,
     loadingNotifications,
@@ -241,5 +240,5 @@ export const useStore = defineStore('store', () => {
     removeNotificationById,
     processCheckedNotifications,
     logout,
-  }
+  })
 })
