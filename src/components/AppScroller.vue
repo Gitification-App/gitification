@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { PartialOptions as OverlayScrollbarsOptions } from 'overlayscrollbars'
 import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
 import type { Option } from '../types'
 import { OverlayScrollbarsComponent as ScrollView } from 'overlayscrollbars-vue'
@@ -23,7 +22,9 @@ const scrollElement = computed(() => scrollView.value?.osInstance()?.elements()?
 provide(scrollElementInjectionKey, scrollElement)
 
 useTauriEvent('window:hidden', focus)
+
 onMounted(focus)
+
 watch(Gitification.router.current, () => {
   focus()
 
@@ -33,13 +34,6 @@ watch(Gitification.router.current, () => {
 }, { flush: 'post' })
 
 const { theme } = useTheme()
-
-const options = computed<OverlayScrollbarsOptions>(() => ({
-  scrollbars: {
-    autoHide: 'scroll',
-    theme: theme.value === ColorPreference.Dark ? 'os-theme-light' : 'os-theme-dark',
-  },
-}))
 </script>
 
 <template>
@@ -47,7 +41,12 @@ const options = computed<OverlayScrollbarsOptions>(() => ({
     ref="scrollView"
     element="main"
     defer
-    :options="options"
+    :options="{
+      scrollbars: {
+        autoHide: 'scroll',
+        theme: theme === ColorPreference.Dark ? 'os-theme-light' : 'os-theme-dark',
+      },
+    }"
     tabindex="-1"
     class="main"
   >
