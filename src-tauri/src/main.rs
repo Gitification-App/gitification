@@ -66,25 +66,7 @@ fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
 
 fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let win = app.get_window("main").expect("window not found");
-
     let _ = win.set_always_on_top(true);
-
-    #[cfg(target_os = "macos")]
-    {
-        use tauri::ActivationPolicy;
-        app.set_activation_policy(ActivationPolicy::Accessory);
-
-        use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
-
-        apply_vibrancy(
-            &win,
-            NSVisualEffectMaterial::HudWindow,
-            Some(NSVisualEffectState::Active),
-            Some(8.0),
-        )
-        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
-    }
-
     Ok(())
 }
 

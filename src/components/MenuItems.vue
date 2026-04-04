@@ -1,16 +1,15 @@
 <script lang="ts">
+import type { Context, Item, ItemRenderList } from 'vue-selectable-items'
+import type { Icons } from './Icons'
+import { onMounted } from 'vue'
 import {
-  type Context,
-  type Item,
-  type ItemRenderList,
-  SelectableItems,
+
   createItemDefaults,
   filterSelectableItems,
   item,
+  SelectableItems,
 } from 'vue-selectable-items'
-import { onMounted } from 'vue'
 import { useKey } from '../composables/useKey'
-import type { Icons } from './Icons'
 import { usePopoverContext } from './Popover.vue'
 
 export type ItemMeta = {
@@ -44,7 +43,6 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<Props>(), {
-  items: () => [],
   setup: () => {},
 })
 
@@ -88,7 +86,6 @@ function setupHandle(ctx: Context) {
     :itemDefaults="itemDefaults"
     :setup="setupHandle"
     :items="items"
-    noWrapperElement
     @select="(meta: ItemMeta) => emits('select', meta)"
   >
     <template #render="{ meta }: Item<ItemMeta>">
@@ -113,6 +110,9 @@ function setupHandle(ctx: Context) {
 
 <style lang="scss">
 .vue-selectable-items {
+  display: flex;
+  flex-direction: column;
+
   &-item {
     white-space: nowrap;
     width: 100%;
