@@ -1,24 +1,22 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
 import { exit } from '@tauri-apps/api/process'
+import { open } from '@tauri-apps/api/shell'
 import { computed, ref } from 'vue'
-import { REPO_LINK } from '../constants'
-import { useStore } from '../stores/store'
-import { AppStorage } from '../storage'
-import { useKey } from '../composables/useKey'
-import { useI18n } from '../composables/useI18n'
-import { Page, useRoute } from '../composables/useRoute'
 import { useCommonCalls } from '../composables/useCommonCalls'
+import { useI18n } from '../composables/useI18n'
+import { useKey } from '../composables/useKey'
+import { REPO_LINK } from '../constants'
+import { Gitification } from '../gitification'
+import { useStore } from '../stores/store'
 import { Icons } from './Icons'
-import SidebarButton from './SidebarButton.vue'
-import Popover from './Popover.vue'
 import MenuItems, { menuItem } from './MenuItems.vue'
-import Tooltip from './Tooltip.vue'
-import SlotRef from './SlotRef.vue'
+import Popover from './Popover.vue'
 import PopoverContentInstallUpdate from './PopoverContentInstallUpdate.vue'
+import SidebarButton from './SidebarButton.vue'
+import SlotRef from './SlotRef.vue'
+import Tooltip from './Tooltip.vue'
 
 const store = useStore()
-const route = useRoute()
 const { t } = useI18n()
 
 function openCurrentReleaseChangelog() {
@@ -34,9 +32,9 @@ const moreItems = computed(() => [
   menuItem({
     key: 'settings',
     meta: { text: t.settings, icon: Icons.Gear16 },
-    onSelect: () => route.go(Page.Settings),
+    onSelect: () => Gitification.router.navigate('settings'),
   }),
-  AppStorage.get('user') != null && menuItem({
+  Gitification.storage.get('user') != null && menuItem({
     key: 'logout',
     meta: { text: t.logOut, icon: Icons.SignOut16 },
     onSelect: store.logout,
@@ -52,7 +50,7 @@ const commonCalls = useCommonCalls()
 
 useKey('r', () => {
   commonCalls.fetchThreads(true)
-}, { source: () => route.currentPage.value === Page.Home })
+}, { source: () => Gitification.router.isCurrent('home') })
 
 const morePopover = ref<InstanceType<typeof Popover> | null>(null)
 
@@ -118,7 +116,7 @@ useKey('.', () => {
       <SlotRef>
         <template #default>
           <SidebarButton
-            :disabled="route.currentPage.value !== Page.Home"
+            :disabled="!Gitification.router.isCurrent('home')"
             @click="commonCalls.fetchThreads(true)"
           >
             <Icons.Sync16 />

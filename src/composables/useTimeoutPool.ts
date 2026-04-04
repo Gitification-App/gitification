@@ -1,42 +1,58 @@
 import { onScopeDispose } from 'vue'
 
-type TimeoutID = ReturnType<typeof setTimeout>
+class TimeoutPool {
+  private timeouts = new Map<string, number>()
 
-export function useTimeoutPool() {
-  const timeouts = new Map<string, TimeoutID>()
+  public set(duration: number, callback: () => unknown): () => void
+  public set(duration: number, key: string, callback: () => unknown): () => void
+  public set(duration: number, keyOrCallback: string | (() => unknown), callbackOrUndefined?: () => unknown): () => void {
+    const key = typeof keyOrCallback === 'string'
+      ? keyOrCallback
+      : Math.random().toString(36).slice(2)
+    const callback = typeof keyOrCallback === 'function'
+      ? keyOrCallback
+      : callbackOrUndefined
 
-  const clear = () => {
-    for (const timeout of timeouts.values()) {
-      clearTimeout(timeout)
+    if (this.timeouts.has(key)) {
+      window.clearTimeout(this.timeouts.get(key))
+      this.timeouts.delete(key)
     }
 
-    timeouts.clear()
+    const timeout = window.setTimeout(() => {
+      this.timeouts.delete(key)
+      callback?.()
+    }, duration)
+
+    this.timeouts.set(key, timeout)
+
+    return () => {
+      window.clearTimeout(timeout)
+      this.timeouts.delete(key)
+    }
   }
 
-  onScopeDispose(clear)
+  public clearAll() {
+    for (const timeout of this.timeouts.values()) {
+      window.clearTimeout(timeout)
+    }
 
-  return {
-    set(name: string, ...[callback, delay]: Parameters<typeof setTimeout>) {
-      if (timeouts.has(name)) {
-        clearTimeout(timeouts.get(name))
-      }
-
-      const timeout = setTimeout(() => {
-        timeouts.delete(name)
-        callback()
-      }, delay)
-
-      timeouts.set(name, timeout)
-    },
-
-    cancel(name: string) {
-      if (timeouts.has(name)) {
-        clearTimeout(timeouts.get(name))
-      }
-
-      timeouts.delete(name)
-    },
-
-    clear,
+    this.timeouts.clear()
   }
+
+  public clear(key: string) {
+    if (this.timeouts.has(key)) {
+      window.clearTimeout(this.timeouts.get(key))
+      this.timeouts.delete(key)
+    }
+  }
+}
+
+export function useTimeoutPool() {
+  const pool = new TimeoutPool()
+
+  onScopeDispose(() => {
+    pool.clearAll()
+  })
+
+  return pool
 }

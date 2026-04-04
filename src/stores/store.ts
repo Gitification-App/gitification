@@ -1,17 +1,19 @@
-import { invoke } from '@tauri-apps/api/tauri'
-import { reactive, ref, watchEffect } from 'vue'
-import pAll from 'p-all'
-import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
-import { relaunch } from '@tauri-apps/api/process'
-import { klona } from 'klona'
-import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
-import { AppStorage } from '../storage'
+import type { UpdateManifest } from '@tauri-apps/api/updater'
+import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList, Option } from '../types'
-import { isRepository, isThread, toNotificationList } from '../utils/notification'
+import { relaunch } from '@tauri-apps/api/process'
+import { invoke } from '@tauri-apps/api/tauri'
+import { installUpdate } from '@tauri-apps/api/updater'
+import { klona } from 'klona'
+import pAll from 'p-all'
+import { reactive, ref, watchEffect } from 'vue'
+import { markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
+import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
+import { Gitification } from '../gitification'
+
 import { everySome } from '../utils/array'
-import { Page, useRoute } from '../composables/useRoute'
 import { singleton } from '../utils/common'
+import { isRepository, isThread } from '../utils/notification'
 
 export const useStore = singleton(() => {
   const notifications = ref<NotificationList>([])
@@ -20,30 +22,30 @@ export const useStore = singleton(() => {
   const skeletonVisible = ref(false)
 
   function removeNotificationById(id: Thread['id']) {
-    const index = notifications.value.findIndex(item => isThread(item) && item.id === id)
+    const index = notifications.value.findIndex((item) => isThread(item) && item.id === id)
     const thread = notifications.value[index] as Thread
     notifications.value.splice(index, 1)
 
-    const repoHasNotifications = notifications.value.some(item => isThread(item) && item.repository.id === thread.repository.id)
+    const repoHasNotifications = notifications.value.some((item) => isThread(item) && item.repository.id === thread.repository.id)
     if (!repoHasNotifications) {
-      const repoIndex = notifications.value.findIndex(item => isRepository(item) && item.id === thread.repository.id)
+      const repoIndex = notifications.value.findIndex((item) => isRepository(item) && item.id === thread.repository.id)
       notifications.value.splice(repoIndex, 1)
     }
   }
 
   const checkedItems = ref<Thread[]>([])
 
-  const route = useRoute()
-
   function logout() {
-    AppStorage.set('accessToken', null)
-    AppStorage.set('user', null)
     notifications.value = []
-    route.go(Page.Landing)
+
+    Gitification.router.navigate('landing')
+    Gitification.state.notifications.value = []
+    Gitification.storage.set('accessToken', null)
+    Gitification.storage.set('user', null)
   }
 
   watchEffect(() => {
-    const hasUnread = notifications.value.some(n => isThread(n) && n.unread)
+    const hasUnread = notifications.value.some((n) => isThread(n) && n.unread)
     invoke(InvokeCommand.SetIconTemplate, { isTemplate: !hasUnread })
   })
 
@@ -74,20 +76,20 @@ export const useStore = singleton(() => {
       const deletedThreads: Thread[] = []
       const checkedThreads = checkedItems.value
       const snapshot = notifications.value.slice(0)
-      const accessToken = AppStorage.get('accessToken')!
+      const accessToken = Gitification.storage.get('accessToken')!
 
-      if (AppStorage.get('showReadNotifications')) {
-        checkedThreads.forEach(thread => thread.unread = false)
+      if (Gitification.storage.get('showReadNotifications')) {
+        checkedThreads.forEach((thread) => thread.unread = false)
       }
       else {
-        checkedThreads.forEach(thread => removeNotificationById(thread.id))
+        checkedThreads.forEach((thread) => removeNotificationById(thread.id))
       }
 
       checkedItems.value = []
 
       try {
         await pAll(
-          checkedThreads.map(thread => async () => {
+          checkedThreads.map((thread) => async () => {
             if (process === CheckedNotificationProcess.MarkAsRead) {
               await markNotificationAsRead(thread.id, accessToken)
             }
@@ -103,11 +105,11 @@ export const useStore = singleton(() => {
           },
         )
       }
-      catch (error) {
+      catch {
         notifications.value = snapshot
 
         deletedThreads.forEach((thread) => {
-          if (!AppStorage.get('showReadNotifications')) {
+          if (!Gitification.storage.get('showReadNotifications')) {
             removeNotificationById(thread.id)
           }
           else {
@@ -146,14 +148,14 @@ export const useStore = singleton(() => {
     if (isRepository(item)) {
       return notifications.value
         .filter(isThread)
-        .filter(thread => thread.unread && thread.repository.id === item.id)
-        .every(thread => (
-          checkedItems.value.some(checkedItem => checkedItem.id === thread.id)
+        .filter((thread) => thread.unread && thread.repository.id === item.id)
+        .every((thread) => (
+          checkedItems.value.some((checkedItem) => checkedItem.id === thread.id)
         ))
     }
 
     return checkedItems.value
-      .some(checkedItem => checkedItem.id === item.id)
+      .some((checkedItem) => checkedItem.id === item.id)
   }
 
   function setChecked(item: MinimalRepository | Thread, value: boolean) {
@@ -178,13 +180,13 @@ export const useStore = singleton(() => {
     }
 
     if (isRepository(item)) {
-      checkedItems.value = checkedItems.value.filter(checkedItem => (
+      checkedItems.value = checkedItems.value.filter((checkedItem) => (
         checkedItem.repository.id !== item.id
       ))
       return
     }
 
-    const index = checkedItems.value.findIndex(checkedItem => checkedItem.id === item.id)
+    const index = checkedItems.value.findIndex((checkedItem) => checkedItem.id === item.id)
     checkedItems.value.splice(index, 1)
   }
 
@@ -195,8 +197,8 @@ export const useStore = singleton(() => {
 
     return notifications.value
       .filter(isThread)
-      .filter(thread => thread.repository.id === item.id)
-      .some(thread => thread.unread)
+      .filter((thread) => thread.repository.id === item.id)
+      .some((thread) => thread.unread)
   }
 
   function isIndeterminate(item: MinimalRepository | Thread): boolean {
@@ -206,10 +208,10 @@ export const useStore = singleton(() => {
 
     const repoThreads = notifications.value
       .filter(isThread)
-      .filter(thread => thread.unread && thread.repository.id === item.id)
+      .filter((thread) => thread.unread && thread.repository.id === item.id)
 
-    const { every, some } = everySome(repoThreads, thread => (
-      checkedItems.value.some(checkedItem => checkedItem.id === thread.id)
+    const { every, some } = everySome(repoThreads, (thread) => (
+      checkedItems.value.some((checkedItem) => checkedItem.id === thread.id)
     ))
 
     return some && !every
@@ -218,7 +220,7 @@ export const useStore = singleton(() => {
   function getThreadsOfRepository(repository: MinimalRepository) {
     return notifications.value
       .filter(isThread)
-      .filter(thread => thread.repository.id === repository.id)
+      .filter((thread) => thread.repository.id === repository.id)
   }
 
   return reactive({

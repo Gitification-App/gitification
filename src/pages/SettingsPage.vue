@@ -1,49 +1,43 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
-import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
-import { computedEager, useEventListener, watchDebounced } from '@vueuse/core'
-
-import { invoke } from '@tauri-apps/api/tauri'
-import { requestPermission } from '@tauri-apps/api/notification'
 import { confirm } from '@tauri-apps/api/dialog'
-import AppButton from '../components/AppButton.vue'
-import PageHeader from '../components/PageHeader.vue'
-import { AppStorage } from '../storage'
-import { ColorPreference, InvokeCommand } from '../constants'
-import { Icons } from '../components/Icons'
-import { useKey } from '../composables/useKey'
-import { useTauriEvent } from '../composables/useTauriEvent'
-import Separator from '../components/Separator.vue'
-import Tooltip from '../components/Tooltip.vue'
-import SlotRef from '../components/SlotRef.vue'
-import MenuItems, { menuItem } from '../components/MenuItems.vue'
-import Popover from '../components/Popover.vue'
-import Switch from '../components/Switch.vue'
-import SettingItem from '../components/SettingItem.vue'
-import { useI18n } from '../composables/useI18n'
-import { Page, useRoute } from '../composables/useRoute'
-import { useScrollElement } from '../composables/useScrollElement'
+import { requestPermission } from '@tauri-apps/api/notification'
+import { invoke } from '@tauri-apps/api/tauri'
 
-const route = useRoute()
+import { useEventListener, watchDebounced, whenever } from '@vueuse/core'
+import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
+import { computed, ref } from 'vue'
+import AppButton from '../components/AppButton.vue'
+import { Icons } from '../components/Icons'
+import MenuItems, { menuItem } from '../components/MenuItems.vue'
+import PageHeader from '../components/PageHeader.vue'
+import Popover from '../components/Popover.vue'
+import Separator from '../components/Separator.vue'
+import SettingItem from '../components/SettingItem.vue'
+import SlotRef from '../components/SlotRef.vue'
+import Switch from '../components/Switch.vue'
+import Tooltip from '../components/Tooltip.vue'
+import { useI18n } from '../composables/useI18n'
+import { useKey } from '../composables/useKey'
+import { useScrollElement } from '../composables/useScrollElement'
+import { useTauriEvent } from '../composables/useTauriEvent'
+import { ColorPreference, InvokeCommand } from '../constants'
+import { Gitification } from '../gitification'
+
 const { t, currentLanguage } = useI18n()
 
 const initialValues = {
-  showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
-  showReadNotifications: AppStorage.get('showReadNotifications'),
+  showOnlyParticipating: Gitification.storage.get('showOnlyParticipating'),
+  showReadNotifications: Gitification.storage.get('showReadNotifications'),
 }
 
-const soundsEnabled = AppStorage.asRef('soundsEnabled')
-const openAtStartup = AppStorage.asRef('openAtStartup')
-const showOnlyParticipating = AppStorage.asRef('showOnlyParticipating')
-const showReadNotifications = AppStorage.asRef('showReadNotifications')
-const markAsReadOnOpen = AppStorage.asRef('markAsReadOnOpen')
+const soundsEnabled = Gitification.storage.asRef('soundsEnabled')
+const openAtStartup = Gitification.storage.asRef('openAtStartup')
+const showOnlyParticipating = Gitification.storage.asRef('showOnlyParticipating')
+const showReadNotifications = Gitification.storage.asRef('showReadNotifications')
+const markAsReadOnOpen = Gitification.storage.asRef('markAsReadOnOpen')
 
-const accessToken = AppStorage.asComputed('accessToken')
-
-watch(soundsEnabled, (enabled) => {
-  if (enabled) {
-    invoke(InvokeCommand.PlayNotificationSound)
-  }
+whenever(soundsEnabled, () => {
+  invoke(InvokeCommand.PlayNotificationSound)
 })
 
 watchDebounced(openAtStartup, (enabled) => {
@@ -56,15 +50,15 @@ watchDebounced(openAtStartup, (enabled) => {
 }, { debounce: 350 })
 
 useTauriEvent('window:hidden', () => {
-  setTimeout(() => route.go(Page.Home), 50)
+  setTimeout(() => Gitification.router.navigate('home'), 50)
 })
 
 function handleBack() {
-  if (accessToken.value == null) {
-    return route.go(Page.Landing)
+  if (Gitification.storage.get('accessToken') == null) {
+    return Gitification.router.navigate('landing')
   }
 
-  route.go(Page.Home, {
+  Gitification.router.navigate('home', {
     fetchOnEnter: (
       initialValues.showOnlyParticipating !== showOnlyParticipating.value
       || initialValues.showReadNotifications !== showReadNotifications.value
@@ -74,7 +68,7 @@ function handleBack() {
 
 useKey('esc', handleBack, { prevent: true })
 
-const showSystemNotifications = AppStorage.asRef('showSystemNotifications')
+const showSystemNotifications = Gitification.storage.asRef('showSystemNotifications')
 async function handleUpdateShowSystemNotifications(value: boolean) {
   if (!value) {
     showSystemNotifications.value = false
@@ -98,14 +92,18 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
   showSystemNotifications.value = value
 }
 
-const selectedColorText = computedEager(() => {
-  switch (AppStorage.get('colorPreference')) {
+const selectedColorText = computed(() => {
+  const pref = Gitification.storage.get('colorPreference')
+
+  switch (pref) {
     case ColorPreference.System:
       return t.system
     case ColorPreference.Light:
       return t.light
     case ColorPreference.Dark:
       return t.dark
+    default:
+      return t.system
   }
 })
 
@@ -114,30 +112,30 @@ const selectColorItems = computed(() => [
     key: ColorPreference.System,
     meta: {
       text: t.system,
-      selected: AppStorage.get('colorPreference') === ColorPreference.System,
+      selected: Gitification.storage.get('colorPreference') === ColorPreference.System,
     },
     onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.System)
+      Gitification.storage.set('colorPreference', ColorPreference.System)
     },
   }),
   menuItem({
     key: ColorPreference.Light,
     meta: {
       text: t.light,
-      selected: AppStorage.get('colorPreference') === ColorPreference.Light,
+      selected: Gitification.storage.get('colorPreference') === ColorPreference.Light,
     },
     onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.Light)
+      Gitification.storage.set('colorPreference', ColorPreference.Light)
     },
   }),
   menuItem({
     key: ColorPreference.Dark,
     meta: {
       text: t.dark,
-      selected: AppStorage.get('colorPreference') === ColorPreference.Dark,
+      selected: Gitification.storage.get('colorPreference') === ColorPreference.Dark,
     },
     onSelect() {
-      AppStorage.set('colorPreference', ColorPreference.Dark)
+      Gitification.storage.set('colorPreference', ColorPreference.Dark)
     },
   }),
 ])

@@ -1,13 +1,15 @@
-import { createSharedComposable } from '@vueuse/core'
+import type { MinimalRepository, Thread } from '../api/notifications'
 import { invoke } from '@tauri-apps/api'
 import { sendNotification } from '@tauri-apps/api/notification'
 import { open as shellOpen } from '@tauri-apps/api/shell'
-import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { useStore } from '../stores/store'
-import { filterNewNotifications, isRepository, isThread, toNotificationList } from '../utils/notification'
-import { AppStorage } from '../storage'
+import { createSharedComposable } from '@vueuse/core'
+import { getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { InvokeCommand } from '../constants'
+
+import { Gitification } from '../gitification'
+import { useStore } from '../stores/store'
 import { createGithubWebURL } from '../utils/github'
+import { filterNewNotifications, isRepository, isThread, toNotificationList } from '../utils/notification'
 
 export const useCommonCalls = createSharedComposable(() => {
   const store = useStore()
@@ -44,14 +46,14 @@ export const useCommonCalls = createSharedComposable(() => {
         continue
       }
 
-      if (AppStorage.get('showReadNotifications')) {
+      if (Gitification.storage.get('showReadNotifications')) {
         thread.unread = false
       }
       else {
         store.removeNotificationById(thread.id)
       }
 
-      markNotificationAsRead(thread.id, AppStorage.get('accessToken')!)
+      markNotificationAsRead(thread.id, Gitification.storage.get('accessToken')!)
     }
   }
 
@@ -59,11 +61,11 @@ export const useCommonCalls = createSharedComposable(() => {
     const threads = getThreadsToProcess(target)
 
     for (const thread of threads) {
-      const url = createGithubWebURL({ notification: thread, userId: AppStorage.get('user')!.id })
+      const url = createGithubWebURL({ notification: thread, userId: Gitification.storage.get('user')!.id })
       shellOpen(url)
     }
 
-    if (AppStorage.get('markAsReadOnOpen')) {
+    if (Gitification.storage.get('markAsReadOnOpen')) {
       markAsRead(threads)
     }
   }
@@ -72,7 +74,7 @@ export const useCommonCalls = createSharedComposable(() => {
     const threads = getThreadsToProcess(target)
 
     for (const thread of threads) {
-      unsubscribeNotification(thread.id, AppStorage.get('accessToken')!)
+      unsubscribeNotification(thread.id, Gitification.storage.get('accessToken')!)
     }
 
     markAsRead(threads)
@@ -83,7 +85,7 @@ export const useCommonCalls = createSharedComposable(() => {
       return
     }
 
-    const accessToken = AppStorage.get('accessToken')
+    const accessToken = Gitification.storage.get('accessToken')
 
     if (accessToken == null) {
       return
@@ -102,16 +104,16 @@ export const useCommonCalls = createSharedComposable(() => {
     try {
       const { data } = await getNotifications({
         accessToken,
-        showOnlyParticipating: AppStorage.get('showOnlyParticipating'),
-        showReadNotifications: AppStorage.get('showReadNotifications'),
+        showOnlyParticipating: Gitification.storage.get('showOnlyParticipating'),
+        showReadNotifications: Gitification.storage.get('showReadNotifications'),
       })
 
-      const threadSet = new Set(data.map(thread => thread.id))
+      const threadSet = new Set(data.map((thread) => thread.id))
 
-      store.checkedItems = store.checkedItems.filter(thread => threadSet.has(thread.id))
+      store.checkedItems = store.checkedItems.filter((thread) => threadSet.has(thread.id))
       store.notifications = toNotificationList(data)
     }
-    catch (error) {
+    catch {
       store.notifications = []
       store.failedLoadingNotifications = true
       store.checkedItems = []
@@ -123,11 +125,11 @@ export const useCommonCalls = createSharedComposable(() => {
     const newNotifications = filterNewNotifications(previousThreads, store.notifications.filter(isThread))
 
     if (newNotifications.length > 0) {
-      if (AppStorage.get('soundsEnabled')) {
+      if (Gitification.storage.get('soundsEnabled')) {
         invoke(InvokeCommand.PlayNotificationSound)
       }
 
-      if (AppStorage.get('showSystemNotifications')) {
+      if (Gitification.storage.get('showSystemNotifications')) {
         sendNotification({
           title: newNotifications[0].repository.full_name,
           body: newNotifications[0].subject.title,

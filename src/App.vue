@@ -1,25 +1,23 @@
 <script setup lang="ts">
-import { onMounted, watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import AppScroller from './components/AppScroller.vue'
 import AppSidebar from './components/AppSidebar.vue'
-import HomePage from './pages/HomePage.vue'
-import SettingsPage from './pages/SettingsPage.vue'
-import { ColorPreference, FETCH_INTERVAL_DURATION, InvokeCommand } from './constants'
-import LandingPage from './pages/LandingPage.vue'
-import { useInterval } from './composables/useInterval'
-import { AppStorage } from './storage'
 import ContextMenu from './components/ContextMenu.vue'
-import { useTheme } from './composables/useTheme'
-import { Page, useRoute } from './composables/useRoute'
-import { useContextMenu } from './composables/useContextMenu'
 import { useCommonCalls } from './composables/useCommonCalls'
+import { useContextMenu } from './composables/useContextMenu'
+import { useInterval } from './composables/useInterval'
+import { useTheme } from './composables/useTheme'
+import { ColorPreference, FETCH_INTERVAL_DURATION } from './constants'
+import { Gitification } from './gitification'
+import HomePage from './pages/HomePage.vue'
+import LandingPage from './pages/LandingPage.vue'
+import SettingsPage from './pages/SettingsPage.vue'
 
-const { currentPage } = useRoute()
 const contextmenu = useContextMenu()
 const commonCalls = useCommonCalls()
 
 useInterval(() => {
-  if (AppStorage.get('accessToken') && AppStorage.get('user')) {
+  if (Gitification.storage.get('accessToken') && Gitification.storage.get('user')) {
     commonCalls.fetchThreads(false)
   }
 }, FETCH_INTERVAL_DURATION)
@@ -34,6 +32,24 @@ watchEffect(() => {
     document.documentElement.classList.add('light-theme')
   }
 })
+
+const Route = computed(() => {
+  const current = Gitification.router.current.value
+
+  if (current === 'home') {
+    return HomePage
+  }
+
+  if (current === 'settings') {
+    return SettingsPage
+  }
+
+  if (current === 'landing') {
+    return LandingPage
+  }
+
+  throw new Error(`Unknown route: ${current}`)
+})
 </script>
 
 <template>
@@ -42,11 +58,8 @@ watchEffect(() => {
   </Teleport>
 
   <AppSidebar />
-
   <AppScroller>
-    <HomePage v-if="currentPage === Page.Home" />
-    <SettingsPage v-else-if="currentPage === Page.Settings" />
-    <LandingPage v-else-if="currentPage === Page.Landing" />
+    <Route />
   </AppScroller>
 
   <ContextMenu

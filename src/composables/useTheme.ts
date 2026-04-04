@@ -1,14 +1,14 @@
-import { computed } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
-import { singleton } from '../utils/common'
-import { AppStorage } from '../storage'
+import { computed } from 'vue'
 import { ColorPreference } from '../constants'
+import { Gitification } from '../gitification'
+import { singleton } from '../utils/common'
 
 export const useTheme = singleton(() => {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 
   const theme = computed(() => {
-    const preference = AppStorage.get('colorPreference')
+    const preference = Gitification.storage.get('colorPreference')
 
     let theme: ColorPreference.Dark | ColorPreference.Light
 

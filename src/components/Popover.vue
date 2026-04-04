@@ -1,9 +1,11 @@
 <script lang="ts">
-import { type InjectionKey, type Ref, inject, onScopeDispose, provide, ref, watch } from 'vue'
-import { type AlignedPlacement, type ReferenceElement, type Side, Wowerlay, type WowerlayTransitionFn } from 'wowerlay'
+import type { InjectionKey, Ref } from 'vue'
+import type { AlignedPlacement, ReferenceElement, Side, WowerlayTransitionFn } from 'wowerlay'
 import { useEventListener } from '@vueuse/core'
-import { useKey } from '../composables/useKey'
+import { inject, onScopeDispose, provide, ref, watch } from 'vue'
+import { Wowerlay } from 'wowerlay'
 import { useCustomHook } from '../composables/useCustomHook'
+import { useKey } from '../composables/useKey'
 
 type PopoverContext = {
   visible: Ref<boolean>

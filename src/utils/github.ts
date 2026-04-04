@@ -1,5 +1,5 @@
-import { GITHUB_AUTHORIZE_ENDPOINT, GITHUB_AUTH_SCOPES } from '../api/constants'
 import type { Thread } from '../api/notifications'
+import { GITHUB_AUTH_SCOPES, GITHUB_AUTHORIZE_ENDPOINT } from '../api/constants'
 import { NotificationReason, NotificationSubject } from '../constants'
 import { createURL } from './url'
 

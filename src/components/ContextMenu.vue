@@ -1,12 +1,13 @@
 <script lang="ts">
+import type { Context } from 'vue-selectable-items'
+import type { ContextMenuState } from '../composables/useContextMenu'
+import type { Option } from '../types'
+import type { ItemMeta } from './MenuItems.vue'
+import { filterSelectableItems } from 'vue-selectable-items'
+
 import { Wowerlay } from 'wowerlay'
-import { type Context, filterSelectableItems } from 'vue-selectable-items'
 import { useKey } from '../composables/useKey'
 import { handleTransition } from '../utils/wowerlay'
-
-import type { Option } from '../types'
-import type { ContextMenuState } from '../composables/useContextMenu'
-import type { ItemMeta } from './MenuItems.vue'
 import MenuItems from './MenuItems.vue'
 </script>
 

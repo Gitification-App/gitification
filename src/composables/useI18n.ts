@@ -1,7 +1,7 @@
-import { createSharedComposable, reactiveComputed } from '@vueuse/core'
-import { Fragment, customRef, h } from 'vue'
-import { AppStorage } from '../storage'
 import type { NotificationReason } from '../constants'
+import { createSharedComposable, reactiveComputed } from '@vueuse/core'
+import { Fragment, h } from 'vue'
+import { Gitification } from '../gitification'
 
 export type Locale = 'en' | 'tr'
 
@@ -142,26 +142,12 @@ const tr: typeof en = {
 const localeMap: Record<Locale, typeof en> = { en, tr }
 
 export const useI18n = createSharedComposable(() => {
-  const currentLanguage = customRef<Locale>((track, trigger) => {
-    let locale: Locale = AppStorage.get('language')
+  const language = Gitification.storage.asRef('language')
 
-    return {
-      get() {
-        track()
-        return locale
-      },
-      set(value) {
-        locale = value
-        AppStorage.set('language', value)
-        trigger()
-      },
-    }
-  })
-
-  const t = reactiveComputed(() => localeMap[currentLanguage.value])
+  const t = reactiveComputed(() => localeMap[language.value])
 
   return {
-    currentLanguage,
+    currentLanguage: language,
     t,
   }
 })

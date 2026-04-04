@@ -1,7 +1,7 @@
 import type { Event, EventName } from '@tauri-apps/api/event'
+import type { Option } from '../types'
 import { listen } from '@tauri-apps/api/event'
 import { getCurrentScope, onScopeDispose } from 'vue'
-import type { Option } from '../types'
 
 export function useTauriEvent<T>(key: EventName, callback: (payload: Event<T>) => void) {
   let unlistenFn: Option<() => void> = null

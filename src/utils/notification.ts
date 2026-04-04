@@ -1,8 +1,8 @@
 import type { MinimalRepository, Thread } from '../api/notifications'
-import { Icons } from '../components/Icons'
 import type { NotificationSubject } from '../constants'
-import { subjectIconMap } from '../constants'
 import type { NotificationList } from '../types'
+import { Icons } from '../components/Icons'
+import { subjectIconMap } from '../constants'
 import { isObject } from './is'
 
 export function notificationSubjectIcon(subject: NotificationSubject) {
@@ -24,7 +24,7 @@ export function toNotificationList(threads: Thread[]): NotificationList {
 
   return Array
     .from(repoThreadsMap.values())
-    .flatMap(threadGroup => (
+    .flatMap((threadGroup) => (
       [threadGroup[0].repository, ...threadGroup]
     ))
 }
@@ -37,12 +37,12 @@ export function isRepository(value: any): value is MinimalRepository {
 }
 
 export function filterNewNotifications(previousThreads: Thread[], newThreads: Thread[]) {
-  const newUnreadThreads = newThreads.filter(thread => thread.unread)
+  const newUnreadThreads = newThreads.filter((thread) => thread.unread)
   const previousUnreadThreadIds = new Set(
     previousThreads
-      .filter(thread => thread.unread)
-      .map(thread => thread.id),
+      .filter((thread) => thread.unread)
+      .map((thread) => thread.id),
   )
 
-  return newUnreadThreads.filter(thread => !previousUnreadThreadIds.has(thread.id))
+  return newUnreadThreads.filter((thread) => !previousUnreadThreadIds.has(thread.id))
 }

@@ -1,7 +1,8 @@
 <script lang="ts">
-import { onScopeDispose, reactive, ref } from 'vue'
-import { Wowerlay, type WowerlayProps, type WowerlayTransitionFn } from 'wowerlay'
+import type { WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
 import { useEventListener } from '@vueuse/core'
+import { onScopeDispose, reactive, ref } from 'vue'
+import { Wowerlay } from 'wowerlay'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
 import { onPopoverVisible } from './Popover.vue'
 
@@ -60,26 +61,26 @@ const timeout = useTimeoutPool()
 const id = getTooltipId()
 
 function handleTargetInteractionStart() {
-  timeout.cancel('_')
+  timeout.clear('_')
 
   if (openTooltips.size > 0) {
     visible.value = true
     openTooltips.add(id)
   }
   else {
-    timeout.set('_', () => {
+    timeout.set(350, '_', () => {
       openTooltips.add(id)
       visible.value = true
-    }, 350)
+    })
   }
 }
 
 function handleTargetInteractionEnd() {
-  timeout.cancel('_')
+  timeout.clear('_')
   visible.value = false
-  timeout.set('_', () => {
+  timeout.set(200, '_', () => {
     openTooltips.delete(id)
-  }, /** leave animation duration */200)
+  })
 }
 
 const targetGetter = () => props.target

@@ -1,32 +1,29 @@
 <script lang="ts" setup>
+import type { ItemRenderList } from 'vue-selectable-items'
+import type { MinimalRepository, Thread } from '../api/notifications'
+import type { ItemMeta } from '../components/MenuItems.vue'
 import { open } from '@tauri-apps/api/shell'
 import { onScopeDispose, ref } from 'vue'
-import { whenever } from '@vueuse/core'
-import type { ItemRenderList } from 'vue-selectable-items'
-import { useStore } from '../stores/store'
-import NotificationItem from '../components/NotificationItem.vue'
-import { type MinimalRepository, type Thread, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
-import { AppStorage } from '../storage'
-import NotificationSkeleton from '../components/NotificationSkeleton.vue'
-import { useElementNavigation } from '../composables/useElementNavigation'
+import AppButton from '../components/AppButton.vue'
 import EmptyState, { EmptyStateIconSize } from '../components/EmptyState.vue'
 import { Icons } from '../components/Icons'
-import AppButton from '../components/AppButton.vue'
-import { isRepository } from '../utils/notification'
-import { type ItemMeta, menuItem } from '../components/MenuItems.vue'
-import { useKey } from '../composables/useKey'
-import { CheckedNotificationProcess } from '../constants'
-import { vContextmenu } from '../directives/contextmenu'
-import { useI18n } from '../composables/useI18n'
-import { useRoute } from '../composables/useRoute'
+import { menuItem } from '../components/MenuItems.vue'
+import NotificationItem from '../components/NotificationItem.vue'
+import NotificationSkeleton from '../components/NotificationSkeleton.vue'
 import { useCommonCalls } from '../composables/useCommonCalls'
+import { useElementNavigation } from '../composables/useElementNavigation'
+import { useI18n } from '../composables/useI18n'
+import { useKey } from '../composables/useKey'
+import { vContextmenu } from '../directives/contextmenu'
+import { Gitification } from '../gitification'
+import { useStore } from '../stores/store'
+import { isRepository } from '../utils/notification'
 
 const store = useStore()
-const route = useRoute()
 const { t } = useI18n()
 const commonCalls = useCommonCalls()
 
-if (route.state.value.fetchOnEnter) {
+if (Gitification.router.pageState.value.fetchOnEnter) {
   commonCalls.fetchThreads(true)
 }
 
@@ -179,7 +176,7 @@ function handleClickRepo(repo: MinimalRepository) {
 
     <EmptyState
       v-else-if="store.failedLoadingNotifications"
-      :iconSize="EmptyStateIconSize.Big"
+      :icon-size="EmptyStateIconSize.Big"
       :icon="Icons.X"
       :description="t.oopsieCouldntLoad"
     >
@@ -192,7 +189,7 @@ function handleClickRepo(repo: MinimalRepository) {
 
     <EmptyState
       v-else-if="store.notifications.length === 0"
-      :iconSize="EmptyStateIconSize.Big"
+      :icon-size="EmptyStateIconSize.Big"
       :icon="Icons.Check"
       :description="t.itsAllClear"
     />
@@ -205,7 +202,7 @@ function handleClickRepo(repo: MinimalRepository) {
       :checked="store.isChecked(item)"
       :checkable="store.isCheckable(item)"
       :indeterminate="store.isIndeterminate(item)"
-      :checkboxVisible="store.checkedItems.length > 0"
+      :checkbox-visible="store.checkedItems.length > 0"
       @click:notification="commonCalls.open"
       @click:repo="handleClickRepo"
       @update:checked="(value) => store.setChecked(item, value)"

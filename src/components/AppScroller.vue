@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-import { computed, onMounted, provide, ref, watch } from 'vue'
-import { type OverlayScrollbarsComponentRef, OverlayScrollbarsComponent as ScrollView } from 'overlayscrollbars-vue'
 import type { PartialOptions as OverlayScrollbarsOptions } from 'overlayscrollbars'
-import { computedEager } from '@vueuse/core'
-import { useTauriEvent } from '../composables/useTauriEvent'
-import { useStore } from '../stores/store'
+import type { OverlayScrollbarsComponentRef } from 'overlayscrollbars-vue'
 import type { Option } from '../types'
-import { batchFn } from '../utils/batch'
-import { ColorPreference } from '../constants'
-import { useTheme } from '../composables/useTheme'
-import { useRoute } from '../composables/useRoute'
-import { scrollElementInjectionKey } from '../composables/useScrollElement'
+import { OverlayScrollbarsComponent as ScrollView } from 'overlayscrollbars-vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 
-const route = useRoute()
+import { scrollElementInjectionKey } from '../composables/useScrollElement'
+import { useTauriEvent } from '../composables/useTauriEvent'
+import { useTheme } from '../composables/useTheme'
+import { ColorPreference } from '../constants'
+import { Gitification } from '../gitification'
+import { batchFn } from '../utils/batch'
+
 const scrollView = ref<Option<OverlayScrollbarsComponentRef>>(null)
 
 const focus = batchFn(() => {
@@ -25,7 +24,7 @@ provide(scrollElementInjectionKey, scrollElement)
 
 useTauriEvent('window:hidden', focus)
 onMounted(focus)
-watch(route.currentPage, () => {
+watch(Gitification.router.current, () => {
   focus()
 
   if (scrollElement.value) {
@@ -35,7 +34,7 @@ watch(route.currentPage, () => {
 
 const { theme } = useTheme()
 
-const options = computedEager<OverlayScrollbarsOptions>(() => ({
+const options = computed<OverlayScrollbarsOptions>(() => ({
   scrollbars: {
     autoHide: 'scroll',
     theme: theme.value === ColorPreference.Dark ? 'os-theme-light' : 'os-theme-dark',

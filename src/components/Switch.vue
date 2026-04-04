@@ -1,6 +1,6 @@
 <script lang="ts">
 type Props = {
-  modelValue: boolean
+  modelValue?: boolean
 }
 
 type Emits = {

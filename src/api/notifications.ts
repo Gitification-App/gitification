@@ -1,8 +1,8 @@
-import redaxios from 'redaxios'
 import type { NotificationReason, NotificationSubject } from '../constants'
 import type { AppStorageContext } from '../types'
-import { createBaseGithubApiHeaders } from '../utils/api'
 import type { User } from './user'
+import redaxios from 'redaxios'
+import { createBaseGithubApiHeaders } from '../utils/api'
 
 export type Thread = {
   id: string
