@@ -1,6 +1,6 @@
 import type { Options as KyOptions } from 'ky'
+import type { Gitification } from '../..'
 import ky from 'ky'
-import { Gitification } from '../..'
 import { NotificationReason, NotificationSubject } from '../../../constants'
 
 const api = ky.create({
@@ -11,12 +11,6 @@ const api = ky.create({
   hooks: {
     beforeRequest: [
       (request) => {
-        const token = Gitification.storage.get('accessToken')
-
-        if (token) {
-          request.headers.set('Authorization', `token ${token}`)
-        }
-
         const url = new URL(request.url)
         url.searchParams.set('t', Date.now().toString())
 
@@ -29,17 +23,24 @@ const api = ky.create({
 export type GithubApiRequestOptions = {
   method: NonNullable<KyOptions['method']>
   searchParams?: NonNullable<KyOptions['searchParams']>
-  headers?: NonNullable<KyOptions['headers']>
+  headers?: Record<string, string>
+  accessToken: string
 }
 
 export function sendGithubApiRequest<T>(url: string, options: GithubApiRequestOptions) {
-  const { method, searchParams, headers } = options
+  const { method, searchParams, headers: _headers = {}, accessToken } = options
+
+  const headers = {
+    ..._headers,
+    Authorization: `token ${accessToken}`,
+  }
 
   return api(url, {
     method,
     searchParams,
     headers,
-  }).json<T>()
+  })
+    .json<T>()
 }
 
 const NOTIFICATION_REFERRER_ID_KEY = 'notification_referrer_id'

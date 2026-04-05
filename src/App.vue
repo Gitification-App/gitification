@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { Gitification } from './gitification'
+import AddAccountPage from './pages/AddAccountPage.vue'
 import LandingPage from './pages/LandingPage.vue'
 import { UI } from './ui'
 
@@ -9,6 +10,9 @@ const Route = computed(() => {
 
   if (current === 'landing') {
     return LandingPage
+  }
+  else if (current === 'addAccount') {
+    return AddAccountPage
   }
 
   return null

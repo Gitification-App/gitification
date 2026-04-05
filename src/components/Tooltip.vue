@@ -4,7 +4,6 @@ import { useEventListener } from '@vueuse/core'
 import { onScopeDispose, reactive, ref } from 'vue'
 import { Wowerlay } from 'wowerlay'
 import { useTimeoutPool } from '../composables/useTimeoutPool'
-import { onPopoverVisible } from './Popover.vue'
 
 type Props = {
   text: string
@@ -97,11 +96,6 @@ useEventListener(targetGetter, 'focus', (e) => {
 })
 
 onScopeDispose(() => {
-  openTooltips.delete(id)
-})
-
-onPopoverVisible(() => {
-  visible.value = false
   openTooltips.delete(id)
 })
 </script>

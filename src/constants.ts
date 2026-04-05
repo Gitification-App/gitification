@@ -1,5 +1,4 @@
 import { Mutex } from 'async-mutex'
-import { Icons } from './components/Icons'
 
 export enum CheckedNotificationProcess {
   Unsubscribe,
@@ -62,13 +61,13 @@ export enum NotificationReason {
   TeamMention = 'team_mention',
 }
 
-export const subjectIconMap = {
-  [NotificationSubject.CheckSuite]: Icons.Sync,
-  [NotificationSubject.Commit]: Icons.Commit,
-  [NotificationSubject.Discussion]: Icons.CommentDiscussions,
-  [NotificationSubject.Issue]: Icons.IssueOpened,
-  [NotificationSubject.PullRequest]: Icons.PullRequest,
-  [NotificationSubject.Release]: Icons.Tag,
-  [NotificationSubject.RepositoryInvitation]: Icons.Mail,
-  [NotificationSubject.RepositoryVulnerabilityAlert]: Icons.Alert,
-}
+// export const subjectIconMap = {
+//   [NotificationSubject.CheckSuite]: Icons.Sync,
+//   [NotificationSubject.Commit]: Icons.Commit,
+//   [NotificationSubject.Discussion]: Icons.CommentDiscussions,
+//   [NotificationSubject.Issue]: Icons.IssueOpened,
+//   [NotificationSubject.PullRequest]: Icons.PullRequest,
+//   [NotificationSubject.Release]: Icons.Tag,
+//   [NotificationSubject.RepositoryInvitation]: Icons.Mail,
+//   [NotificationSubject.RepositoryVulnerabilityAlert]: Icons.Alert,
+// }

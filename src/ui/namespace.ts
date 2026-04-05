@@ -1,4 +1,7 @@
+export { default as ActionSection } from './ActionSection/ActionSection.vue'
+export { default as Button } from './Button/Button.vue'
 export { default as Container } from './Container/Container.vue'
+export * as Icons from './Icons'
 export { default as Page } from './Page/Page.vue'
 export { default as PageContent } from './Page/PageContent.vue'
 export { default as PageHeader } from './Page/PageHeader.vue'

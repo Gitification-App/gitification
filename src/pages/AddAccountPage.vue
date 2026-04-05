@@ -8,6 +8,8 @@ import { UI } from '../ui'
 const processing = ref(true)
 const { t } = useI18n()
 
+const currentUser = Gitification.storage.asRef('user')
+
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value) {
     return
@@ -22,19 +24,24 @@ useTauriEvent<string>('code', async ({ payload }) => {
       code: payload,
     })
 
-    Gitification.storage.set('accessToken', accessToken)
+    const user = await Gitification.api.getUser(accessToken)
+    const existingUser = Gitification.storage.get('allUsers').some((u) => u.id === user?.id)
 
-    const user = await Gitification.api.getUser()
-
-    if (user) {
-      Gitification.server.stop()
-      Gitification.storage.set('user', user)
-      Gitification.storage.set('userAccessTokens', (prev) => ({
-        ...prev,
-        [user.id]: accessToken,
-      }))
-      Gitification.router.navigate('home', { fetchOnEnter: true })
+    if (user == null || user.id === currentUser.value?.id || existingUser) {
+      return
     }
+
+    Gitification.storage.set('userAccessTokens', (prev) => ({
+      ...prev,
+      [user.id]: accessToken,
+    }))
+
+    Gitification.storage.set('allUsers', (prev) => [
+      ...prev,
+      user,
+    ])
+
+    Gitification.router.navigate('home', { fetchOnEnter: true })
   }
   finally {
     processing.value = false
@@ -55,17 +62,18 @@ onMounted(async () => {
 
 <template>
   <UI.Page>
-    <UI.PageContent class="grid place-items-center">
-      <UI.ActionSection class="mb-[100px]">
-        <template #label>
-          Landing
-        </template>
+    <UI.PageHeader @back="Gitification.router.navigate('home')">
+      Add Account
+    </UI.PageHeader>
+
+    <UI.PageContent class="grid justify-center pt-[50px]">
+      <UI.ActionSection>
         <template #heading>
-          Welcome to Gitification
+          Adding Account
         </template>
 
         <template #description>
-          Let's start by logging in with your GitHub account.
+          Click button to login via GitHub and add your account.
         </template>
 
         <template #action>

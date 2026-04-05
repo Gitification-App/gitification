@@ -4,12 +4,14 @@ import { checkUpdate } from '@tauri-apps/api/updater'
 import dayjs from 'dayjs'
 
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { uniqBy } from 'es-toolkit'
 import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { useKey } from './composables/useKey'
 import { Gitification } from './gitification'
 
+import 'wowerlay/style.css'
 import './lib.css'
 import 'dayjs/locale/en'
 import 'dayjs/locale/tr'
@@ -28,9 +30,13 @@ async function main() {
   const token = Gitification.storage.get('accessToken')
   const user = Gitification.storage.get('user')
 
-  // if (token && user) {
-  //   Gitification.router.navigate('home', { fetchOnEnter: true })
-  // }
+  if (token && user) {
+    Gitification.storage.set('allUsers', (allUsers) => (
+      uniqBy([...allUsers, user], (u) => u.id)
+    ))
+
+    Gitification.router.navigate('home', { fetchOnEnter: true })
+  }
 
   const [
     autoStartEnabled,
@@ -51,6 +57,7 @@ async function main() {
     })
 
   Gitification.state.osType.value = await osType()
+  await Gitification.server.start()
 
   const app = createApp(App)
   app.mount('#app')

@@ -2,10 +2,18 @@
 
 @theme {
   --color-surface-1: rgb(20,20,20);
-  --color-surface-2: rgb(30,30,30);
-  --color-surface-3: rgb(40,40,40);
-  --color-surface-4: rgb(50,50,50);
-  --color-surface-5: rgb(60,60,60);
+  --color-surface-2: rgb(25,25,25);
+  --color-surface-3: rgb(30,30,30);
+  --color-surface-4: rgb(35,35,35);
+  --color-surface-5: rgb(40,40,40);
+  --color-surface-6: rgb(45,45,45);
+  --color-surface-7: rgb(50,50,50);
+
+  --color-txt-1: rgb(240,240,240);
+  --color-txt-2: rgb(215,215,215);
+  --color-txt-3: rgb(185,185,185);
+
+  --color-primary: rgb(100,149,237);
   
   --color-app-border: rgb(45,45,45);
 }

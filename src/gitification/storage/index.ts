@@ -17,6 +17,8 @@ export function createStorage() {
     markAsReadOnOpen: false,
     colorPreference: ColorPreference.System,
     language: 'en',
+    allUsers: [],
+    userAccessTokens: {},
   })
 
   let willSave = false
@@ -56,13 +58,18 @@ export function createStorage() {
     return storage[key]
   }
 
-  function set<K extends Key>(key: K, value: Value<K>) {
-    if (value === storage[key]) {
+  function set<K extends Key>(key: K, value: Value<K> | ((prev: Value<K>) => Value<K>)) {
+    const currentValue = storage[key]
+    const newValue = typeof value === 'function'
+      ? value(currentValue)
+      : value
+
+    if (newValue === currentValue) {
       return
     }
 
-    storage[key] = value
-    store.set((key as string), value)
+    storage[key] = newValue
+    store.set(key, newValue)
       .then(save)
   }
 
@@ -86,10 +93,7 @@ export function createStorage() {
   function assign(newValues: Partial<AppStorageContext>) {
     for (const key of Object.keys(newValues) as Key[]) {
       const value = newValues[key]
-
-      if (value != null) {
-        set(key, value)
-      }
+      set(key, value as any)
     }
   }
 

@@ -1,10 +1,9 @@
 <script lang="ts">
 import type { InjectionKey, Ref } from 'vue'
-import type { AlignedPlacement, ReferenceElement, Side, WowerlayTransitionFn } from 'wowerlay'
-import { useEventListener } from '@vueuse/core'
+import type { AlignedPlacement, Side, WowerlayTransitionFn } from 'wowerlay'
+import { useEventListener, whenever } from '@vueuse/core'
 import { inject, provide, ref, watch } from 'vue'
 import { Wowerlay } from 'wowerlay'
-import { useCustomHook } from '../composables/useCustomHook'
 import { useKey } from '../composables/useKey'
 
 type PopoverContext = {
@@ -78,8 +77,6 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
     done()
   }
 }
-
-export const [onPopoverVisible, emitPopoverVisible] = useCustomHook<[el: ReferenceElement]>()
 </script>
 
 <script lang="ts" setup>
@@ -131,7 +128,6 @@ watch(visible, (value) => {
     setTimeout(() => {
       popoverEl.value?.focus()
     })
-    emitPopoverVisible(props.target as ReferenceElement)
   }
   else {
     setTimeout(() => lastFocusedElement instanceof HTMLElement && lastFocusedElement.focus())
@@ -146,12 +142,15 @@ useEventListener(
   },
   { passive: true },
 )
+
+whenever(() => props.target instanceof HTMLElement, (target) => {
+  (props.target as HTMLElement).setAttribute('data-wowerlay-stop', '')
+})
 </script>
 
 <template>
   <Wowerlay
     v-model:visible="visible"
-    class="popover"
     tabindex="-1"
     :target="target"
     :gap="2"
@@ -160,6 +159,7 @@ useEventListener(
     }"
     :transition="handleTransition"
     v-bind="props.wowerlayOptions"
+    class="outline-none rounded-lg bg-surface-3 shadow-md overflow-clip flex"
     @update:el="(el) => popoverEl = el"
   >
     <slot
@@ -168,15 +168,3 @@ useEventListener(
     />
   </Wowerlay>
 </template>
-
-<style lang="scss">
-.popover {
-  outline: none;
-  background-color: var(--popover-bg);
-  border-radius: 8px;
-  border: 1px solid var(--popover-border);
-  box-shadow: 0px 0px 7px -3px rgba(0, 0, 0, 0.2);
-  display: flex;
-  padding: 4px;
-}
-</style>

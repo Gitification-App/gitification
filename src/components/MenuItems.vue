@@ -1,7 +1,6 @@
 <script lang="ts">
 import type { Context, Item, ItemRenderList } from 'vue-selectable-items'
-import type { Icons } from './Icons'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import {
 
   createItemDefaults,
@@ -10,24 +9,25 @@ import {
   SelectableItems,
 } from 'vue-selectable-items'
 import { useKey } from '../composables/useKey'
+import { UI } from '../ui'
 import { usePopoverContext } from './Popover.vue'
 
 export type ItemMeta = {
   text: string
-  icon?: typeof Icons[keyof typeof Icons]
+  icon?: any
   key?: string
   selected?: boolean
 }
 
 export const menuItem = item<ItemMeta>
 
-const itemDefaults = createItemDefaults<ItemMeta>(({ disabled, meta }) => ({
+const itemDefaults = createItemDefaults<ItemMeta>(({ disabled }) => ({
   elementTag: 'button',
   elementAttrs: {
     tabindex: disabled ? -1 : 0,
     role: 'button',
     disabled: disabled || null,
-    style: meta?.selected ? 'color: var(--accent-color); font-weight: bold;' : undefined,
+    class: 'group',
   },
 }))
 
@@ -79,6 +79,20 @@ function setupHandle(ctx: Context) {
 
   props.setup(ctx)
 }
+
+const selectableItems = computed(() => filterSelectableItems(props.items))
+
+const iconShown = computed(() => {
+  return selectableItems.value.some((item) => item.meta?.icon)
+})
+
+const keyShown = computed(() => {
+  return selectableItems.value.some((item) => item.meta?.key)
+})
+
+const tickShown = computed(() => {
+  return selectableItems.value.some((item) => item.meta?.selected)
+})
 </script>
 
 <template>
@@ -86,83 +100,42 @@ function setupHandle(ctx: Context) {
     :itemDefaults="itemDefaults"
     :setup="setupHandle"
     :items="items"
+    class="flex flex-col"
     @select="(meta: ItemMeta) => emits('select', meta)"
   >
     <template #render="{ meta }: Item<ItemMeta>">
-      <div
-        v-if="meta!.icon"
-        class="item-icon"
-      >
-        <component :is="meta!.icon" />
+      <div class="h-[40px] pl-2 pr-4 py-1 gap-1 flex flex-row items-center text-left justify-start w-full group-[.vue-selectable-items-item-focused]:bg-surface-4 group-hover:bg-surface-4">
+        <div
+          v-if="iconShown"
+          class="text-txt-2 shrink-0 size-[32px] grid place-items-center text-[16px]"
+        >
+          <component
+            :is="meta.icon"
+            v-if="meta?.icon"
+          />
+        </div>
+
+        <div class="text-sm text-txt-2 shrink w-full">
+          {{ meta!.text }}
+        </div>
+
+        <span
+          v-if="keyShown"
+          class="text-xs w-[24px] text-txt-3"
+        >
+          {{ meta?.key }}
+        </span>
+
+        <span
+          v-if="tickShown"
+          class="shrink-0 text-[16px] grid place-items-center invisible text-txt-2"
+          :class="{
+            visible: meta?.selected,
+          }"
+        >
+          <UI.Icons.Tick01 />
+        </span>
       </div>
-      <div class="item-text">
-        {{ meta!.text }}
-      </div>
-      <span
-        v-if="meta?.key"
-        class="item-key"
-      >
-        {{ meta.key }}
-      </span>
     </template>
   </SelectableItems>
 </template>
-
-<style lang="scss">
-.vue-selectable-items {
-  display: flex;
-  flex-direction: column;
-
-  &-item {
-    white-space: nowrap;
-    width: 100%;
-    padding: 5px 10px;
-    outline: none;
-    height: 32px;
-    border-radius: 4px; // 8px parent border radius - 4px parent padding
-    color: var(--text-faded);
-
-    &,
-    .item-text,
-    .item-icon {
-      display: inline-flex;
-      flex-direction: row;
-      align-items: center;
-    }
-
-    &-focused {
-      background-color: var(--item-bg);
-      color: var(--text);
-    }
-
-    &-disabled {
-      color: var(--gray);
-    }
-
-    .item-text {
-      font-size: 13px;
-      vertical-align: middle;
-      color: currentColor;
-      width: 100%;
-    }
-
-    .item-icon {
-      flex-shrink: 0;
-      margin-right: 10px;
-      font-size: 14px;
-      color: currentColor;
-
-      :deep(.icon) {
-        max-width: 17px;
-        max-height: 17px;
-      }
-    }
-
-    .item-key {
-      color: var(--gray-bright);
-      font-size: 10px;
-      margin-left: 10px;
-    }
-  }
-}
-</style>

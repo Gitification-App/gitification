@@ -5,9 +5,10 @@ import { Gitification } from '..'
 
 export const mutex = new Mutex()
 
-export function getUser() {
+export function getUser(accessToken: string) {
   const req = Gitification.utils.github.sendGithubApiRequest<ApiTypes.AnyUser>('https://api.github.com/user', {
     method: 'get',
+    accessToken,
   })
 
   return req
