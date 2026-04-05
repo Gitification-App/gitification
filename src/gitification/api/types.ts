@@ -1,8 +1,115 @@
-import type { NotificationReason, NotificationSubject } from '../constants'
-import type { AppStorageContext } from '../types'
-import type { User } from './user'
-import redaxios from 'redaxios'
-import { createBaseGithubApiHeaders } from '../utils/api'
+// #NamespaceName: ApiTypes
+
+import type { NotificationReason, NotificationSubject } from '../../constants'
+
+export type AnyUser = PrivateUser | PublicUser
+
+export type PrivateUser = {
+  login: string
+  id: number
+  node_id: string
+  avatar_url: string
+  gravatar_id: string | null
+  url: string
+  html_url: string
+  followers_url: string
+  following_url: string
+  gists_url: string
+  starred_url: string
+  subscriptions_url: string
+  organizations_url: string
+  repos_url: string
+  events_url: string
+  received_events_url: string
+  type: string
+  site_admin: boolean
+  name: string | null
+  company: string | null
+  blog: string | null
+  location: string | null
+  email: string | null
+  hireable: boolean | null
+  bio: string | null
+  twitter_username?: string | null
+  public_repos: number
+  public_gists: number
+  followers: number
+  following: number
+  created_at: string
+  updated_at: string
+  private_gists: number
+  total_private_repos: number
+  owned_private_repos: number
+  disk_usage: number
+  collaborators: number
+  two_factor_authentication: boolean
+  plan?: {
+    collaborators: number
+    name: string
+    space: number
+    private_repos: number
+
+  }
+  suspended_at?: string | null
+  business_plus?: boolean
+  ldap_dn?: string
+}
+
+export type PublicUser = {
+  login: string
+  id: number
+  node_id: string
+  avatar_url: string
+  gravatar_id: string | null
+  url: string
+  html_url: string
+  followers_url: string
+  following_url: string
+  gists_url: string
+  starred_url: string
+  subscriptions_url: string
+  organizations_url: string
+  repos_url: string
+  events_url: string
+  received_events_url: string
+  type: string
+  site_admin: boolean
+  name: string | null
+  company: string | null
+  blog: string | null
+  location: string | null
+  email: string | null
+  hireable: boolean | null
+  bio: string | null
+  twitter_username?: string | null
+  public_repos: number
+  public_gists: number
+  followers: number
+  following: number
+  created_at: string
+  updated_at: string
+  plan?: {
+    collaborators: number
+    name: string
+    space: number
+    private_repos: number
+  }
+  suspended_at?: string | null
+  private_gists?: number
+  total_private_repos?: number
+  owned_private_repos?: number
+  disk_usage?: number
+  collaborators?: number
+}
+
+export type AccessToken = {
+  access_token: string
+  expires_in: number
+  refresh_token: string
+  refresh_token_expires_in: number
+  scope: string
+  token_type: string
+}
 
 export type Thread = {
   id: string
@@ -26,7 +133,7 @@ export type MinimalRepository = {
   node_id: string
   name: string
   full_name: string
-  owner: User
+  owner: AnyUser
   private: boolean
   html_url: string
   description: string | null
@@ -135,45 +242,11 @@ export type MinimalRepository = {
     }
   } | null
 }
+
 export type CodeOfConduct = {
   key: string
   name: string
   url: string
   body?: string
   html_url: string | null
-}
-
-export type GetNotificationsArgs = {
-  accessToken: string
-  showOnlyParticipating: boolean
-  showReadNotifications: boolean
-}
-
-export function getNotifications({
-  accessToken,
-  showOnlyParticipating,
-  showReadNotifications,
-}: GetNotificationsArgs) {
-  return redaxios.get<Thread[]>('https://api.github.com/notifications', {
-    headers: createBaseGithubApiHeaders(accessToken),
-    params: {
-      participating: showOnlyParticipating,
-      all: showReadNotifications,
-      t: Date.now(),
-    },
-  })
-}
-
-export function markNotificationAsRead(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
-  return redaxios.patch(`https://api.github.com/notifications/threads/${id}`, null, {
-    headers: createBaseGithubApiHeaders(accessToken),
-  })
-}
-
-export async function unsubscribeNotification(id: Thread['id'], accessToken: NonNullable<AppStorageContext['accessToken']>) {
-  await redaxios.put(`https://api.github.com/notifications/threads/${id}/subscription`, { ignored: true }, {
-    headers: createBaseGithubApiHeaders(accessToken),
-  })
-
-  await markNotificationAsRead(id, accessToken)
 }

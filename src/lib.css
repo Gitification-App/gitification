@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-1: rgb(20,20,20);
+  --color-surface-2: rgb(30,30,30);
+  --color-surface-3: rgb(40,40,40);
+  --color-surface-4: rgb(50,50,50);
+  --color-surface-5: rgb(60,60,60);
+  
+  --color-app-border: rgb(45,45,45);
+}
+
+html, body, #app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}

@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 import type { AppStorageContext } from '../../types'
 import { Store } from 'tauri-plugin-store-api'
 import { customRef, shallowReactive } from 'vue'
-import * as Constants from '../constants/index'
+import { ColorPreference } from '../../constants'
 
 export function createStorage() {
   const store = new Store('.storage.dat')
@@ -15,7 +15,7 @@ export function createStorage() {
     showReadNotifications: false,
     showSystemNotifications: false,
     markAsReadOnOpen: false,
-    colorPreference: Constants.ColorPreference.System,
+    colorPreference: ColorPreference.System,
     language: 'en',
   })
 

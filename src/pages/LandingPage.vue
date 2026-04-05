@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
-import { invoke } from '@tauri-apps/api/tauri'
-import { ref } from 'vue'
-import { getServerPort } from '../api/app'
-import { getAccessToken } from '../api/token'
-import { getUser } from '../api/user'
+import { onMounted, ref } from 'vue'
 import AppButton from '../components/AppButton.vue'
 import EmptyState from '../components/EmptyState.vue'
 import { useI18n } from '../composables/useI18n'
 import { useTauriEvent } from '../composables/useTauriEvent'
-import { useTimeoutPool } from '../composables/useTimeoutPool'
-import { InvokeCommand } from '../constants'
 import { Gitification } from '../gitification'
-import { createAuthURL } from '../utils/github'
+import { UI } from '../ui'
 
 const processing = ref(true)
 const { t } = useI18n()
@@ -25,17 +18,21 @@ useTauriEvent<string>('code', async ({ payload }) => {
   processing.value = true
 
   try {
-    const { data: { access_token: accessToken } } = await getAccessToken({
+    const { data: { access_token: accessToken } } = await Gitification.api.getAccessToken({
       clientId: import.meta.env.VITE_CLIENT_ID,
       clientSecret: import.meta.env.VITE_CLIENT_SECRET,
       code: payload,
     })
 
-    const { data: user } = await getUser(accessToken)
+    Gitification.storage.set('accessToken', accessToken)
 
-    invoke(InvokeCommand.StopServer)
-    Gitification.storage.assign({ accessToken, user })
-    Gitification.router.navigate('home', { fetchOnEnter: true })
+    const user = await Gitification.api.getUser()
+
+    if (user) {
+      Gitification.server.stop()
+      Gitification.storage.set('user', user)
+      Gitification.router.navigate('home', { fetchOnEnter: true })
+    }
   }
   finally {
     processing.value = false
@@ -45,36 +42,38 @@ useTauriEvent<string>('code', async ({ payload }) => {
 let port: number
 
 function handleLogin() {
-  open(createAuthURL(port))
+  Gitification.actions.openURL(Gitification.utils.github.createCodeCallbackURL(port))
 }
 
-invoke(InvokeCommand.StartServer)
-
-useTimeoutPool()
-  .set(1000, 'server_start', async () => {
-    port = await getServerPort()
-    processing.value = false
-  })
+onMounted(async () => {
+  await Gitification.server.start()
+  port = await Gitification.server.getPort()
+  processing.value = false
+})
 </script>
 
 <template>
-  <EmptyState :description="t.welcomeToGitification">
-    <template #icon>
-      <img
-        width="75"
-        draggable="false"
-        height="75"
-        src="/src/assets/img/icon.png"
-      >
-    </template>
+  <UI.Page>
+    <UI.PageContent>
+      <EmptyState :description="t.welcomeToGitification">
+        <template #icon>
+          <img
+            width="75"
+            draggable="false"
+            height="75"
+            src="/src/assets/img/icon.png"
+          >
+        </template>
 
-    <template #footer>
-      <AppButton
-        :loading="processing"
-        @click="handleLogin"
-      >
-        {{ t.loginViaGithub }}
-      </AppButton>
-    </template>
-  </EmptyState>
+        <template #footer>
+          <AppButton
+            :loading="processing"
+            @click="handleLogin"
+          >
+            {{ t.loginViaGithub }}
+          </AppButton>
+        </template>
+      </EmptyState>
+    </UI.PageContent>
+  </UI.Page>
 </template>

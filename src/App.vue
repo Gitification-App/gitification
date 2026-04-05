@@ -1,69 +1,23 @@
-<script setup lang="ts">
-import { computed, watchEffect } from 'vue'
-import AppScroller from './components/AppScroller.vue'
-import AppSidebar from './components/AppSidebar.vue'
-import ContextMenu from './components/ContextMenu.vue'
-import { useCommonCalls } from './composables/useCommonCalls'
-import { useContextMenu } from './composables/useContextMenu'
-import { useInterval } from './composables/useInterval'
-import { useTheme } from './composables/useTheme'
-import { ColorPreference, FETCH_INTERVAL_DURATION } from './constants'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { Gitification } from './gitification'
-import HomePage from './pages/HomePage.vue'
 import LandingPage from './pages/LandingPage.vue'
-import SettingsPage from './pages/SettingsPage.vue'
-
-const contextmenu = useContextMenu()
-const commonCalls = useCommonCalls()
-
-useInterval(() => {
-  if (Gitification.storage.get('accessToken') && Gitification.storage.get('user')) {
-    commonCalls.fetchThreads(false)
-  }
-}, FETCH_INTERVAL_DURATION)
-
-const { theme } = useTheme()
-
-watchEffect(() => {
-  if (theme.value === ColorPreference.Dark) {
-    document.documentElement.classList.remove('light-theme')
-  }
-  else {
-    document.documentElement.classList.add('light-theme')
-  }
-})
+import { UI } from './ui'
 
 const Route = computed(() => {
   const current = Gitification.router.current.value
-
-  if (current === 'home') {
-    return HomePage
-  }
-
-  if (current === 'settings') {
-    return SettingsPage
-  }
 
   if (current === 'landing') {
     return LandingPage
   }
 
-  throw new Error(`Unknown route: ${current}`)
+  return null
 })
 </script>
 
 <template>
-  <Teleport to="body">
-    <div id="app-border" />
-  </Teleport>
-
-  <AppSidebar />
-  <AppScroller>
+  <UI.Container class="flex flex-row gap-2">
+    <UI.Sidebar />
     <Route />
-  </AppScroller>
-
-  <ContextMenu
-    :state="contextmenu.state.value"
-    @close="contextmenu.clear()"
-  />
+  </UI.Container>
 </template>

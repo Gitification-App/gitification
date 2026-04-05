@@ -7,20 +7,17 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { useCommonCalls } from './composables/useCommonCalls'
 import { useKey } from './composables/useKey'
 import { Gitification } from './gitification'
 
-import './assets/main.scss'
-import 'wowerlay/style.css'
-import 'focus-visible'
-import 'overlayscrollbars/overlayscrollbars.css'
+import './lib.css'
 import 'dayjs/locale/en'
 import 'dayjs/locale/tr'
 
 async function main() {
   if (import.meta.env.MODE !== 'production') {
     useKey('command+r', () => location.reload(), { prevent: true })
+    ;(globalThis as any).Gitification = Gitification
   }
 
   dayjs.extend(relativeTime)
@@ -31,10 +28,9 @@ async function main() {
   const token = Gitification.storage.get('accessToken')
   const user = Gitification.storage.get('user')
 
-  if (token && user) {
-    Gitification.router.navigate('home', {})
-    useCommonCalls().fetchThreads()
-  }
+  // if (token && user) {
+  //   Gitification.router.navigate('home', { fetchOnEnter: true })
+  // }
 
   const [
     autoStartEnabled,

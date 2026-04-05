@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { type as osType } from '@tauri-apps/api/os'
-import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
-import { isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
+import { type as osType } from '@tauri-apps/api/os'
 import { useI18n } from '../composables/useI18n'
+import { Gitification } from '../gitification'
 import { fromNow } from '../utils/date'
+import { notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
 
 type Props = {
@@ -16,10 +16,10 @@ type Props = {
 }
 
 type Emits = {
-  (e: 'click:notification', notification: Thread): void
-  (e: 'click:repo', repo: MinimalRepository): void
+  (e: 'click:notification', notification: Gitification.Types.Api.Thread): void
+  (e: 'click:repo', repo: Gitification.Types.Api.MinimalRepository): void
   (e: 'update:checked', value: boolean): void
-  (e: 'contextmenu', value: Thread, event: MouseEvent): void
+  (e: 'contextmenu', value: Gitification.Types.Api.Thread, event: MouseEvent): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +33,7 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
   return e.target instanceof HTMLElement && e.target.closest('.notification-checkbox') != null
 }
 
-async function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEvent) {
+async function handleThreadClick(thread: Gitification.Types.Api.Thread, event: MouseEvent | KeyboardEvent) {
   if ((event instanceof KeyboardEvent && event.repeat)) {
     return
   }
@@ -65,7 +65,7 @@ async function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEve
   emit('click:notification', thread)
 }
 
-function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEvent) {
+function handleRepoClick(repo: Gitification.Types.Api.MinimalRepository, event: MouseEvent | KeyboardEvent) {
   if ((event instanceof KeyboardEvent && event.repeat)) {
     return
   }
@@ -86,12 +86,13 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
 
 <template>
   <div
-    v-if="isRepository(value)"
+    v-if="Gitification.utils.notification.isRepository(value)"
     class="notification-title-wrapper"
   >
     <button
       class="notification-title"
-      @click="(event) => isRepository(value) && handleRepoClick(value, event)"
+      :bruh="value"
+      @click="handleRepoClick(value, $event)"
     >
       <img
         draggable="false"
@@ -117,7 +118,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
           tabindex="0"
           aria-checked="true"
           class="notification-checkbox"
-          @keydown.space.enter.prevent=" (event) => isRepository(value) && handleRepoClick(value, event)"
+          @keydown.space.enter.prevent="handleRepoClick(value, $event)"
         >
           <span class="notification-checkbox-dot" />
         </span>
@@ -131,8 +132,8 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
     v-else
     class="notification-item"
     :class="{ 'notification-item-read': !value.unread }"
-    @contextmenu="(event) => emit('contextmenu', value as Thread, event)"
-    @click="(event) => isThread(value) && handleThreadClick(value, event)"
+    @contextmenu="emit('contextmenu', value, $event)"
+    @click="handleThreadClick(value, $event)"
   >
     <Component
       :is="notificationSubjectIcon(value.subject.type)"
@@ -161,7 +162,7 @@ function handleRepoClick(repo: MinimalRepository, event: MouseEvent | KeyboardEv
         tabindex="0"
         aria-checked="true"
         class="notification-checkbox"
-        @keydown.space.enter.prevent=" (event) => isThread(value) && handleThreadClick(value, event)"
+        @keydown.space.enter.prevent="handleThreadClick(value, $event)"
       >
         <span class="notification-checkbox-dot" />
       </span>

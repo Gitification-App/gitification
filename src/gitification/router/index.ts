@@ -5,7 +5,7 @@ type PageState = {
   fetchOnEnter?: boolean
 }
 
-export const routes = ['home', 'landing', 'settings'] as const
+export const routes = ['home', 'addAccount', 'landing', 'settings'] as const
 export type RouteName = typeof routes[number]
 
 export function createRouter(defaultPage: RouteName) {

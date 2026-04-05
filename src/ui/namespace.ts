@@ -1,0 +1,5 @@
+export { default as Container } from './Container/Container.vue'
+export { default as Page } from './Page/Page.vue'
+export { default as PageContent } from './Page/PageContent.vue'
+export { default as PageHeader } from './Page/PageHeader.vue'
+export { default as Sidebar } from './Sidebar/Sidebar.vue'

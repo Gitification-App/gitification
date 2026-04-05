@@ -39,7 +39,7 @@ export const useStore = singleton(() => {
     notifications.value = []
 
     Gitification.router.navigate('landing')
-    Gitification.state.notifications.value = []
+    Gitification.state.threads.value = []
     Gitification.storage.set('accessToken', null)
     Gitification.storage.set('user', null)
   }
