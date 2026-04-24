@@ -85,7 +85,7 @@ async function handleUpdateShowSystemNotifications(value: boolean) {
 
   if (permission !== 'granted') {
     const confirmed = await confirm('Gitification has no permission to show notifications. Press Ok to go to Preferences/Notifications.', {
-      type: 'error',
+      kind: 'error',
     })
 
     if (confirmed) {

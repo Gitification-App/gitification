@@ -1,5 +1,5 @@
 import { createSharedComposable } from '@vueuse/core'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { sendNotification } from '@tauri-apps/plugin-notification'
 import { open as shellOpen } from '@tauri-apps/plugin-shell'
 import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'

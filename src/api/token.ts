@@ -1,4 +1,4 @@
-import { Body, ResponseType, fetch } from '@tauri-apps/plugin-http'
+import { fetch } from '@tauri-apps/plugin-http'
 
 export type GetAccessTokenArgs = {
   clientId: string
@@ -16,24 +16,24 @@ export type GetAccessTokenResponse = {
 }
 
 export async function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenArgs) {
-  const body = Body.json({
-    client_id: clientId,
-    client_secret: clientSecret,
-    code,
-  })
-
-  const res = await fetch<GetAccessTokenResponse>('https://github.com/login/oauth/access_token', {
+  const res = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
-    body,
-    responseType: ResponseType.JSON,
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+    }),
   })
 
   if (!res.ok) {
     throw res
   }
 
-  return res
+  const data = await res.json() as GetAccessTokenResponse
+
+  return { data, ok: res.ok }
 }

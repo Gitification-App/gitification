@@ -1,11 +1,12 @@
-import { Store } from '@tauri-apps/plugin-store'
+import { load } from '@tauri-apps/plugin-store'
 import type { WritableComputedRef } from 'vue'
 import { computed, shallowReactive } from 'vue'
 import type { AppStorageContext } from './types'
 import { batchFn } from './utils/batch'
 import { ColorPreference } from './constants'
 
-const store = new Store('.storage.dat')
+const storePromise = load('.storage.dat', { autoSave: false, defaults: {} })
+
 const storage = shallowReactive<AppStorageContext>({
   user: null,
   accessToken: null,
@@ -19,9 +20,9 @@ const storage = shallowReactive<AppStorageContext>({
   language: 'en',
 })
 
-const writeStorageToDisk = batchFn(() => (
-  store.save()
-))
+const writeStorageToDisk = batchFn(() => {
+  storePromise.then((s) => s.save())
+})
 
 export const AppStorage = {
   /**
@@ -41,7 +42,7 @@ export const AppStorage = {
 
     storage[key] = value
 
-    store.set(key, value).then(() => writeStorageToDisk())
+    storePromise.then((s) => s.set(key, value)).then(() => writeStorageToDisk())
   },
 
   /**
@@ -72,6 +73,7 @@ export const AppStorage = {
  * Reads storage from disk and saves values to app cache.
  */
 export async function cacheStorageFromDisk() {
+  const store = await storePromise
   const values = Object.fromEntries(await store.entries())
 
   console.log('disk storage value: ', values)

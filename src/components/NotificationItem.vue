@@ -40,7 +40,7 @@ async function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEve
 
   const os = await osType()
 
-  if (os === 'Darwin' && event.ctrlKey) {
+  if (os === 'macos' && event.ctrlKey) {
     queueMicrotask(() => {
       const el = event.target as HTMLElement
       const bounds = el.getBoundingClientRect()

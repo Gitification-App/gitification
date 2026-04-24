@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { isPermissionGranted } from '@tauri-apps/plugin-notification'
 import { type as osType } from '@tauri-apps/plugin-os'
-import { checkUpdate } from '@tauri-apps/plugin-updater'
+import { check } from '@tauri-apps/plugin-updater'
 import App from './App.vue'
 import { AppStorage, cacheStorageFromDisk } from './storage'
 import { useStore } from './stores/store'
@@ -54,10 +54,10 @@ async function main() {
   }
 
   try {
-    const { shouldUpdate, manifest } = await checkUpdate()
+    const update = await check()
 
-    if (shouldUpdate) {
-      store.newRelease = manifest!
+    if (update) {
+      store.newRelease = update
     }
   }
   catch (error) {
@@ -65,7 +65,7 @@ async function main() {
   }
 
   const os = await osType()
-  if (os === 'Darwin') {
+  if (os === 'macos') {
     document.documentElement.setAttribute('data-os-darwin', '')
   }
 
