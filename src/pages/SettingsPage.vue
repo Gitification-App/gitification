@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { disable as disableAutostart, enable as enableAutostart } from 'tauri-plugin-autostart-api'
+import { disable as disableAutostart, enable as enableAutostart } from '@tauri-apps/plugin-autostart'
 import { computedEager, useEventListener, watchDebounced } from '@vueuse/core'
 
-import { invoke } from '@tauri-apps/api/tauri'
-import { requestPermission } from '@tauri-apps/api/notification'
-import { confirm } from '@tauri-apps/api/dialog'
+import { invoke } from '@tauri-apps/api/core'
+import { requestPermission } from '@tauri-apps/plugin-notification'
+import { confirm } from '@tauri-apps/plugin-dialog'
 import AppButton from '../components/AppButton.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { AppStorage } from '../storage'

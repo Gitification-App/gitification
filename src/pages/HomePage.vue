@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/plugin-shell'
 import { onScopeDispose, ref } from 'vue'
 import { whenever } from '@vueuse/core'
 import type { ItemRenderList } from 'vue-selectable-items'

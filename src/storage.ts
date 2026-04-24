@@ -1,4 +1,4 @@
-import { Store } from 'tauri-plugin-store-api'
+import { Store } from '@tauri-apps/plugin-store'
 import type { WritableComputedRef } from 'vue'
 import { computed, shallowReactive } from 'vue'
 import type { AppStorageContext } from './types'

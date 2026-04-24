@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type as osType } from '@tauri-apps/api/os'
+import { type as osType } from '@tauri-apps/plugin-os'
 import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
 import { isRepository, isThread, notificationSubjectIcon } from '../utils/notification'

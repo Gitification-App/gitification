@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/plugin-shell'
 import { ref } from 'vue'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 import AppButton from '../components/AppButton.vue'
 import { InvokeCommand } from '../constants'
 import { useStore } from '../stores/store'

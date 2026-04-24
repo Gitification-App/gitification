@@ -16,7 +16,16 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.5.3",
+    "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/plugin-autostart": "~2",
+    "@tauri-apps/plugin-dialog": "~2",
+    "@tauri-apps/plugin-http": "~2",
+    "@tauri-apps/plugin-notification": "~2",
+    "@tauri-apps/plugin-os": "~2",
+    "@tauri-apps/plugin-process": "~2",
+    "@tauri-apps/plugin-shell": "~2",
+    "@tauri-apps/plugin-store": "~2",
+    "@tauri-apps/plugin-updater": "~2",
     "@vueuse/core": "^10.7.2",
     "dayjs": "^1.11.10",
     "klona": "^2.0.6",
@@ -24,8 +33,6 @@
     "overlayscrollbars-vue": "^0.5.7",
     "p-all": "^5.0.0",
     "redaxios": "^0.5.1",
-    "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart",
-    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "vue": "^3.4.15",
     "vue-selectable-items": "^1.0.1",
     "wowerlay": "1.1.0"

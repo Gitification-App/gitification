@@ -1,4 +1,4 @@
-import { Body, ResponseType, fetch } from '@tauri-apps/api/http'
+import { Body, ResponseType, fetch } from '@tauri-apps/plugin-http'
 
 export type GetAccessTokenArgs = {
   clientId: string

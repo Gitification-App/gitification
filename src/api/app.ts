@@ -1,4 +1,4 @@
-import { ResponseType, fetch } from '@tauri-apps/api/http'
+import { ResponseType, fetch } from '@tauri-apps/plugin-http'
 import { SERVER_PORTS } from '../constants'
 
 export async function getServerPort() {
