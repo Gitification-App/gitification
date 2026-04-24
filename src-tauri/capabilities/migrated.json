@@ -8,7 +8,8 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "dialog:allow-confirm",
+    "dialog:allow-message",
+    "store:default",
     {
       "identifier": "http:default",
       "allow": [
@@ -30,18 +31,7 @@
       ]
     },
     "notification:default",
-    "os:allow-platform",
-    "os:allow-version",
-    "os:allow-os-type",
-    "os:allow-family",
-    "os:allow-arch",
-    "os:allow-exe-extension",
-    "os:allow-locale",
-    "os:allow-hostname",
     "process:allow-restart",
-    "process:allow-exit",
-    "os:default",
-    "dialog:default",
-    "shell:default"
+    "process:allow-exit"
   ]
 }
