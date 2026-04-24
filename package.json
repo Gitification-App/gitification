@@ -42,7 +42,7 @@
     "@iconify-json/ph": "^1.1.11",
     "@kadiryazici/eslint-config": "^1.0.3",
     "@tauri-apps/cli": "^2.10.1",
-    "@types/node": "^20.11.16",
+    "@types/node": "^24.0.0",
     "@vitejs/plugin-vue": "5.0.3",
     "@vue/devtools": "^7.0.15",
     "async-mutex": "^0.4.1",
