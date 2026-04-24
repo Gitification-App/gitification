@@ -1,15 +1,15 @@
 use std::{fs::File, io::BufReader, sync::Mutex};
 
 use rodio::{Decoder, OutputStream, Sink};
-use tauri::{AppHandle, State, Window};
+use tauri::{image::Image, path::BaseDirectory, AppHandle, Manager, State, Window};
 
 use crate::{server::AuthServer, utils::get_available_socket_addr};
 
 #[tauri::command]
 pub fn play_notification_sound(app: AppHandle) {
     let audio_path = app
-        .path_resolver()
-        .resolve_resource("resources/mee-too.mp3")
+        .path()
+        .resolve("resources/mee-too.mp3", BaseDirectory::Resource)
         .expect("failed to load it");
 
     std::thread::spawn(move || {
@@ -28,13 +28,13 @@ pub fn play_notification_sound(app: AppHandle) {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_icon_template(is_template: bool, app: AppHandle) {
-    app.tray_handle().set_icon_as_template(is_template).unwrap();
+    let tray = app.tray_by_id("main").expect("tray 'main' not found");
+    tray.set_icon_as_template(is_template).unwrap();
 
-    app.tray_handle()
-        .set_icon(tauri::Icon::Raw(
-            include_bytes!("../icons/tray/icon.png").to_vec(),
-        ))
-        .unwrap();
+    tray.set_icon(Some(
+        Image::from_bytes(include_bytes!("../icons/tray/icon.png")).unwrap(),
+    ))
+    .unwrap();
 }
 
 #[cfg(any(target_os = "linux", target_os = "windows"))]
@@ -43,18 +43,18 @@ pub fn set_icon_template(is_template: bool, app: AppHandle) {
     // In other systems there is no template option for tray icons
     // So we just simulate like it has.
 
+    let tray = app.tray_by_id("main").expect("tray 'main' not found");
+
     if is_template {
-        app.tray_handle()
-            .set_icon(tauri::Icon::Raw(
-                include_bytes!("../icons/128x128.png").to_vec(),
-            ))
-            .unwrap();
+        tray.set_icon(Some(
+            Image::from_bytes(include_bytes!("../icons/128x128.png")).unwrap(),
+        ))
+        .unwrap();
     } else {
-        app.tray_handle()
-            .set_icon(tauri::Icon::Raw(
-                include_bytes!("../icons/tray/icon.png").to_vec(),
-            ))
-            .unwrap();
+        tray.set_icon(Some(
+            Image::from_bytes(include_bytes!("../icons/tray/icon.png")).unwrap(),
+        ))
+        .unwrap();
     }
 }
 
