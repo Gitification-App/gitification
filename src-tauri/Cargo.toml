@@ -20,7 +20,7 @@ tauri = { version = "1.6.1", features = [ "updater", "dialog-confirm", "http-req
 window-vibrancy = "0.3.2"
 tiny_http = "0.12.0"
 ascii = "1.1.0"
-rodio = "0.16.0"
+rodio = "0.20.1"
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 port_scanner = "*"
