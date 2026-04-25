@@ -1,21 +1,20 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { Gitification } from './gitification'
-import AddAccountPage from './pages/AddAccountPage.vue'
-import LandingPage from './pages/LandingPage.vue'
 import { UI } from './ui'
+import { View } from './views'
 
 const Route = computed(() => {
   const current = Gitification.router.current.value
 
   if (current === 'landing') {
-    return LandingPage
+    return View.LandingView
   }
   else if (current === 'addAccount') {
-    return AddAccountPage
+    return View.AddAccountView
   }
 
-  return null
+  return () => null
 })
 </script>
 

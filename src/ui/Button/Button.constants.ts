@@ -41,7 +41,7 @@ export const ButtonVariantStyles = {
   },
 
   ghost: {
-    bg: 'hover:bg-surface-2',
+    bg: 'hover:bg-surface-3 focus-visible:bg-surface-3',
     fg: 'text-txt-1 hover:text-txt-2',
     shadow: '',
   },

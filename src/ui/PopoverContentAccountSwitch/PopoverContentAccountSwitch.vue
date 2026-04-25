@@ -13,12 +13,16 @@ const otherUsers = computed(() => (
 
 const items = computed(() => {
   const accountItems = [currentUser.value, ...otherUsers.value]
+    .sort((a, b) => a.login.localeCompare(b.login))
     .map((user, index) => menuItem({
       key: String(user.id),
+      onSelect() {
+        Gitification.actions.switchAccount(user.id)
+      },
       meta: {
-        key: index > 0 ? String(index + 1) : undefined,
         text: user.login,
         selected: user.id === currentUser.value?.id,
+        key: String(index + 1),
         icon: h('img', {
           src: user.avatar_url,
           alt: `${user.login}'s avatar`,

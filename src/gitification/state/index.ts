@@ -7,17 +7,19 @@ import { reactive, shallowReactive, shallowRef } from 'vue'
 
 export function createState() {
   const threads = shallowRef<ApiTypes.Thread[]>([])
-  const notificationFetchStatus = shallowRef<'idle' | 'syncing' | 'loading' | 'failed'>('idle')
+  const threadLoadStatus = shallowRef<'idle' | 'syncing' | 'loading'>('idle')
   const checkedThreadIds = reactive(new Set<string>())
   const newRelease = shallowRef<Option<UpdateManifest>>(null)
   const osType = shallowRef<OsType>('Darwin')
+  const currentUser = shallowRef<Option<ApiTypes.AnyUser>>(null)
 
   return shallowReactive({
     threads,
-    notificationFetchStatus,
+    threadLoadStatus,
     checkedThreadIds,
     newRelease,
     osType,
+    currentUser,
   })
 }
 

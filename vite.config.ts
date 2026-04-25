@@ -4,6 +4,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import Vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import Icons from 'unplugin-icons/vite'
 import { defineConfig } from 'vite'
 import { checker as Checker } from 'vite-plugin-checker'
@@ -24,6 +25,7 @@ export default defineConfig({
       compiler: 'vue3',
       defaultClass: 'icon',
     }),
+    vueJsx(),
   ],
 
   define: {

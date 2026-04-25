@@ -48,12 +48,14 @@ export async function getAccessToken({ clientId, clientSecret, code }: GetAccess
 export type GetThreadsArgs = {
   onlyParticipating: boolean
   all: boolean
+  accessToken: string
 }
 
 export async function getThreads(args: GetThreadsArgs) {
-  const { onlyParticipating, all } = args
+  const { onlyParticipating, all, accessToken } = args
 
   return Gitification.utils.github.sendGithubApiRequest<ApiTypes.Thread[]>('https://api.github.com/notifications', {
+    accessToken,
     method: 'get',
     searchParams: {
       participating: onlyParticipating,

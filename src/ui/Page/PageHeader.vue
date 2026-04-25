@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { UI } from '..'
+import { useKey } from '../../composables/useKey'
 
 const emit = defineEmits<{
   back: []
 }>()
+
+useKey('esc', () => {
+  emit('back')
+})
 </script>
 
 <template>
@@ -17,7 +22,9 @@ const emit = defineEmits<{
         <UI.Icons.ArrowLeft01 />
       </template>
 
-      <slot />
+      <span><slot /></span>
+
+      <UI.Key hotkey="esc" />
     </UI.Button>
   </div>
 </template>

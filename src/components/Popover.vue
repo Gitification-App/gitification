@@ -1,8 +1,9 @@
 <script lang="ts">
 import type { InjectionKey, Ref } from 'vue'
 import type { AlignedPlacement, Side, WowerlayTransitionFn } from 'wowerlay'
+import type { PopoverControl } from '../composables/usePopoverControl'
 import { useEventListener, whenever } from '@vueuse/core'
-import { inject, provide, ref, watch } from 'vue'
+import { inject, onScopeDispose, provide, ref } from 'vue'
 import { Wowerlay } from 'wowerlay'
 import { useKey } from '../composables/useKey'
 
@@ -77,33 +78,52 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
     done()
   }
 }
+
+const activePopoverId = ref<symbol | null>(null)
 </script>
 
 <script lang="ts" setup>
 type Props = {
   wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
   target?: InstanceType<typeof Wowerlay>['$props']['target']
-}
-
-type Emits = {
-  (e: 'visibilityChange', visible: boolean): void
+  control?: PopoverControl
 }
 
 const props = withDefaults(defineProps<Props>(), {
   wowerlayOptions: () => ({}),
 })
 
-const emit = defineEmits<Emits>()
-
 defineSlots<{
   default: (props: SlotProps) => any
 }>()
 
+const symbol = Symbol('PopoverSYM')
 const visible = ref(false)
 
-watch(visible, (value) => {
-  emit('visibilityChange', value)
+whenever(visible, () => {
+  activePopoverId.value = symbol
 })
+
+whenever(() => activePopoverId.value !== symbol, () => {
+  visible.value = false
+})
+
+onScopeDispose(() => {
+  if (activePopoverId.value === symbol) {
+    activePopoverId.value = null
+  }
+})
+
+if (props.control) {
+  props.control.onControl((state) => {
+    if (state === 'toggle') {
+      visible.value = !visible.value
+    }
+    else {
+      visible.value = state === 'show'
+    }
+  })
+}
 
 defineExpose({
   show() {
@@ -113,6 +133,7 @@ defineExpose({
     visible.value = false
   },
 })
+
 provide(popoverContextKey, { visible })
 
 useKey('esc', () => {
@@ -120,19 +141,16 @@ useKey('esc', () => {
 }, { prevent: true, source: visible })
 
 const popoverEl = ref<HTMLElement | null>(null)
-let lastFocusedElement: Element | null = null
 
-watch(visible, (value) => {
-  if (value) {
-    lastFocusedElement = document.activeElement
-    setTimeout(() => {
-      popoverEl.value?.focus()
-    })
+whenever(popoverEl, (el) => {
+  el.focus()
+}, { flush: 'post' })
+
+whenever(() => !visible.value, () => {
+  if (props.target instanceof HTMLElement) {
+    props.target.focus()
   }
-  else {
-    setTimeout(() => lastFocusedElement instanceof HTMLElement && lastFocusedElement.focus())
-  }
-})
+}, { flush: 'post' })
 
 useEventListener(
   () => props.target instanceof HTMLElement ? props.target : null,
@@ -143,8 +161,10 @@ useEventListener(
   { passive: true },
 )
 
-whenever(() => props.target instanceof HTMLElement, (target) => {
-  (props.target as HTMLElement).setAttribute('data-wowerlay-stop', '')
+whenever(() => props.target, () => {
+  if (props.target instanceof HTMLElement) {
+    props.target.setAttribute('data-wowerlay-stop', '')
+  }
 })
 </script>
 
