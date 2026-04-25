@@ -9,7 +9,7 @@ import pAll from 'p-all'
 import { reactive, ref, watchEffect } from 'vue'
 import { markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 
 import { everySome } from '../utils/array'
 import { singleton } from '../utils/common'

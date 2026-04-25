@@ -1,5 +1,5 @@
 import type { Options as KyOptions } from 'ky'
-import type { Gitification } from '../..'
+import type * as Gitification from '../../index'
 import ky from 'ky'
 import { NotificationReason, NotificationSubject } from '../../../constants'
 
@@ -54,7 +54,7 @@ export function createThreadReferrerId(
 }
 
 export type CreateThreadUrlArgs = {
-  thread: Gitification.Types.Api.Thread
+  thread: Gitification.api.Types.Thread
   userId: number
 }
 
@@ -102,6 +102,7 @@ export function createCodeCallbackURL(port: number) {
   url.searchParams.set('client_id', import.meta.env.VITE_CLIENT_ID)
   url.searchParams.set('scope', scopes.join(' '))
   url.searchParams.set('redirect_uri', `http://localhost:${port}/callback`)
+  url.searchParams.set('prompt', 'select_account')
 
   return url.toString()
 }

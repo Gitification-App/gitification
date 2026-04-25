@@ -3,14 +3,14 @@ import type { Gitification } from '../../gitification'
 import { computed } from 'vue'
 
 type Props = {
-  activeAccount: Gitification.Types.Api.AnyUser
-  otherAccounts: Gitification.Types.Api.AnyUser[]
+  activeAccount: Gitification.api.Types.SimpleUser
+  otherAccounts: Gitification.api.Types.SimpleUser[]
 }
 
 const props = defineProps<Props>()
 
 defineEmits<{
-  switchAccount: [user: Gitification.Types.Api.AnyUser]
+  switchAccount: [user: Gitification.api.Types.SimpleUser]
   addAccount: []
 }>()
 

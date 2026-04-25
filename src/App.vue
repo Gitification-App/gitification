@@ -1,25 +1,29 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { Gitification } from './gitification'
-import { UI } from './ui'
-import { View } from './views'
+import * as Gitification from './gitification/index'
+import * as UI from './ui'
+import * as Views from './views'
 
 const Route = computed(() => {
   const current = Gitification.router.current.value
 
-  if (current === 'landing') {
-    return View.LandingView
+  switch (current) {
+    case 'home':
+      return Views.HomeView
+    case 'settings':
+      return Views.SettingsView
+    case 'addAccount':
+      return Views.AddAccountView
+    case 'landing':
+      return Views.LandingView
+    default:
+      return null
   }
-  else if (current === 'addAccount') {
-    return View.AddAccountView
-  }
-
-  return () => null
 })
 </script>
 
 <template>
-  <UI.Container class="flex flex-row gap-2">
+  <UI.Container class="border border-surface-3 flex flex-row">
     <UI.Sidebar />
     <Route />
   </UI.Container>

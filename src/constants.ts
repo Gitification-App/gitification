@@ -30,6 +30,11 @@ export enum InvokeCommand {
   GoToNotificationSettings = 'go_to_notification_settings',
 }
 
+export enum NotificationItemType {
+  Repository = 'repository',
+  Thread = 'thread',
+}
+
 export enum NotificationSubject {
   CheckSuite = 'CheckSuite',
   Discussion = 'Discussion',
@@ -39,26 +44,27 @@ export enum NotificationSubject {
   PullRequest = 'PullRequest',
   RepositoryVulnerabilityAlert = 'RepositoryVulnerabilityAlert',
   Release = 'Release',
-}
-
-export enum NotificationItemType {
-  Repository = 'repository',
-  Thread = 'thread',
+  TeamDiscussion = 'TeamDiscussion', // Added
 }
 
 export enum NotificationReason {
+  ApprovalRequested = 'approval_requested', // Added
   Assign = 'assign',
   Author = 'author',
   Comment = 'comment',
   CiActivity = 'ci_activity',
   Invitation = 'invitation',
   Manual = 'manual',
+  MemberFeatureRequested = 'member_feature_requested', // Added
   Mention = 'mention',
+  Push = 'push', // Added
   ReviewRequested = 'review_requested',
+  SecurityAdvisoryCredit = 'security_advisory_credit', // Added
   SecurityAlert = 'security_alert',
   StateChange = 'state_change',
   Subscribed = 'subscribed',
   TeamMention = 'team_mention',
+  YourActivity = 'your_activity', // Added
 }
 
 // export const subjectIconMap = {

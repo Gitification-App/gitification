@@ -100,15 +100,15 @@ button, a {
   color: currentColor;
 }
 
-#app-border {
-  z-index: 9999;
-  pointer-events: none;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  border: 1px solid var(--app-border);
-  @include borderRadiusOverflowHidden(8px);
-}
+// #app-border {
+//   z-index: 9999;
+//   pointer-events: none;
+//   position: fixed;
+//   left: 0;
+//   top: 0;
+//   width: 100%;
+//   height: 100%;
+//   border: 1px solid var(--app-border);
+//   @include borderRadiusOverflowHidden(8px);
+// }
 

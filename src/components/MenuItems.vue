@@ -1,7 +1,8 @@
 <script lang="ts">
+import type { EffectScope } from 'vue'
 import type { Context, Item, ItemRenderList } from 'vue-selectable-items'
 import { whenever } from '@vueuse/core'
-import { computed, effectScope, onMounted, watch } from 'vue'
+import { computed, effectScope, onMounted, onScopeDispose } from 'vue'
 import {
   createItemDefaults,
   filterSelectableItems,
@@ -9,7 +10,7 @@ import {
   SelectableItems,
 } from 'vue-selectable-items'
 import { useKey } from '../composables/useKey'
-import { UI } from '../ui'
+import * as UI from '../ui'
 import { usePopoverContext } from './Popover.vue'
 
 export type ItemMeta = {
@@ -77,16 +78,28 @@ function setupHandle(ctx: Context) {
     }
   })
 
+  let scope: EffectScope | null = null
+
+  onScopeDispose(() => {
+    scope?.stop()
+    scope = null
+  })
+
   whenever(() => selectableItems.value.length > 0, (items) => {
-    for (const item of selectableItems.value) {
-      if (item.meta?.key) {
-        useKey(item.meta.key, () => {
-          ctx.setFocusByKey(item.key)
-          ctx.selectFocusedItem()
-        }, { prevent: true, source: () => true })
+    scope?.stop()
+    scope = effectScope(true)
+
+    scope.run(() => {
+      for (const item of selectableItems.value) {
+        if (item.meta?.key) {
+          useKey(item.meta.key, () => {
+            ctx.setFocusByKey(item.key)
+            ctx.selectFocusedItem()
+          }, { prevent: true, source: () => true })
+        }
       }
-    }
-  }, { immediate: true, once: true, flush: 'post' })
+    })
+  }, { immediate: true, flush: 'post' })
 
   props.setup(ctx)
 }

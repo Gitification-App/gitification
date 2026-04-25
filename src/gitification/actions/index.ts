@@ -1,6 +1,6 @@
-import type * as ApiTypes from '../api/types'
+import { exit } from '@tauri-apps/api/process'
 import { open } from '@tauri-apps/api/shell'
-import { Gitification } from '..'
+import * as Gitification from '../index'
 
 export function openURL(url: string) {
   open(url)
@@ -37,7 +37,7 @@ export function logout() {
   Gitification.state.threads.value = []
 }
 
-export function switchAccount(userId: ApiTypes.AnyUser['id']) {
+export function switchAccount(userId: Gitification.api.Types.SimpleUser['id']) {
   const user = Gitification.storage.get('allUsers').find((u) => u.id === userId)
 
   if (!user) {
@@ -48,4 +48,8 @@ export function switchAccount(userId: ApiTypes.AnyUser['id']) {
     user,
     accessToken: Gitification.storage.get('userAccessTokens')[user.id],
   })
+}
+
+export function quitApp() {
+  exit(0)
 }

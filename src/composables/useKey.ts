@@ -1,6 +1,8 @@
+import type { HotkeysEvent } from 'hotkeys-js'
+import type { Ref } from 'vue'
 import { tryOnScopeDispose } from '@vueuse/core'
-import hotkeys, { type HotkeysEvent } from 'hotkeys-js'
-import { type Ref, isRef, unref, watch } from 'vue'
+import hotkeys from 'hotkeys-js'
+import { isRef, unref, watch } from 'vue'
 
 type MaybeRef<T> = T | Ref<T>
 
@@ -14,7 +16,7 @@ export type UseKeyOptions = {
 
 export type UseKeyCallback = (event: KeyboardEvent, hotkeysEvent: HotkeysEvent) => void
 
-const getLast = <T>(arr: T[]) => arr[arr.length - 1]
+const getLast = <T>(arr: T[]) => arr.at(-1)
 
 function isInputing() {
   return document.activeElement instanceof HTMLTextAreaElement
@@ -45,7 +47,7 @@ export function useKey(
 
   const keyList = keys
     .split(',')
-    .map(key => key.trim())
+    .map((key) => key.trim())
     .filter(Boolean)
 
   const handler: UseKeyCallback = (event, hotkeysEvent) => {
@@ -80,7 +82,7 @@ export function useKey(
         bindings.set(key, [handler])
         hotkeys(key, (...args) => {
           const func = getLast(bindings.get(key)!)
-          func(...args)
+          func?.(...args)
         })
       }
     }
@@ -96,7 +98,7 @@ export function useKey(
     for (const key of keyList) {
       bindings.set(
         key,
-        bindings.get(key)!.filter(cb => cb !== handler),
+        bindings.get(key)!.filter((cb) => cb !== handler),
       )
       if (bindings.get(key)!.length === 0) {
         bindings.delete(key)

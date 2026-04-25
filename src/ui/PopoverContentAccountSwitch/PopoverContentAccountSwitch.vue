@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, h } from 'vue'
-import { UI } from '..'
+import * as UI from '..'
 import MenuItems, { menuItem } from '../../components/MenuItems.vue'
-import { Gitification } from '../../gitification'
+import * as Gitification from '../../gitification'
 
 const currentUser = computed(() => Gitification.storage.get('user')!)
 

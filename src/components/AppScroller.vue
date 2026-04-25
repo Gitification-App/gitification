@@ -8,7 +8,7 @@ import { scrollElementInjectionKey } from '../composables/useScrollElement'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { useTheme } from '../composables/useTheme'
 import { ColorPreference } from '../constants'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 import { batchFn } from '../utils/batch'
 
 const scrollView = ref<Option<OverlayScrollbarsComponentRef>>(null)

@@ -6,7 +6,7 @@ import { createSharedComposable } from '@vueuse/core'
 import { getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { InvokeCommand } from '../constants'
 
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 import { useStore } from '../stores/store'
 import { createGithubWebURL } from '../utils/github'
 import { filterNewNotifications, isRepository, isThread, toNotificationList } from '../utils/notification'

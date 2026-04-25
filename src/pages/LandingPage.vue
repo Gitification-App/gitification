@@ -2,8 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { useTauriEvent } from '../composables/useTauriEvent'
-import { Gitification } from '../gitification'
-import { UI } from '../ui'
+import * as Gitification from '../gitification'
+import * as UI from '../ui'
 
 const processing = ref(true)
 const { t } = useI18n()

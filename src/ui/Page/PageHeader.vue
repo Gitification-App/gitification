@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UI } from '..'
+import * as UI from '..'
 import { useKey } from '../../composables/useKey'
 
 const emit = defineEmits<{
@@ -12,7 +12,7 @@ useKey('esc', () => {
 </script>
 
 <template>
-  <div class="shrink-0 flex flex-row gap-2 items-center">
+  <div class="shrink-0 flex flex-row gap-2 px-2 py-2 items-center">
     <UI.Button
       variant="ghost"
       paddingVariant="md"

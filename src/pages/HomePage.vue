@@ -15,7 +15,7 @@ import { useElementNavigation } from '../composables/useElementNavigation'
 import { useI18n } from '../composables/useI18n'
 import { useKey } from '../composables/useKey'
 import { vContextmenu } from '../directives/contextmenu'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 import { useStore } from '../stores/store'
 import { isRepository } from '../utils/notification'
 

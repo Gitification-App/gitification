@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { InjectionKey, Ref } from 'vue'
-import type { AlignedPlacement, Side, WowerlayTransitionFn } from 'wowerlay'
+import type { AlignedPlacement, Placement, Side, WowerlayTransitionFn } from 'wowerlay'
 import type { PopoverControl } from '../composables/usePopoverControl'
-import { useEventListener, whenever } from '@vueuse/core'
-import { inject, onScopeDispose, provide, ref } from 'vue'
+import { whenever } from '@vueuse/core'
+import { computed, inject, onScopeDispose, provide, ref, shallowRef, useTemplateRef } from 'vue'
 import { Wowerlay } from 'wowerlay'
 import { useKey } from '../composables/useKey'
 
@@ -84,10 +84,14 @@ const activePopoverId = ref<symbol | null>(null)
 
 <script lang="ts" setup>
 type Props = {
-  wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target'>>
-  target?: InstanceType<typeof Wowerlay>['$props']['target']
+  wowerlayOptions?: Partial<Omit<InstanceType<typeof Wowerlay>['$props'], 'visible' | 'target' | 'position'>>
   control?: PopoverControl
+  position: Placement
 }
+
+defineOptions({
+  inheritAttrs: false,
+})
 
 const props = withDefaults(defineProps<Props>(), {
   wowerlayOptions: () => ({}),
@@ -95,27 +99,41 @@ const props = withDefaults(defineProps<Props>(), {
 
 defineSlots<{
   default: (props: SlotProps) => any
+  // eslint-disable-next-line no-empty-pattern
+  target: ({}: SlotProps & { targetProps: Record<string, any> }) => any
 }>()
 
 const symbol = Symbol('PopoverSYM')
-const visible = ref(false)
+const target = shallowRef<HTMLElement | null>(null)
+const visible = computed({
+  get() {
+    return activePopoverId.value === symbol
+  },
+  set(value) {
+    if (!value && activePopoverId.value !== symbol) {
+      return
+    }
 
-whenever(visible, () => {
-  activePopoverId.value = symbol
-})
+    activePopoverId.value = value ? symbol : null
 
-whenever(() => activePopoverId.value !== symbol, () => {
-  visible.value = false
+    if (!value) {
+      target.value?.focus({ preventScroll: true })
+      target.value = null
+    }
+  },
 })
 
 onScopeDispose(() => {
-  if (activePopoverId.value === symbol) {
-    activePopoverId.value = null
-  }
+  visible.value = false
 })
 
 if (props.control) {
+  const targetWrapper = useTemplateRef('targetWrapper')
   props.control.onControl((state) => {
+    if (target.value == null && targetWrapper.value) {
+      target.value = targetWrapper.value.children[0] as HTMLElement
+    }
+
     if (state === 'toggle') {
       visible.value = !visible.value
     }
@@ -124,15 +142,6 @@ if (props.control) {
     }
   })
 }
-
-defineExpose({
-  show() {
-    visible.value = true
-  },
-  hide() {
-    visible.value = false
-  },
-})
 
 provide(popoverContextKey, { visible })
 
@@ -146,29 +155,30 @@ whenever(popoverEl, (el) => {
   el.focus()
 }, { flush: 'post' })
 
-whenever(() => !visible.value, () => {
-  if (props.target instanceof HTMLElement) {
-    props.target.focus()
-  }
-}, { flush: 'post' })
+const targetProps = computed(() => ({
+  'data-wowerlay-stop': '',
+  onClick(e: MouseEvent) {
+    if (!visible.value) {
+      target.value = e.currentTarget as HTMLElement
+    }
 
-useEventListener(
-  () => props.target instanceof HTMLElement ? props.target : null,
-  'click',
-  () => {
     visible.value = !visible.value
   },
-  { passive: true },
-)
-
-whenever(() => props.target, () => {
-  if (props.target instanceof HTMLElement) {
-    props.target.setAttribute('data-wowerlay-stop', '')
-  }
-})
+}))
 </script>
 
 <template>
+  <div
+    ref="targetWrapper"
+    class="contents"
+  >
+    <slot
+      name="target"
+      :visible="visible"
+      :targetProps="targetProps"
+    />
+  </div>
+
   <Wowerlay
     v-model:visible="visible"
     tabindex="-1"
@@ -178,8 +188,9 @@ whenever(() => props.target, () => {
       style: { zIndex: 1500 },
     }"
     :transition="handleTransition"
+    :position="props.position"
     v-bind="props.wowerlayOptions"
-    class="outline-none rounded-lg bg-surface-3 shadow-md overflow-clip flex"
+    class="outline-none rounded-lg bg-surface-4 border border-surface-3 shadow-md overflow-clip flex"
     @update:el="(el) => popoverEl = el"
   >
     <slot

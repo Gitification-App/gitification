@@ -71,16 +71,13 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn handle_window_event(event: GlobalWindowEvent) {
+    if cfg!(debug_assertions) {
+        return;
+    }
+
     let event_type = event.event();
 
     if let WindowEvent::Focused(false) = event_type {
-        let command = std::env::var("npm_lifecycle_script");
-        if let Ok(command) = command {
-            if command.contains("dev") {
-                return;
-            };
-        }
-
         event.window().hide().unwrap();
         event.window().emit("window:hidden", true).unwrap();
     }

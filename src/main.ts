@@ -1,19 +1,20 @@
 import { isPermissionGranted } from '@tauri-apps/api/notification'
 import { type as osType } from '@tauri-apps/api/os'
 import { checkUpdate } from '@tauri-apps/api/updater'
-import dayjs from 'dayjs'
 
+import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { uniqBy } from 'es-toolkit'
 import { isEnabled as isAutostartEnabled } from 'tauri-plugin-autostart-api'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { useKey } from './composables/useKey'
-import { Gitification } from './gitification'
 
+import * as Gitification from './gitification'
 import 'wowerlay/style.css'
 import './lib.css'
 import 'dayjs/locale/en'
+
 import 'dayjs/locale/tr'
 
 async function main() {

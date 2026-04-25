@@ -1,7 +1,7 @@
 import type { NotificationReason } from '../constants'
 import { createSharedComposable, reactiveComputed } from '@vueuse/core'
 import { Fragment, h } from 'vue'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification/index'
 
 export type Locale = 'en' | 'tr'
 
@@ -63,6 +63,11 @@ const en = {
     subscribed: 'Subscribed',
     team_mention: 'Team mention',
     ci_activity: 'CI activity',
+    approval_requested: 'Approval requested',
+    member_feature_requested: 'Member feature requested',
+    push: 'Push',
+    security_advisory_credit: 'Security advisory credit',
+    your_activity: 'Your activity',
   } satisfies Record<NotificationReason, string>,
   goBack: (shortcut: string) => `Go back (${shortcut})`,
   language: {
@@ -130,7 +135,12 @@ const tr: typeof en = {
     subscribed: 'Abone Olundu',
     team_mention: 'Takım bahsetmesi',
     ci_activity: 'CI etkinliği',
-  } satisfies Record<NotificationReason, string>,
+    approval_requested: 'Onay istendi',
+    member_feature_requested: 'Üye özelliği istendi',
+    push: 'Push',
+    security_advisory_credit: 'Güvenlik danışmanlığı kredisi',
+    your_activity: 'Öz aktivite',
+  } satisfies Record<Gitification.api.Types.NotificationReason, string>,
   goBack: (shortcut: string) => `Geri (${shortcut})`,
   language: {
     title: 'Dil',

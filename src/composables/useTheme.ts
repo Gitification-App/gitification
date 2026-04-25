@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@vueuse/core'
 import { computed } from 'vue'
 import { ColorPreference } from '../constants'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 import { singleton } from '../utils/common'
 
 export const useTheme = singleton(() => {

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue'
-import { UI } from '..'
+import { computed } from 'vue'
+import * as UI from '..'
 import MenuItems, { menuItem } from '../../components/MenuItems.vue'
 import Popover from '../../components/Popover.vue'
 import { useKey } from '../../composables/useKey'
 import { usePopoverControl } from '../../composables/usePopoverControl'
-import { vEl } from '../../directives/vEl'
-import { Gitification } from '../../gitification'
+import * as Gitification from '../../gitification'
 import PopoverContentAccountSwitch from '../PopoverContentAccountSwitch/PopoverContentAccountSwitch.vue'
 
 const currentUser = Gitification.storage.asRef('user')
-const profileButton = shallowRef<HTMLElement | null>(null)
-const menuButton = shallowRef<HTMLElement | null>(null)
 
 const settingsItems = computed(() => [
   menuItem({
@@ -37,7 +34,7 @@ const settingsItems = computed(() => [
   }),
   menuItem({
     key: 'quit',
-    onSelect: () => Gitification.router.navigate('settings'),
+    onSelect: () => Gitification.actions.quitApp(),
     meta: {
       text: 'Quit App',
       icon: UI.Icons.Cancel01,
@@ -60,24 +57,35 @@ useKey('p', () => {
 
 <template>
   <div
-    class="flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full border-r border-surface-2"
+    class="bg-surface-1 flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full  border-r-2 border-surface-2"
   >
-    <UI.Button
-      v-if="currentUser != null"
-      v-el="(el) => profileButton = el"
-      variant="ghost"
-      paddingVariant="icon"
-      hotkey="p"
+    <Popover
+      position="right-start"
+      :control="profilePopoverControl"
     >
-      <img
-        :draggable="false"
-        :src="currentUser.avatar_url"
-        class="rounded-full size-[20px]"
-        width="20"
-        height="20"
-        :title="currentUser.url.split('/').slice(-1)[0]"
-      >
-    </UI.Button>
+      <template #target="{ targetProps }">
+        <UI.Button
+          v-if="currentUser != null"
+          v-bind="targetProps"
+          variant="ghost"
+          paddingVariant="icon"
+          hotkey="p"
+        >
+          <img
+            :draggable="false"
+            :src="currentUser.avatar_url"
+            class="rounded-full size-[20px]"
+            width="20"
+            height="20"
+            :title="currentUser.url.split('/').slice(-1)[0]"
+          >
+        </UI.Button>
+      </template>
+
+      <template #default>
+        <PopoverContentAccountSwitch />
+      </template>
+    </Popover>
 
     <UI.Button
       class="mt-auto"
@@ -88,29 +96,22 @@ useKey('p', () => {
       <UI.Icons.Reload />
     </UI.Button>
 
-    <UI.Button
-      v-el="(el) => menuButton = el"
-      variant="ghost"
-      paddingVariant="icon"
-      title="Menu"
-      hotkey="."
-    >
-      <UI.Icons.Menu02 />
-    </UI.Button>
-
     <Popover
-      :target="profileButton"
-      :wowerlay-options="{ position: 'right-start' }"
-      :control="profilePopoverControl"
-    >
-      <PopoverContentAccountSwitch />
-    </Popover>
-
-    <Popover
-      :target="menuButton"
-      :wowerlay-options="{ position: 'right-end' }"
+      position="right-end"
       :control="menuPopoverControl"
     >
+      <template #target="{ targetProps }">
+        <UI.Button
+          v-bind="targetProps"
+          variant="ghost"
+          paddingVariant="icon"
+          title="Menu"
+          hotkey="."
+        >
+          <UI.Icons.Menu02 />
+        </UI.Button>
+      </template>
+
       <MenuItems :items="settingsItems" />
     </Popover>
   </div>

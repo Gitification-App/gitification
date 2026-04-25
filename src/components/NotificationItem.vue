@@ -2,7 +2,7 @@
 import type { NotificationList } from '../types'
 import { type as osType } from '@tauri-apps/api/os'
 import { useI18n } from '../composables/useI18n'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 import { fromNow } from '../utils/date'
 import { notificationSubjectIcon } from '../utils/notification'
 import Separator from './Separator.vue'
@@ -16,10 +16,10 @@ type Props = {
 }
 
 type Emits = {
-  (e: 'click:notification', notification: Gitification.Types.Api.Thread): void
-  (e: 'click:repo', repo: Gitification.Types.Api.MinimalRepository): void
+  (e: 'click:notification', notification: Gitification.api.Types.Thread): void
+  (e: 'click:repo', repo: Gitification.api.Types.MinimalRepository): void
   (e: 'update:checked', value: boolean): void
-  (e: 'contextmenu', value: Gitification.Types.Api.Thread, event: MouseEvent): void
+  (e: 'contextmenu', value: Gitification.api.Types.Thread, event: MouseEvent): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +33,7 @@ function isInteractedCheckbox(e: MouseEvent | KeyboardEvent) {
   return e.target instanceof HTMLElement && e.target.closest('.notification-checkbox') != null
 }
 
-async function handleThreadClick(thread: Gitification.Types.Api.Thread, event: MouseEvent | KeyboardEvent) {
+async function handleThreadClick(thread: Gitification.api.Types.Thread, event: MouseEvent | KeyboardEvent) {
   if ((event instanceof KeyboardEvent && event.repeat)) {
     return
   }
@@ -65,7 +65,7 @@ async function handleThreadClick(thread: Gitification.Types.Api.Thread, event: M
   emit('click:notification', thread)
 }
 
-function handleRepoClick(repo: Gitification.Types.Api.MinimalRepository, event: MouseEvent | KeyboardEvent) {
+function handleRepoClick(repo: Gitification.api.Types.MinimalRepository, event: MouseEvent | KeyboardEvent) {
   if ((event instanceof KeyboardEvent && event.repeat)) {
     return
   }

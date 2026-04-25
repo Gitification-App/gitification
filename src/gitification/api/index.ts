@@ -1,12 +1,14 @@
 import type * as ApiTypes from './types'
 import * as TauriHTTP from '@tauri-apps/api/http'
 import { Mutex } from 'async-mutex'
-import { Gitification } from '..'
+import * as Gitification from '..'
+
+export type { ApiTypes as Types }
 
 export const mutex = new Mutex()
 
 export function getUser(accessToken: string) {
-  const req = Gitification.utils.github.sendGithubApiRequest<ApiTypes.AnyUser>('https://api.github.com/user', {
+  const req = Gitification.utils.github.sendGithubApiRequest<ApiTypes.SimpleUser>('https://api.github.com/user', {
     method: 'get',
     accessToken,
   })
@@ -64,16 +66,18 @@ export async function getThreads(args: GetThreadsArgs) {
   })
 }
 
-export function markThreadAsRead(id: ApiTypes.Thread['id']) {
+export function markThreadAsRead(id: ApiTypes.Thread['id'], accessToken: string) {
   return Gitification.utils.github.sendGithubApiRequest(`https://api.github.com/notifications/threads/${id}`, {
     method: 'patch',
+    accessToken,
   })
 }
 
-export async function unsubscribeThread(id: ApiTypes.Thread['id']) {
+export async function unsubscribeThread(id: ApiTypes.Thread['id'], accessToken: string) {
   await Gitification.utils.github.sendGithubApiRequest(`https://api.github.com/notifications/threads/${id}/subscription`, {
     method: 'put',
+    accessToken,
   })
 
-  await markThreadAsRead(id)
+  await markThreadAsRead(id, accessToken)
 }

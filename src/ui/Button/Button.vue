@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { VNode } from 'vue'
-import { UI } from '..'
+import * as UI from '..'
 import { ButtonVariantStyles, PaddingVariantStyles } from './Button.constants'
 
 type ButtonProps = {

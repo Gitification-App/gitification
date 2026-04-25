@@ -2,16 +2,16 @@ import type { OsType } from '@tauri-apps/api/os'
 import type { UpdateManifest } from '@tauri-apps/api/updater'
 
 import type { Option } from '../../types'
-import type * as ApiTypes from '../api/types'
+import type * as Gitification from '../index'
 import { reactive, shallowReactive, shallowRef } from 'vue'
 
 export function createState() {
-  const threads = shallowRef<ApiTypes.Thread[]>([])
+  const threads = shallowRef<Gitification.api.Types.Thread[]>([])
   const threadLoadStatus = shallowRef<'idle' | 'syncing' | 'loading'>('idle')
   const checkedThreadIds = reactive(new Set<string>())
   const newRelease = shallowRef<Option<UpdateManifest>>(null)
   const osType = shallowRef<OsType>('Darwin')
-  const currentUser = shallowRef<Option<ApiTypes.AnyUser>>(null)
+  const currentUser = shallowRef<Option<Gitification.api.Types.SimpleUser>>(null)
 
   return shallowReactive({
     threads,

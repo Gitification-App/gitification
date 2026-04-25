@@ -1,124 +1,42 @@
-// #NamespaceName: ApiTypes
+export type NotificationSubject
+  = | 'CheckSuite'
+    | 'Discussion'
+    | 'Issue'
+    | 'Commit'
+    | 'RepositoryInvitation'
+    | 'PullRequest'
+    | 'RepositoryVulnerabilityAlert'
+    | 'Release'
+    | 'TeamDiscussion'
 
-import type { NotificationReason, NotificationSubject } from '../../constants'
-
-export type AnyUser = PrivateUser | PublicUser
-
-export type PrivateUser = {
-  login: string
-  id: number
-  node_id: string
-  avatar_url: string
-  gravatar_id: string | null
-  url: string
-  html_url: string
-  followers_url: string
-  following_url: string
-  gists_url: string
-  starred_url: string
-  subscriptions_url: string
-  organizations_url: string
-  repos_url: string
-  events_url: string
-  received_events_url: string
-  type: string
-  site_admin: boolean
-  name: string | null
-  company: string | null
-  blog: string | null
-  location: string | null
-  email: string | null
-  hireable: boolean | null
-  bio: string | null
-  twitter_username?: string | null
-  public_repos: number
-  public_gists: number
-  followers: number
-  following: number
-  created_at: string
-  updated_at: string
-  private_gists: number
-  total_private_repos: number
-  owned_private_repos: number
-  disk_usage: number
-  collaborators: number
-  two_factor_authentication: boolean
-  plan?: {
-    collaborators: number
-    name: string
-    space: number
-    private_repos: number
-
-  }
-  suspended_at?: string | null
-  business_plus?: boolean
-  ldap_dn?: string
-}
-
-export type PublicUser = {
-  login: string
-  id: number
-  node_id: string
-  avatar_url: string
-  gravatar_id: string | null
-  url: string
-  html_url: string
-  followers_url: string
-  following_url: string
-  gists_url: string
-  starred_url: string
-  subscriptions_url: string
-  organizations_url: string
-  repos_url: string
-  events_url: string
-  received_events_url: string
-  type: string
-  site_admin: boolean
-  name: string | null
-  company: string | null
-  blog: string | null
-  location: string | null
-  email: string | null
-  hireable: boolean | null
-  bio: string | null
-  twitter_username?: string | null
-  public_repos: number
-  public_gists: number
-  followers: number
-  following: number
-  created_at: string
-  updated_at: string
-  plan?: {
-    collaborators: number
-    name: string
-    space: number
-    private_repos: number
-  }
-  suspended_at?: string | null
-  private_gists?: number
-  total_private_repos?: number
-  owned_private_repos?: number
-  disk_usage?: number
-  collaborators?: number
-}
-
-export type AccessToken = {
-  access_token: string
-  expires_in: number
-  refresh_token: string
-  refresh_token_expires_in: number
-  scope: string
-  token_type: string
-}
+export type NotificationReason
+  = | 'approval_requested'
+    | 'assign'
+    | 'author'
+    | 'comment'
+    | 'ci_activity'
+    | 'invitation'
+    | 'manual'
+    | 'member_feature_requested'
+    | 'mention'
+    | 'push'
+    | 'review_requested'
+    | 'security_advisory_credit'
+    | 'security_alert'
+    | 'state_change'
+    | 'subscribed'
+    | 'team_mention'
+    | 'your_activity'
 
 export type Thread = {
   id: string
   repository: MinimalRepository
   subject: {
     title: string
-    url: string
-    latest_comment_url: string
+    url: string | null
+    latest_comment_url: string | null
     type: NotificationSubject
+    [k: string]: unknown
   }
   reason: NotificationReason
   unread: boolean
@@ -126,6 +44,7 @@ export type Thread = {
   last_read_at: string | null
   url: string
   subscription_url: string
+  [k: string]: unknown
 }
 
 export type MinimalRepository = {
@@ -133,7 +52,7 @@ export type MinimalRepository = {
   node_id: string
   name: string
   full_name: string
-  owner: AnyUser
+  owner: SimpleUser
   private: boolean
   html_url: string
   description: string | null
@@ -186,7 +105,7 @@ export type MinimalRepository = {
   stargazers_count?: number
   watchers_count?: number
   /**
-   * The size of the repository. Size is calculated hourly. When a repository is initially created, the size is 0.
+   * The size of the repository, in kilobytes. Size is calculated hourly. When a repository is initially created, the size is 0.
    */
   size?: number
   default_branch?: string
@@ -197,8 +116,12 @@ export type MinimalRepository = {
   has_projects?: boolean
   has_wiki?: boolean
   has_pages?: boolean
-  has_downloads?: boolean
   has_discussions?: boolean
+  has_pull_requests?: boolean
+  /**
+   * The policy controlling who can create pull requests: all or collaborators_only.
+   */
+  pull_request_creation_policy?: 'all' | 'collaborators_only'
   archived?: boolean
   disabled?: boolean
   visibility?: string
@@ -211,6 +134,7 @@ export type MinimalRepository = {
     push?: boolean
     triage?: boolean
     pull?: boolean
+    [k: string]: unknown
   }
   role_name?: string
   temp_clone_token?: string
@@ -222,8 +146,9 @@ export type MinimalRepository = {
     key?: string
     name?: string
     spdx_id?: string
-    url?: string
+    url?: string | null
     node_id?: string
+    [k: string]: unknown
   } | null
   forks?: number
   open_issues?: number
@@ -231,16 +156,110 @@ export type MinimalRepository = {
   allow_forking?: boolean
   web_commit_signoff_required?: boolean
   security_and_analysis?: {
+    /**
+     * Enable or disable GitHub Advanced Security for the repository.
+     *
+     * For standalone Code Scanning or Secret Protection products, this parameter cannot be used.
+     *
+     */
     advanced_security?: {
       status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    code_security?: {
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    /**
+     * Enable or disable Dependabot security updates for the repository.
+     */
+    dependabot_security_updates?: {
+      /**
+       * The enablement status of Dependabot security updates for the repository.
+       */
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
     }
     secret_scanning?: {
       status?: 'enabled' | 'disabled'
+      [k: string]: unknown
     }
     secret_scanning_push_protection?: {
       status?: 'enabled' | 'disabled'
+      [k: string]: unknown
     }
+    secret_scanning_non_provider_patterns?: {
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    secret_scanning_ai_detection?: {
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    secret_scanning_delegated_alert_dismissal?: {
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    secret_scanning_delegated_bypass?: {
+      status?: 'enabled' | 'disabled'
+      [k: string]: unknown
+    }
+    secret_scanning_delegated_bypass_options?: {
+      /**
+       * The bypass reviewers for secret scanning delegated bypass
+       */
+      reviewers?: {
+        /**
+         * The ID of the team or role selected as a bypass reviewer
+         */
+        reviewer_id: number
+        /**
+         * The type of the bypass reviewer
+         */
+        reviewer_type: 'TEAM' | 'ROLE'
+        /**
+         * The bypass mode for the reviewer
+         */
+        mode?: 'ALWAYS' | 'EXEMPT'
+        [k: string]: unknown
+      }[]
+      [k: string]: unknown
+    }
+    [k: string]: unknown
   } | null
+  /**
+   * The custom properties that were defined for the repository. The keys are the custom property names, and the values are the corresponding custom property values.
+   */
+  custom_properties?: {
+    [k: string]: unknown
+  }
+  [k: string]: unknown
+}
+
+export type SimpleUser = {
+  name?: string | null
+  email?: string | null
+  login: string
+  id: number
+  node_id: string
+  avatar_url: string
+  gravatar_id: string | null
+  url: string
+  html_url: string
+  followers_url: string
+  following_url: string
+  gists_url: string
+  starred_url: string
+  subscriptions_url: string
+  organizations_url: string
+  repos_url: string
+  events_url: string
+  received_events_url: string
+  type: string
+  site_admin: boolean
+  starred_at?: string
+  user_view_type?: string
+  [k: string]: unknown
 }
 
 export type CodeOfConduct = {
@@ -249,4 +268,14 @@ export type CodeOfConduct = {
   url: string
   body?: string
   html_url: string | null
+  [k: string]: unknown
+}
+
+export type AccessToken = {
+  access_token: string
+  expires_in: number
+  refresh_token: string
+  refresh_token_expires_in: number
+  scope: string
+  token_type: string
 }

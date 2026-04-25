@@ -1,15 +1,15 @@
 import type { Ref } from 'vue'
 import type { Locale } from './composables/useI18n'
 import type { ColorPreference } from './constants'
-import type { Gitification } from './gitification'
+import type * as Gitification from './gitification/index'
 
 export type Option<T> = T | null
 export type MaybeRef<T> = T | Ref<T>
 
-export type NotificationList = (Gitification.Types.Api.Thread | Gitification.Types.Api.MinimalRepository)[]
+export type NotificationList = (Gitification.api.Types.Thread | Gitification.api.Types.MinimalRepository)[]
 
 export type AppStorageContext = {
-  user: Option<Gitification.Types.Api.AnyUser>
+  user: Option<Gitification.api.Types.SimpleUser>
   accessToken: Option<string>
   showOnlyParticipating: boolean
   openAtStartup: boolean
@@ -19,6 +19,6 @@ export type AppStorageContext = {
   markAsReadOnOpen: boolean
   colorPreference: ColorPreference
   language: Locale
-  allUsers: Gitification.Types.Api.AnyUser[]
-  userAccessTokens: Record<Gitification.Types.Api.AnyUser['id'], string>
+  allUsers: Gitification.api.Types.SimpleUser[]
+  userAccessTokens: Record<Gitification.api.Types.SimpleUser['id'], string>
 }

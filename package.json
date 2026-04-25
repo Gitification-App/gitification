@@ -11,7 +11,7 @@
     "devtools": "vue-devtools",
     "vite:dev": "vite",
     "build": "pnpm run typecheck && vite build",
-    "typecheck": "vue-vine-tsc --noEmit",
+    "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
     "tauri": "tauri"
   },
@@ -31,7 +31,6 @@
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "vue": "^3.5.32",
     "vue-selectable-items": "^1.0.1",
-    "vue-vine": "^1.7.27",
     "wowerlay": "1.1.0"
   },
   "devDependencies": {
@@ -41,7 +40,6 @@
     "@types/node": "^25.5.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "@vue-vine/eslint-config": "^1.1.12",
     "@vue/devtools": "^8.1.1",
     "async-mutex": "^0.5.0",
     "eslint": "^10.1.0",
@@ -54,7 +52,6 @@
     "unplugin-icons": "^23.0.1",
     "vite": "^8.0.3",
     "vite-plugin-checker": "^0.12.0",
-    "vue-tsc": "^3.2.6",
-    "vue-vine-tsc": "^1.7.27"
+    "vue-tsc": "^3.2.6"
   }
 }

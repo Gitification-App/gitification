@@ -21,7 +21,7 @@ import { useKey } from '../composables/useKey'
 import { useScrollElement } from '../composables/useScrollElement'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import { ColorPreference, InvokeCommand } from '../constants'
-import { Gitification } from '../gitification'
+import * as Gitification from '../gitification'
 
 const { t, currentLanguage } = useI18n()
 
