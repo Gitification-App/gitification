@@ -2,19 +2,16 @@
 
 @theme {
   --color-surface-1: rgb(20,20,20);
-  --color-surface-2: rgb(25,25,25);
-  --color-surface-3: rgb(30,30,30);
-  --color-surface-4: rgb(35,35,35);
-  --color-surface-5: rgb(40,40,40);
-  --color-surface-6: rgb(45,45,45);
-  --color-surface-7: rgb(50,50,50);
-  --color-surface-8: rgb(55,55,55);
-  --color-surface-9: rgb(60,60,60);
-  --color-surface-10: rgb(65,65,65);
+  --color-surface-2: rgb(30,30,30);
+  --color-surface-3: rgb(36,36,36);
+  --color-surface-4: rgb(42,42,42);
+  --color-surface-5: rgb(51,51,51);
+  --color-surface-6: rgb(60,60,60);
+  --color-surface-7: rgb(70,70,70);
 
-  --color-txt-1: rgb(240,240,240);
-  --color-txt-2: rgb(215,215,215);
-  --color-txt-3: rgb(185,185,185);
+  --color-txt-1: rgb(255,255,255);
+  --color-txt-2: rgb(200,200,200);
+  --color-txt-3: rgb(180,180,180);
 
   --color-primary: rgb(100,149,237);
 }
@@ -23,4 +20,6 @@ html, body, #app {
   display: flex;
   width: 100%;
   height: 100%;
+
+  @apply select-none;
 }

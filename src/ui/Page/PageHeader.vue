@@ -12,7 +12,7 @@ useKey('esc', () => {
 </script>
 
 <template>
-  <div class="shrink-0 flex flex-row gap-2 px-2 py-2 items-center">
+  <div class="shrink-0 flex flex-row gap-2 px-2 py-3 items-center">
     <UI.Button
       variant="ghost"
       paddingVariant="md"
