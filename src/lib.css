@@ -16,6 +16,20 @@
   --color-primary: rgb(100,149,237);
 }
 
+.light {
+  --color-surface-1: rgb(255,255,255);
+  --color-surface-2: rgb(245,245,245);
+  --color-surface-3: rgb(239,239,239);
+  --color-surface-4: rgb(233,233,233);
+  --color-surface-5: rgb(224,224,224);
+  --color-surface-6: rgb(215,215,215);
+  --color-surface-7: rgb(205,205,205);
+
+  --color-txt-1: rgb(0,0,0);
+  --color-txt-2: rgb(55,55,55);
+  --color-txt-3: rgb(100,100,100);
+}
+
 html, body, #app {
   display: flex;
   width: 100%;

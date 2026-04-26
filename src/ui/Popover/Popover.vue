@@ -178,7 +178,7 @@ whenever(popoverEl, (el) => {
     :transition="handleTransition"
     :position="props.position"
     v-bind="props.wowerlayOptions"
-    class="outline-none rounded-lg bg-surface-4 border border-surface-3 shadow-md overflow-clip flex"
+    class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
     @update:el="(el) => popoverEl = el"
   >
     <slot

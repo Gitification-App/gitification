@@ -122,14 +122,14 @@ const tickShown = computed(() => {
   >
     <template #render="{ meta }: Item<ItemMeta> & Required<Pick<Item<ItemMeta>, 'meta'>>">
       <div
-        class="relative h-[40px] py-1 gap-2 flex flex-row items-center text-left justify-start w-full group-[.vue-selectable-items-item-focused]:bg-surface-5 group-hover:bg-surface-4"
+        class="relative h-[40px] py-1 gap-2 flex flex-row items-center text-left justify-start w-full group-[.vue-selectable-items-item-focused]:bg-surface-3"
         :class="[
           tickShown ? 'px-5' : 'px-2',
         ]"
       >
         <UI.Icons.Tick01
           v-if="meta.selected"
-          class="left-[4px] absolute top-0 bottom-0 my-auto text-[12px] text-white "
+          class="left-[4px] absolute top-0 bottom-0 my-auto text-[12px] text-txt-1"
         />
 
         <div
