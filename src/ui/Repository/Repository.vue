@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { MinimalRepository } from '../../gitification/api/types'
+import type * as Gitification from '../../gitification/index'
 
 defineProps<{
   repo: MinimalRepository
+  threads: Gitification.api.Types.Thread[]
 }>()
 </script>
 
@@ -20,8 +22,10 @@ defineProps<{
       alt="repo logo"
     >
 
-    <span class="text-txt-3 text-[14px] font-[500] w-full truncate min-w-0">
+    <span class="text-txt-3 text-[14px] font-[500] max-w-full truncate min-w-0">
       {{ repo.full_name }}
     </span>
+
+    <span class="text-txt-3 text-xs">({{ threads.length }})</span>
   </button>
 </template>

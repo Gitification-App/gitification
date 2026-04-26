@@ -109,7 +109,10 @@ async function handleThreadClick(thread: Gitification.api.Types.Thread) {
         :key="repoId"
         class="space-y-2"
       >
-        <UI.Repository :repo="repoThreads[0].repository" />
+        <UI.Repository
+          :threads="repoThreads"
+          :repo="repoThreads[0].repository"
+        />
         <UI.Thread
           v-for="thread in repoThreads"
           :key="thread.id"

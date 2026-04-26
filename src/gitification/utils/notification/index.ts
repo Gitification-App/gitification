@@ -1,4 +1,4 @@
-import type { Gitification } from '../..'
+import type * as Gitification from '../../index'
 
 export function isThread(value: any): value is Gitification.api.Types.Thread {
   return typeof value === 'object' && 'reason' in value

@@ -83,14 +83,11 @@ export async function fetchThreads(withLoader = true) {
     return
   }
 
-  const prevThreadIds = Gitification.state.threads
-    .reduce((acc, thread) => {
-      acc.add(thread.id)
-      return acc
-    }, new Set<string>())
-
-  const newThreads = threads
-    .filter((thread) => !prevThreadIds.has(thread.id))
+  const newThreads = Gitification.utils.array.filterNewItems(
+    Gitification.state.threads,
+    threads,
+    (thread) => thread.id,
+  )
 
   const newUnread = newThreads.find((thread) => thread.unread)
 
