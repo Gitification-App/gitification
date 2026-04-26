@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
 import * as Views from './views'
@@ -20,6 +20,10 @@ const Route = computed(() => {
       return null
   }
 })
+
+watch(() => Gitification.state.threads, (threads) => {
+  Gitification.actions.setMenubarIcon(threads.length === 0)
+}, { immediate: true })
 </script>
 
 <template>

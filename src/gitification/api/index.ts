@@ -1,14 +1,14 @@
 import type * as ApiTypes from './types'
 import * as TauriHTTP from '@tauri-apps/api/http'
 import { Mutex } from 'async-mutex'
-import * as Gitification from '..'
+import * as Gitification from '../index'
 
 export type { ApiTypes as Types }
 
 export const mutex = new Mutex()
 
 export function getUser(accessToken: string) {
-  const req = Gitification.utils.github.sendGithubApiRequest<ApiTypes.SimpleUser>('https://api.github.com/user', {
+  const req = Gitification.utils.github.sendRequest<ApiTypes.SimpleUser>('https://api.github.com/user', {
     method: 'get',
     accessToken,
   })
@@ -56,7 +56,7 @@ export type GetThreadsArgs = {
 export async function getThreads(args: GetThreadsArgs) {
   const { onlyParticipating, all, accessToken } = args
 
-  return Gitification.utils.github.sendGithubApiRequest<ApiTypes.Thread[]>('https://api.github.com/notifications', {
+  return Gitification.utils.github.sendRequest<ApiTypes.Thread[]>('https://api.github.com/notifications', {
     accessToken,
     method: 'get',
     searchParams: {
@@ -67,17 +67,31 @@ export async function getThreads(args: GetThreadsArgs) {
 }
 
 export function markThreadAsRead(id: ApiTypes.Thread['id'], accessToken: string) {
-  return Gitification.utils.github.sendGithubApiRequest(`https://api.github.com/notifications/threads/${id}`, {
+  return Gitification.utils.github.sendRequest(`https://api.github.com/notifications/threads/${id}`, {
     method: 'patch',
     accessToken,
   })
 }
 
 export async function unsubscribeThread(id: ApiTypes.Thread['id'], accessToken: string) {
-  await Gitification.utils.github.sendGithubApiRequest(`https://api.github.com/notifications/threads/${id}/subscription`, {
+  await Gitification.utils.github.sendRequest(`https://api.github.com/notifications/threads/${id}/subscription`, {
     method: 'put',
     accessToken,
   })
 
   await markThreadAsRead(id, accessToken)
+}
+
+export async function getThreadHTMLURL(thread: ApiTypes.Thread, accessToken: string) {
+  if (thread.subject.url == null) {
+    // CheckSuite
+    return `https://github.com/${thread.repository.full_name}/actions`
+  }
+
+  const response = await Gitification.utils.github.sendRequest<{ html_url: string }>(thread.subject.url, {
+    method: 'get',
+    accessToken,
+  })
+
+  return response.html_url
 }

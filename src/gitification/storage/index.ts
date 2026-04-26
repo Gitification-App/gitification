@@ -1,110 +1,88 @@
-import type { Ref } from 'vue'
-import type { AppStorageContext } from '../../types'
+import { extendRef } from '@vueuse/core'
 import { Store } from 'tauri-plugin-store-api'
-import { customRef, shallowReactive } from 'vue'
-import { ColorPreference } from '../../constants'
+import { ref, watch } from 'vue'
+import * as StorageTypes from './types'
 
 export function createStorage() {
   const store = new Store('.storage.dat')
-  const storage = shallowReactive<AppStorageContext>({
-    user: null,
-    accessToken: null,
-    showOnlyParticipating: false,
-    openAtStartup: false,
-    soundsEnabled: true,
-    showReadNotifications: false,
-    showSystemNotifications: false,
-    markAsReadOnOpen: false,
-    colorPreference: ColorPreference.System,
-    language: 'en',
-    allUsers: [],
-    userAccessTokens: {},
+  const storage = ref<StorageTypes.AppStorageContextV2>({
+    version: 2,
+    activeUserId: null,
+    users: [],
+    settings: {
+      onlyParticipating: false,
+      openAtStartup: false,
+      soundsEnabled: false,
+      showReadNotifications: false,
+      showSystemNotifications: true,
+      markAsReadOnOpen: true,
+      colorPreference: 'system',
+    },
   })
 
-  let willSave = false
-
   async function save() {
-    if (willSave) {
-      return
+    for (const [key, value] of Object.entries(storage.value)) {
+      await store.set(key, value)
     }
 
-    willSave = true
-    setTimeout(async () => {
-      try {
-        await store.save()
-      }
-      finally {
-        willSave = false
-      }
-    }, 0)
+    void store.save()
   }
+
+  const saveWatchHandle = watch(storage, () => {
+    void save()
+  }, { flush: 'post', deep: true })
 
   async function syncFromDisk() {
-    const values = Object.fromEntries(await store.entries()) as AppStorageContext
+    saveWatchHandle.pause()
 
-    for (const key of Object.keys(storage) as (keyof AppStorageContext)[]) {
-      const value = values[key]
+    const values = await store.entries()
+      .catch(() => [])
 
-      if (value != null) {
-        Reflect.set(storage, key, value)
+    let ctx: StorageTypes.AppStorageContextV2
+
+    if (values.length === 0) {
+      ctx = storage.value
+    }
+    else if (values.some(([key]) => key === 'markAsReadOnOpen')) {
+      // We need to upgrade from old storage format to new one.
+      const oldStorage = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV1
+      ctx = {
+        ...storage.value,
+        activeUserId: oldStorage.user?.id ?? null,
+        users: (oldStorage.user == null || oldStorage.accessToken == null)
+          ? []
+          : [{
+              user: oldStorage.user,
+              accessToken: oldStorage.accessToken ?? '',
+            }],
+        settings: Object.keys(storage.value.settings)
+          .reduce((settings, key) => {
+            const value = Reflect.get(oldStorage, key)
+
+            if (value != null) {
+              Reflect.set(settings, key, value)
+            }
+
+            return settings
+          }, { ...storage.value.settings } as StorageTypes.StorageSettings),
       }
     }
-  }
-
-  type Key = keyof AppStorageContext
-  type Value<K extends Key> = AppStorageContext[K]
-
-  function get<K extends Key>(key: K): Value<K> {
-    return storage[key]
-  }
-
-  function set<K extends Key>(key: K, value: Value<K> | ((prev: Value<K>) => Value<K>)) {
-    const currentValue = storage[key]
-    const newValue = typeof value === 'function'
-      ? value(currentValue)
-      : value
-
-    if (newValue === currentValue) {
-      return
+    else {
+      ctx = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV2
     }
 
-    storage[key] = newValue
-    store.set(key, newValue)
-      .then(save)
+    storage.value = ctx
+
+    saveWatchHandle.resume()
   }
 
-  function asRef<K extends Key>(key: K): Ref<Value<K>> {
-    return customRef((track, trigger) => ({
-      get() {
-        track()
-        return get(key)
-      },
-      set(value) {
-        if (value === storage[key]) {
-          return
-        }
-
-        set(key, value)
-        trigger()
-      },
-    }))
-  }
-
-  function assign(newValues: Partial<AppStorageContext>) {
-    for (const key of Object.keys(newValues) as Key[]) {
-      const value = newValues[key]
-      set(key, value as any)
-    }
-  }
-
-  return {
-    get,
-    set,
-    assign,
-    asRef,
-    save,
+  return extendRef(storage, {
     syncFromDisk,
-  }
+  })
 }
 
 export type Storage = ReturnType<typeof createStorage>
+
+export {
+  StorageTypes as Types,
+}

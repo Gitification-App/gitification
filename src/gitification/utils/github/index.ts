@@ -1,7 +1,6 @@
 import type { Options as KyOptions } from 'ky'
 import type * as Gitification from '../../index'
 import ky from 'ky'
-import { NotificationReason, NotificationSubject } from '../../../constants'
 
 const api = ky.create({
   headers: {
@@ -27,7 +26,7 @@ export type GithubApiRequestOptions = {
   accessToken: string
 }
 
-export function sendGithubApiRequest<T>(url: string, options: GithubApiRequestOptions) {
+export function sendRequest<T>(url: string, options: GithubApiRequestOptions) {
   const { method, searchParams, headers: _headers = {}, accessToken } = options
 
   const headers = {
@@ -63,11 +62,11 @@ export function createThreadURL({ thread, userId }: CreateThreadUrlArgs) {
 
   let url: string
 
-  if (thread.subject.type === NotificationSubject.Discussion) {
+  if (thread.subject.type === 'Discussion') {
     url = `https://github.com/${thread.repository.full_name}/discussions`
     url += `?${DISCUSSIONS_QUERY_KEY}=${decodeURIComponent(thread.subject.title)}`
   }
-  else if (thread.reason === NotificationReason.CiActivity) {
+  else if (thread.reason === 'ci_activity' || thread.subject.url == null) {
     // We cannot produce link to CiActivity so target to repo name
     url = `https://github.com/${thread.repository.full_name}`
   }

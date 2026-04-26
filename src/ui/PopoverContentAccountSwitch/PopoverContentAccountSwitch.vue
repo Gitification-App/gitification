@@ -1,33 +1,33 @@
-<script lang="ts" setup>
-import { computed, h } from 'vue'
-import * as UI from '..'
-import MenuItems, { menuItem } from '../../components/MenuItems.vue'
-import * as Gitification from '../../gitification'
-
-const currentUser = computed(() => Gitification.storage.get('user')!)
+<script lang="tsx" setup>
+import { computed } from 'vue'
+import * as Gitification from '../../gitification/index'
+import * as UI from '../index'
+import { menuItem } from '../MenuItems/MenuItems.vue'
 
 const otherUsers = computed(() => (
-  Gitification.storage.get('allUsers')
-    .filter((user) => user.id !== currentUser.value?.id)
+  Gitification.state.users
+    .filter(({ user }) => user.id !== Gitification.state.currentUser?.user.id)
 ))
 
 const items = computed(() => {
-  const accountItems = [currentUser.value, ...otherUsers.value]
-    .sort((a, b) => a.login.localeCompare(b.login))
-    .map((user, index) => menuItem({
+  const accountItems = [Gitification.state.currentUser!, ...otherUsers.value]
+    .sort(({ user: a }, { user: b }) => a.login.localeCompare(b.login))
+    .map(({ user }, index) => menuItem({
       key: String(user.id),
       onSelect() {
         Gitification.actions.switchAccount(user.id)
       },
       meta: {
         text: user.login,
-        selected: user.id === currentUser.value?.id,
+        selected: user.id === Gitification.state.currentUser?.user.id,
         key: String(index + 1),
-        icon: h('img', {
-          src: user.avatar_url,
-          alt: `${user.login}'s avatar`,
-          class: 'size-[18px] rounded-full',
-        }),
+        icon: (
+          <img
+            src={user.avatar_url}
+            alt={`${user.login}'s avatar`}
+            class="size-[18px] rounded-full"
+          />
+        ),
       },
     }))
 
@@ -39,6 +39,7 @@ const items = computed(() => {
       meta: {
         text: 'Add Account',
         icon: UI.Icons.UserAdd01,
+        key: 'n',
       },
     }),
   ]
@@ -46,5 +47,5 @@ const items = computed(() => {
 </script>
 
 <template>
-  <MenuItems :items="items" />
+  <UI.MenuItems :items="items" />
 </template>

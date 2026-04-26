@@ -1,14 +1,10 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { useI18n } from '../composables/useI18n'
 import { useTauriEvent } from '../composables/useTauriEvent'
-import * as Gitification from '../gitification'
+import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
 
 const processing = ref(true)
-const { t } = useI18n()
-
-const currentUser = Gitification.storage.asRef('user')
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value) {
@@ -25,24 +21,28 @@ useTauriEvent<string>('code', async ({ payload }) => {
     })
 
     const user = await Gitification.api.getUser(accessToken)
-    const existingUser = Gitification.storage.get('allUsers').some((u) => u.id === user?.id)
 
-    if (user == null || user.id === currentUser.value?.id || existingUser) {
-      return
+    if (
+      user != null
+      && user.id !== Gitification.state.currentUser?.user.id
+      && !Gitification.state.users.some(({ user: u }) => u.id === user.id)
+    ) {
+      Gitification.state.currentUser = {
+        user,
+        accessToken,
+      }
+
+      Gitification.state.users = [
+        ...Gitification.state.users,
+        {
+          user,
+          accessToken,
+        },
+      ]
     }
 
-    Gitification.storage.set('userAccessTokens', (prev) => ({
-      ...prev,
-      [user.id]: accessToken,
-    }))
-
-    Gitification.storage.set('allUsers', (prev) => [
-      ...prev,
-      user,
-    ])
-
     Gitification.server.stop()
-    Gitification.router.navigate('home', { fetchOnEnter: true })
+    Gitification.router.navigate('home')
   }
   finally {
     processing.value = false
@@ -69,8 +69,12 @@ onMounted(async () => {
 
     <UI.PageContent class="grid justify-center pt-[50px]">
       <UI.ActionSection>
+        <template #label>
+          <UI.Icons.UserAdd01 />
+        </template>
+
         <template #heading>
-          Adding Account
+          Add Account
         </template>
 
         <template #description>
@@ -85,7 +89,7 @@ onMounted(async () => {
             :loading="processing"
             @click="handleLogin"
           >
-            {{ t.loginViaGithub }}
+            {{ Gitification.i18n.loginViaGithub }}
           </UI.Button>
         </template>
       </UI.ActionSection>

@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { useI18n } from '../composables/useI18n'
 import { useTauriEvent } from '../composables/useTauriEvent'
-import * as Gitification from '../gitification'
+import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
 
 const processing = ref(true)
-const { t } = useI18n()
 
 useTauriEvent<string>('code', async ({ payload }) => {
   if (processing.value) {
@@ -22,17 +20,23 @@ useTauriEvent<string>('code', async ({ payload }) => {
       code: payload,
     })
 
-    Gitification.storage.set('accessToken', accessToken)
-
     const user = await Gitification.api.getUser(accessToken)
 
     if (user) {
-      Gitification.storage.set('user', user)
-      Gitification.storage.set('userAccessTokens', (prev) => ({
-        ...prev,
-        [user.id]: accessToken,
-      }))
-      Gitification.router.navigate('home', { fetchOnEnter: true })
+      Gitification.state.currentUser = {
+        user,
+        accessToken,
+      }
+
+      Gitification.state.users = [
+        ...Gitification.state.users,
+        {
+          user,
+          accessToken,
+        },
+      ]
+
+      Gitification.router.navigate('home')
     }
   }
   finally {
@@ -75,7 +79,7 @@ onMounted(async () => {
             :loading="processing"
             @click="handleLogin"
           >
-            {{ t.loginViaGithub }}
+            {{ Gitification.i18n.loginViaGithub }}
           </UI.Button>
         </template>
       </UI.ActionSection>

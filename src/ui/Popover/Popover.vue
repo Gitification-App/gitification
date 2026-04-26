@@ -1,11 +1,11 @@
 <script lang="ts">
 import type { InjectionKey, Ref } from 'vue'
 import type { AlignedPlacement, Placement, Side, WowerlayTransitionFn } from 'wowerlay'
-import type { PopoverControl } from '../composables/usePopoverControl'
+import type { PopoverControl } from '../../composables/usePopoverControl'
 import { whenever } from '@vueuse/core'
 import { computed, inject, onScopeDispose, provide, ref, shallowRef, useTemplateRef } from 'vue'
 import { Wowerlay } from 'wowerlay'
-import { useKey } from '../composables/useKey'
+import { useKey } from '../../composables/useKey'
 
 type PopoverContext = {
   visible: Ref<boolean>
@@ -99,11 +99,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 defineSlots<{
   default: (props: SlotProps) => any
-  // eslint-disable-next-line no-empty-pattern
-  target: ({}: SlotProps & { targetProps: Record<string, any> }) => any
+  target: (props: SlotProps) => any
 }>()
 
 const symbol = Symbol('PopoverSYM')
+const targetWrapper = useTemplateRef('targetWrapper')
 const target = shallowRef<HTMLElement | null>(null)
 const visible = computed({
   get() {
@@ -114,12 +114,15 @@ const visible = computed({
       return
     }
 
-    activePopoverId.value = value ? symbol : null
-
     if (!value) {
       target.value?.focus({ preventScroll: true })
       target.value = null
     }
+    else {
+      target.value = (targetWrapper.value as HTMLElement).children[0] as HTMLElement
+    }
+
+    activePopoverId.value = value ? symbol : null
   },
 })
 
@@ -128,12 +131,7 @@ onScopeDispose(() => {
 })
 
 if (props.control) {
-  const targetWrapper = useTemplateRef('targetWrapper')
   props.control.onControl((state) => {
-    if (target.value == null && targetWrapper.value) {
-      target.value = targetWrapper.value.children[0] as HTMLElement
-    }
-
     if (state === 'toggle') {
       visible.value = !visible.value
     }
@@ -154,28 +152,18 @@ const popoverEl = ref<HTMLElement | null>(null)
 whenever(popoverEl, (el) => {
   el.focus()
 }, { flush: 'post' })
-
-const targetProps = computed(() => ({
-  'data-wowerlay-stop': '',
-  onClick(e: MouseEvent) {
-    if (!visible.value) {
-      target.value = e.currentTarget as HTMLElement
-    }
-
-    visible.value = !visible.value
-  },
-}))
 </script>
 
 <template>
   <div
     ref="targetWrapper"
     class="contents"
+    data-wowerlay-stop
+    @click="visible = !visible"
   >
     <slot
       name="target"
       :visible="visible"
-      :targetProps="targetProps"
     />
   </div>
 

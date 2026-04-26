@@ -1,3 +1,5 @@
+import { invoke } from '@tauri-apps/api'
+import { sendNotification } from '@tauri-apps/api/notification'
 import { exit } from '@tauri-apps/api/process'
 import { open } from '@tauri-apps/api/shell'
 import * as Gitification from '../index'
@@ -6,50 +8,101 @@ export function openURL(url: string) {
   open(url)
 }
 
+export function resetThreadsState() {
+  Gitification.state.checkedThreadIds.clear()
+  Gitification.state.threads = []
+  Gitification.state.threadLoadStatus = 'idle'
+}
+
 export function logout() {
-  const currentUser = Gitification.storage.get('user')
-
-  if (!currentUser) {
+  if (Gitification.state.currentUser == null) {
     return
   }
 
-  Gitification.storage.set('allUsers', (prev) => (
-    prev.filter((u) => u.id !== currentUser.id)
-  ))
+  Gitification.state.currentUser = null
+  Gitification.state.users = Gitification.state.users
+    .filter(({ user }) => user.id !== Gitification.state.currentUser?.user.id)
 
-  const nextUser = Gitification.storage.get('allUsers').at(0)
-  const userAccessTokens = Gitification.storage.get('userAccessTokens')
+  const nextUser = Gitification.state.users.at(0)
 
-  if (nextUser && nextUser.id in userAccessTokens) {
-    Gitification.storage.assign({
-      user: nextUser,
-      accessToken: userAccessTokens[nextUser.id],
-    })
-
+  if (nextUser) {
+    switchAccount(nextUser.user.id)
     return
   }
 
-  Gitification.storage.assign({
-    user: null,
-    accessToken: null,
-  })
+  resetThreadsState()
+  Gitification.state.currentUser = null
   Gitification.router.navigate('landing')
-  Gitification.state.threads.value = []
 }
 
 export function switchAccount(userId: Gitification.api.Types.SimpleUser['id']) {
-  const user = Gitification.storage.get('allUsers').find((u) => u.id === userId)
-
-  if (!user) {
+  if (Gitification.state.currentUser?.user.id === userId) {
     return
   }
 
-  Gitification.storage.assign({
-    user,
-    accessToken: Gitification.storage.get('userAccessTokens')[user.id],
-  })
+  resetThreadsState()
+  Gitification.state.currentUser = Gitification.state.users.find(({ user }) => user.id === userId) ?? null
 }
 
 export function quitApp() {
   exit(0)
+}
+
+export function playNotificationSound() {
+  if (Gitification.state.settings.soundsEnabled) {
+    invoke('play_notification_sound')
+  }
+}
+
+export function pushThreadNotification(thread: Gitification.api.Types.Thread) {
+  if (Gitification.state.settings.showSystemNotifications) {
+    sendNotification({
+      title: thread.repository.full_name,
+      body: thread.subject.title,
+    })
+  }
+}
+
+export async function fetchThreads(withLoader = true) {
+  if (Gitification.state.currentUser == null) {
+    return
+  }
+
+  Gitification.state.threadLoadStatus = withLoader ? 'loading' : 'syncing'
+
+  const threads = await Gitification.api
+    .getThreads({
+      all: Gitification.state.settings.showReadNotifications,
+      accessToken: Gitification.state.currentUser.accessToken,
+      onlyParticipating: Gitification.state.settings.onlyParticipating,
+    })
+    .catch(() => new Error('Failed to fetch threads'))
+
+  if (threads instanceof Error) {
+    Gitification.state.threadLoadStatus = 'failed'
+    return
+  }
+
+  const prevThreadIds = Gitification.state.threads
+    .reduce((acc, thread) => {
+      acc.add(thread.id)
+      return acc
+    }, new Set<string>())
+
+  const newThreads = threads
+    .filter((thread) => !prevThreadIds.has(thread.id))
+
+  const newUnread = newThreads.find((thread) => thread.unread)
+
+  if (newUnread) {
+    playNotificationSound()
+    pushThreadNotification(newUnread)
+  }
+
+  Gitification.state.threads = threads
+  Gitification.state.threadLoadStatus = 'idle'
+}
+
+export function setMenubarIcon(isTemplate: boolean) {
+  invoke('set_icon_template', { isTemplate })
 }

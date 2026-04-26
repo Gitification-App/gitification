@@ -1,26 +1,20 @@
 import type { Option } from '../../types'
 import { shallowRef } from 'vue'
 
-type PageState = {
-  fetchOnEnter?: boolean
-}
-
 export const routes = ['home', 'addAccount', 'landing', 'settings'] as const
 export type RouteName = typeof routes[number]
 
 export function createRouter(defaultPage: RouteName) {
   const previous = shallowRef<Option<RouteName>>(null)
   const current = shallowRef<RouteName>(defaultPage)
-  const pageState = shallowRef<PageState>({} as PageState)
 
-  function navigate(page: RouteName, state: PageState = {}) {
+  function navigate(page: RouteName) {
     if (!routes.includes(page)) {
       throw new Error(`Invalid route: ${page}`)
     }
 
     previous.value = current.value
     current.value = page
-    pageState.value = state
   }
 
   function isCurrent(page: RouteName) {
@@ -30,7 +24,6 @@ export function createRouter(defaultPage: RouteName) {
   return {
     previous,
     current,
-    pageState,
     navigate,
     isCurrent,
   }

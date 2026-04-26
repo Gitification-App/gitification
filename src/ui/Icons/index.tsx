@@ -1,6 +1,7 @@
 export { default as Alert01 } from 'virtual:icons/hugeicons/alert-01'
 export { default as ArrowLeft01 } from 'virtual:icons/hugeicons/arrow-left-01'
 export { default as Cancel01 } from 'virtual:icons/hugeicons/cancel-01'
+export { default as CheckmarkSquare01 } from 'virtual:icons/hugeicons/checkmark-square-01'
 export { default as Comment01 } from 'virtual:icons/hugeicons/comment-01'
 export { default as GitCommit } from 'virtual:icons/hugeicons/git-commit'
 export { default as GitPullRequest } from 'virtual:icons/hugeicons/git-pull-request'

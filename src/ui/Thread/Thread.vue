@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { Thread } from '../../gitification/api/types'
 import { computed } from 'vue'
-import { useI18n } from '../../composables/useI18n'
 import * as Gitification from '../../gitification/index'
-import { fromNow } from '../../utils/date'
 import * as UI from '../index'
 
 type Props = {
@@ -47,66 +45,7 @@ const ThreadIcon = computed(() => {
   }
 })
 
-const { t, currentLanguage } = useI18n()
-
-const reason = computed(() => {
-  switch (props.thread.reason) {
-    case 'assign': {
-      return t.reason.assign
-    }
-    case 'author': {
-      return t.reason.author
-    }
-    case 'comment': {
-      return t.reason.comment
-    }
-    case 'invitation': {
-      return t.reason.invitation
-    }
-    case 'manual': {
-      return t.reason.manual
-    }
-    case 'mention': {
-      return t.reason.mention
-    }
-    case 'state_change': {
-      return t.reason.state_change
-    }
-    case 'subscribed': {
-      return t.reason.subscribed
-    }
-    case 'team_mention': {
-      return t.reason.team_mention
-    }
-    case 'approval_requested': {
-      return t.reason.approval_requested
-    }
-    case 'ci_activity': {
-      return t.reason.ci_activity
-    }
-    case 'member_feature_requested': {
-      return t.reason.member_feature_requested
-    }
-    case 'review_requested': {
-      return t.reason.review_requested
-    }
-    case 'push': {
-      return t.reason.push
-    }
-    case 'security_advisory_credit': {
-      return t.reason.security_advisory_credit
-    }
-    case 'security_alert': {
-      return t.reason.security_alert
-    }
-    case 'your_activity': {
-      return t.reason.your_activity
-    }
-    default: {
-      return props.thread.reason
-    }
-  }
-})
+const reason = computed(() => Gitification.i18n.reason[props.thread.reason])
 </script>
 
 <template>
@@ -126,7 +65,7 @@ const reason = computed(() => {
         -
         <span>{{
           Gitification.utils.date
-            .fromNow(currentLanguage, thread.updated_at)
+            .fromNow(thread.updated_at)
         }}</span>
       </p>
     </div>

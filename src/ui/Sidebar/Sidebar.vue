@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import * as UI from '..'
-import MenuItems, { menuItem } from '../../components/MenuItems.vue'
-import Popover from '../../components/Popover.vue'
 import { useKey } from '../../composables/useKey'
 import { usePopoverControl } from '../../composables/usePopoverControl'
-import * as Gitification from '../../gitification'
-import PopoverContentAccountSwitch from '../PopoverContentAccountSwitch/PopoverContentAccountSwitch.vue'
-
-const currentUser = Gitification.storage.asRef('user')
+import * as Gitification from '../../gitification/index'
+import { menuItem } from '../MenuItems/MenuItems.vue'
 
 const settingsItems = computed(() => [
   menuItem({
@@ -59,50 +55,53 @@ useKey('p', () => {
   <div
     class="bg-surface-1 flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full  border-r-2 border-surface-2"
   >
-    <Popover
+    <UI.Popover
+      v-if="Gitification.state.currentUser != null"
       position="right-start"
       :control="profilePopoverControl"
     >
-      <template #target="{ targetProps }">
+      <template #target>
         <UI.Button
-          v-if="currentUser != null"
-          v-bind="targetProps"
           variant="ghost"
           paddingVariant="icon"
           hotkey="p"
         >
           <img
             :draggable="false"
-            :src="currentUser.avatar_url"
+            :src="Gitification.state.currentUser.user.avatar_url"
             class="rounded-full size-[20px]"
             width="20"
             height="20"
-            :title="currentUser.url.split('/').slice(-1)[0]"
+            :title="Gitification.state.currentUser.user.url.split('/').slice(-1)[0]"
           >
         </UI.Button>
       </template>
 
       <template #default>
-        <PopoverContentAccountSwitch />
+        <UI.PopoverContentAccountSwitch />
       </template>
-    </Popover>
+    </UI.Popover>
 
     <UI.Button
       class="mt-auto"
       variant="ghost"
       paddingVariant="icon"
-      title="Reload"
+      title="Fetch Notifications"
+      @click="Gitification.actions.fetchThreads(true)"
     >
-      <UI.Icons.Reload />
+      <UI.Icons.Reload
+        :class="{
+          'animate-spin': Gitification.state.threadLoadStatus === 'loading' || Gitification.state.threadLoadStatus === 'syncing',
+        }"
+      />
     </UI.Button>
 
-    <Popover
+    <UI.Popover
       position="right-end"
       :control="menuPopoverControl"
     >
-      <template #target="{ targetProps }">
+      <template #target>
         <UI.Button
-          v-bind="targetProps"
           variant="ghost"
           paddingVariant="icon"
           title="Menu"
@@ -112,7 +111,7 @@ useKey('p', () => {
         </UI.Button>
       </template>
 
-      <MenuItems :items="settingsItems" />
-    </Popover>
+      <UI.MenuItems :items="settingsItems" />
+    </UI.Popover>
   </div>
 </template>
