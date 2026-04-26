@@ -2,96 +2,70 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Gitification",
-    "version": "1.3.2"
-  },
-  "tauri": {
-    "systemTray": {
-      "iconPath": "icons/tray/icon.png",
-      "iconAsTemplate": true,
-      "menuOnLeftClick": false
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
+    "targets": "all",
+    "externalBin": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png",
+      "icons/Square30x30Logo.png",
+      "icons/Square44x44Logo.png",
+      "icons/Square71x71Logo.png",
+      "icons/Square89x89Logo.png",
+      "icons/Square107x107Logo.png",
+      "icons/Square142x142Logo.png",
+      "icons/Square150x150Logo.png",
+      "icons/Square284x284Logo.png",
+      "icons/Square310x310Logo.png",
+      "icons/StoreLogo.png"
+    ],
+    "publisher": "Gitification",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
     },
-    "allowlist": {
-      "os": {
-        "all": true
-      },
-      "http": {
-        "request": true,
-        "scope": ["https://github.com/*", "https://api.github.com/*", "http://localhost:23846/*", "http://localhost:15830/*", "http://localhost:12840/*"]
-      },
-      "process": {
-        "exit": true,
-        "relaunch": true
-      },
-      "notification": {
-        "all": true
-      },
-      "shell": {
-        "open": true
-      },
-      "dialog": {
-        "confirm": true
-      }
+    "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
     },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+    "resources": [
+      "resources/*"
+    ],
+    "shortDescription": "Manage your Github notifications",
+    "linux": {
       "deb": {
         "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico",
-        "icons/icon.png",
-        "icons/Square30x30Logo.png",
-        "icons/Square44x44Logo.png",
-        "icons/Square71x71Logo.png",
-        "icons/Square89x89Logo.png",
-        "icons/Square107x107Logo.png",
-        "icons/Square142x142Logo.png",
-        "icons/Square150x150Logo.png",
-        "icons/Square284x284Logo.png",
-        "icons/Square310x310Logo.png",
-        "icons/StoreLogo.png"
-      ],
-      "publisher": "Gitification",
-      "identifier": "app.gitification",
-      "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": ["resources/*"],
-      "shortDescription": "Manage your Github notifications",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
       }
     },
-    "security": {
-      "csp": null
-    },
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "productName": "Gitification",
+  "mainBinaryName": "Gitification",
+  "version": "1.3.2",
+  "identifier": "app.gitification",
+  "plugins": {
     "updater": {
-      "active": true,
-      "dialog": false,
-      "endpoints": ["https://gitification.app/latest-update"],
+      "endpoints": [
+        "https://gitification.app/latest-update"
+      ],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
-    },
-    "macOSPrivateApi": true,
+    }
+  },
+  "app": {
     "windows": [
       {
         "fullscreen": false,
@@ -101,8 +75,19 @@
         "width": 500,
         "transparent": true,
         "decorations": false,
-        "visible": false
+        "visible": false,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+    "withGlobalTauri": false,
+    "macOSPrivateApi": true,
+    "security": {
+      "csp": null
+    },
+    "trayIcon": {
+      "iconPath": "icons/tray/icon.png",
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false
+    }
   }
 }

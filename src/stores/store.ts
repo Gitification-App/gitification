@@ -1,8 +1,8 @@
-import { invoke } from '@tauri-apps/api/tauri'
-import { reactive, ref, watchEffect } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
+import { reactive, ref, shallowRef, watchEffect } from 'vue'
 import pAll from 'p-all'
-import { type UpdateManifest, installUpdate } from '@tauri-apps/api/updater'
-import { relaunch } from '@tauri-apps/api/process'
+import type { Update } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 import { klona } from 'klona'
 import { type MinimalRepository, type Thread, getNotifications, markNotificationAsRead, unsubscribeNotification } from '../api/notifications'
 import { CheckedNotificationProcess, InvokeCommand, notificationApiMutex } from '../constants'
@@ -118,7 +118,7 @@ export const useStore = singleton(() => {
     })
   }
 
-  const newRelease = ref<Option<UpdateManifest>>(null)
+  const newRelease = shallowRef<Option<Update>>(null)
   const installingUpate = ref(false)
 
   async function updateAndRestart() {
@@ -128,7 +128,7 @@ export const useStore = singleton(() => {
 
     try {
       installingUpate.value = true
-      await installUpdate()
+      await newRelease.value.downloadAndInstall()
       await relaunch()
       installingUpate.value = false
     }

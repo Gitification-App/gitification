@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { open } from '@tauri-apps/api/shell'
-import { exit } from '@tauri-apps/api/process'
+import { open } from '@tauri-apps/plugin-shell'
+import { exit } from '@tauri-apps/plugin-process'
 import { computed, ref } from 'vue'
 import { REPO_LINK } from '../constants'
 import { useStore } from '../stores/store'

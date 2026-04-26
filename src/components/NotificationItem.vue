@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type as osType } from '@tauri-apps/api/os'
+import { type as osType } from '@tauri-apps/plugin-os'
 import type { MinimalRepository, Thread } from '../api/notifications'
 import type { NotificationList } from '../types'
 import { isRepository, isThread, notificationSubjectIcon } from '../utils/notification'
@@ -40,7 +40,7 @@ async function handleThreadClick(thread: Thread, event: MouseEvent | KeyboardEve
 
   const os = await osType()
 
-  if (os === 'Darwin' && event.ctrlKey) {
+  if (os === 'macos' && event.ctrlKey) {
     queueMicrotask(() => {
       const el = event.target as HTMLElement
       const bounds = el.getBoundingClientRect()

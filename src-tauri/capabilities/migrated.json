@@ -1,0 +1,37 @@
+{
+  "identifier": "migrated",
+  "description": "permissions that were migrated from v1",
+  "local": true,
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "dialog:allow-message",
+    "store:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://github.com/*"
+        },
+        {
+          "url": "https://api.github.com/*"
+        },
+        {
+          "url": "http://localhost:23846/*"
+        },
+        {
+          "url": "http://localhost:15830/*"
+        },
+        {
+          "url": "http://localhost:12840/*"
+        }
+      ]
+    },
+    "notification:default",
+    "process:allow-restart",
+    "process:allow-exit"
+  ]
+}

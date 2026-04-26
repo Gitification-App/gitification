@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { UpdateManifest } from '@tauri-apps/api/updater'
+import type { Update } from '@tauri-apps/plugin-updater'
 import { useI18n } from '../composables/useI18n'
 import AppButton from './AppButton.vue'
 import EmptyState from './EmptyState.vue'
 
 type Props = {
-  manifest: UpdateManifest
+  manifest: Update
   loading?: boolean
 }
 
