@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
+import { useKey } from '../composables/useKey'
 import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
 
@@ -17,7 +18,16 @@ onMounted(() => {
   Gitification.actions.fetchThreads(Gitification.state.threads.length === 0)
 })
 
-async function handleThreadClick(thread: Gitification.api.Types.Thread) {
+function handleThreadCheck(thread: Gitification.api.Types.Thread) {
+  Gitification.state.checkedThreadIds.add(thread.id)
+}
+
+async function handleThreadClick(event: MouseEvent, thread: Gitification.api.Types.Thread) {
+  if (event.ctrlKey || event.metaKey) {
+    handleThreadCheck(thread)
+    return
+  }
+
   if (Gitification.state.currentUser == null) {
     return
   }
@@ -29,6 +39,10 @@ async function handleThreadClick(thread: Gitification.api.Types.Thread) {
 
   console.log(data)
 }
+
+useKey('esc', () => {
+  Gitification.state.checkedThreadIds.clear()
+})
 </script>
 
 <template>
@@ -122,7 +136,8 @@ async function handleThreadClick(thread: Gitification.api.Types.Thread) {
           v-for="thread in repoThreads"
           :key="thread.id"
           :thread="thread"
-          @click="handleThreadClick(thread)"
+          :checked="Gitification.state.checkedThreadIds.has(thread.id)"
+          @click="handleThreadClick($event, thread)"
         />
       </div>
     </UI.PageContent>

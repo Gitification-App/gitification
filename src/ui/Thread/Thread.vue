@@ -6,6 +6,7 @@ import * as UI from '../index'
 
 type Props = {
   thread: Thread
+  checked?: boolean
 }
 
 const props = defineProps<Props>()
@@ -50,9 +51,18 @@ const reason = computed(() => Gitification.i18n.reason[props.thread.reason])
 
 <template>
   <button
-    class="flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 hover:bg-surface-3"
+    :data-blurrable-id="thread.id"
+    class="isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 hover:bg-surface-3"
+    :class="{
+      'bg-primary': checked,
+    }"
     type="button"
   >
+    <div
+      v-if="checked"
+      class="bg-linear-60 from-primary/30 to-transparent size-full left-0 top-0 absolute -z-1 rounded-[inherit]"
+    />
+
     <ThreadIcon class="text-[16px] text-txt-3 shrink-0" />
 
     <div class="text-left w-full items-start flex flex-col gap-1 flex-nowrap min-w-0">
