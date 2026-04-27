@@ -22,23 +22,18 @@ useTauriEvent<string>('code', async ({ payload }) => {
 
     const user = await Gitification.api.getUser(accessToken)
 
-    if (
-      user != null
-      && user.id !== Gitification.state.currentUser?.user.id
-      && !Gitification.state.users.some(({ user: u }) => u.id === user.id)
-    ) {
-      Gitification.state.currentUser = {
-        user,
-        accessToken,
-      }
+    if (user) {
+      const existingUser = Gitification.state.users
+        .some(({ user: u }) => u.id === user.id)
 
-      Gitification.state.users = [
-        ...Gitification.state.users,
-        {
+      if (!existingUser) {
+        Gitification.state.users.push({
           user,
           accessToken,
-        },
-      ]
+        })
+
+        Gitification.actions.switchToAccount(user.id)
+      }
     }
 
     Gitification.server.stop()

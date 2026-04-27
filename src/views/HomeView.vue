@@ -7,7 +7,8 @@ const groupedThreads = computed(() => (
   Object.entries(
     Gitification.utils.object.groupBy(
       Gitification.state.threads,
-      (thread) => thread.repository.id,
+      // By default js orders object keys if they are number, so we avoid it by prefix and suffix
+      (thread) => `::${thread.repository.id}::`,
     ),
   )
 ))
@@ -21,7 +22,11 @@ async function handleThreadClick(thread: Gitification.api.Types.Thread) {
     return
   }
 
-  const data = await Gitification.api.getThreadHTMLURL(thread, Gitification.state.currentUser.accessToken)
+  const data = await Gitification.utils.github.createThreadHtmlURL({
+    thread,
+    user: Gitification.state.currentUser,
+  })
+
   console.log(data)
 }
 </script>

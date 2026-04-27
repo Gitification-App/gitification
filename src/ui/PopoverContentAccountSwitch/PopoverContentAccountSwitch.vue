@@ -15,7 +15,7 @@ const items = computed(() => {
     .map(({ user }, index) => menuItem({
       key: String(user.id),
       onSelect() {
-        Gitification.actions.switchAccount(user.id)
+        Gitification.actions.switchToAccount(user.id)
       },
       meta: {
         text: user.login,

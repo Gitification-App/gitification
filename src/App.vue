@@ -24,6 +24,16 @@ const Route = computed(() => {
 watch(() => Gitification.state.threads, (threads) => {
   Gitification.actions.setMenubarIcon(threads.length === 0)
 }, { immediate: true })
+
+watch(() => Gitification.state.theme, (theme) => {
+  console.log('Theme changed to', theme)
+  if (theme === 'light') {
+    document.documentElement.classList.add('light')
+  }
+  else {
+    document.documentElement.classList.remove('light')
+  }
+}, { immediate: true })
 </script>
 
 <template>

@@ -81,17 +81,3 @@ export async function unsubscribeThread(id: ApiTypes.Thread['id'], accessToken: 
 
   await markThreadAsRead(id, accessToken)
 }
-
-export async function getThreadHTMLURL(thread: ApiTypes.Thread, accessToken: string) {
-  if (thread.subject.url == null) {
-    // CheckSuite
-    return `https://github.com/${thread.repository.full_name}/actions`
-  }
-
-  const response = await Gitification.utils.github.sendRequest<{ html_url: string }>(thread.subject.url, {
-    method: 'get',
-    accessToken,
-  })
-
-  return response.html_url
-}

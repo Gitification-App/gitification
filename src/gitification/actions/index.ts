@@ -19,14 +19,13 @@ export function logout() {
     return
   }
 
-  Gitification.state.currentUser = null
   Gitification.state.users = Gitification.state.users
     .filter(({ user }) => user.id !== Gitification.state.currentUser?.user.id)
 
   const nextUser = Gitification.state.users.at(0)
 
   if (nextUser) {
-    switchAccount(nextUser.user.id)
+    switchToAccount(nextUser.user.id)
     return
   }
 
@@ -35,13 +34,16 @@ export function logout() {
   Gitification.router.navigate('landing')
 }
 
-export function switchAccount(userId: Gitification.api.Types.SimpleUser['id']) {
+export function switchToAccount(userId: Gitification.api.Types.SimpleUser['id']) {
   if (Gitification.state.currentUser?.user.id === userId) {
     return
   }
 
   resetThreadsState()
-  Gitification.state.currentUser = Gitification.state.users.find(({ user }) => user.id === userId) ?? null
+  Gitification.state.currentUser = Gitification.state.users
+    .find(({ user }) => user.id === userId) ?? null
+  fetchThreads()
+  Gitification.router.navigate('home')
 }
 
 export function quitApp() {

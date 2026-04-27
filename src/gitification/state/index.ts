@@ -13,9 +13,19 @@ export function createState() {
   const threadLoadStatus = ref('idle' as 'idle' | 'syncing' | 'loading' | 'failed')
   const checkedThreadIds = reactive(new Set<string>())
   const newRelease = ref(null as Option<UpdateManifest>)
+
   const osType = ref('Darwin' as OsType)
-  const users = computed(() => Gitification.storage.value.users)
-  const settings = computed(() => Gitification.storage.value.settings)
+
+  const users = computed({
+    get: () => Gitification.storage.value.users,
+    set: (value) => void (Gitification.storage.value.users = value),
+  })
+
+  const settings = computed({
+    get: () => Gitification.storage.value.settings,
+    set: (value) => void (Gitification.storage.value.settings = value),
+  })
+
   const currentUser = computed({
     get() {
       return users.value
@@ -30,16 +40,16 @@ export function createState() {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 
   const theme = computed({
-    get(): Omit<Gitification.StorageTypes.ColorPreference, 'system'> {
-      let preference = Gitification.storage.value.settings.colorPreference
+    get() {
+      // let preference = Gitification.storage.value.settings.colorPreference
 
-      if (preference === 'system') {
-        preference = prefersDark.value ? 'dark' : 'light'
-      }
+      // if (preference === 'system') {
+      //   preference = prefersDark.value ? 'dark' : 'light'
+      // }
 
-      return preference
+      return prefersDark.value ? 'dark' : 'light'
     },
-    set(value: Gitification.StorageTypes.ColorPreference) {
+    set(value: 'light' | 'dark' | 'system') {
       Gitification.storage.value.settings.colorPreference = value
     },
   })

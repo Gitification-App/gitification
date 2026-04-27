@@ -42,9 +42,6 @@ export function sendRequest<T>(url: string, options: GithubApiRequestOptions) {
     .json<T>()
 }
 
-const NOTIFICATION_REFERRER_ID_KEY = 'notification_referrer_id'
-const DISCUSSIONS_QUERY_KEY = 'discussions_q'
-
 export function createThreadReferrerId(
   notificationId: string,
   userId: number,
@@ -54,42 +51,67 @@ export function createThreadReferrerId(
 
 export type CreateThreadUrlArgs = {
   thread: Gitification.api.Types.Thread
-  userId: number
+  user: Gitification.StorageTypes.StorageUser
 }
 
-export function createThreadURL({ thread, userId }: CreateThreadUrlArgs) {
-  const notificationReferrerId = createThreadReferrerId(thread.id, userId)
+export async function createThreadHtmlURL({ thread, user }: CreateThreadUrlArgs) {
+  const notificationReferrerId = createThreadReferrerId(thread.id, user.user.id)
 
-  let url: string
+  let url: null | string = null
 
-  if (thread.subject.type === 'Discussion') {
-    url = `https://github.com/${thread.repository.full_name}/discussions`
-    url += `?${DISCUSSIONS_QUERY_KEY}=${decodeURIComponent(thread.subject.title)}`
+  if (thread.subject.type === 'CheckSuite') {
+    url = `https://github.com/${thread.repository.full_name}/actions`
   }
-  else if (thread.reason === 'ci_activity' || thread.subject.url == null) {
-    // We cannot produce link to CiActivity so target to repo name
-    url = `https://github.com/${thread.repository.full_name}`
+  else if (thread.subject.type === 'RepositoryInvitation') {
+    url = `https://github.com/${thread.repository.full_name}/invitations`
   }
-  else {
-    url = thread.subject.url.replace('api.github.com/repos', 'github.com')
+  else if (thread.subject.type === 'Discussion') {
+    url = (thread.subject.url as string).replace('api.gthub.com/repos/', `https://github.com/`)
+  }
+  else if (thread.subject.type === 'Release') {
+    url = `https://github.com/${thread.repository.full_name}/releases/`
+  }
+  else if (thread.subject.type === 'PullRequest') {
+    const prId = (thread.subject.url as string)
+      .split('?')[0]
+      .split('/')
+      .at(-1) as string
 
-    if (url.includes('/pulls/')) {
-      url = url.replace('/pulls/', '/pull/')
-    }
+    url = `https://github.com/${thread.repository.full_name}/pull/${prId}`
+  }
+  else if (thread.subject.type === 'Issue') {
+    const issueId = (thread.subject.url as string)
+      .split('?')[0]
+      .split('/')
+      .at(-1) as string
 
-    if (url.includes('/releases/')) {
-      url = url.replace('/repos', '')
-      url = url.slice(0, url.lastIndexOf('/'))
-    }
+    url = `https://github.com/${thread.repository.full_name}/issues/${issueId}`
+  }
+  else if (thread.subject.type === 'Commit') {
+    const commitId = (thread.subject.url as string)
+      .split('?')[0]
+      .split('/')
+      .at(-1) as string
+
+    url = `https://github.com/${thread.repository.full_name}/commit/${commitId}`
+  }
+  else if (thread.subject.url != null) {
+    const response = await sendRequest<{ html_url?: string }>(thread.subject.url, {
+      method: 'GET',
+      accessToken: user.accessToken,
+    }).catch(() => null)
+
+    url = response?.html_url ?? null
   }
 
-  const refer = `${NOTIFICATION_REFERRER_ID_KEY}=${notificationReferrerId}`
-
-  if (url.includes('?')) {
-    return `${url}&${refer}`
+  if (url == null) {
+    return null
   }
 
-  return `${url}?${refer}`
+  const uri = new URL(url)
+  uri.searchParams.set('notification_referrer_id', notificationReferrerId)
+
+  return uri.toString()
 }
 
 export function createCodeCallbackURL(port: number) {

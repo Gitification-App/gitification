@@ -7,7 +7,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { useKey } from './composables/useKey'
 
-import * as Gitification from './gitification'
+import * as Gitification from './gitification/index'
 import 'wowerlay/style.css'
 import './lib.css'
 import 'dayjs/locale/en'
