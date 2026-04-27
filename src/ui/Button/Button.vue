@@ -29,7 +29,7 @@ const iconWrapperStyles = 'text-[16px] shrink-0 inline-grid place-items-center'
 <template>
   <button
     :type="type"
-    class="relative rounded-lg whitespace-nowrap font-medium inline-flex flex-row text-center justify-center items-center gap-[8px]"
+    class="with-attention relative rounded-lg whitespace-nowrap font-medium inline-flex flex-row text-center justify-center items-center gap-[8px]"
     :class="[
       ButtonVariantStyles[variant].bg,
       ButtonVariantStyles[variant].fg,

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue'
+import { useEventListener } from '@vueuse/core'
+import { computed, onMounted, onScopeDispose } from 'vue'
 import { useKey } from '../composables/useKey'
 import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
@@ -18,13 +19,31 @@ onMounted(() => {
   Gitification.actions.fetchThreads(Gitification.state.threads.length === 0)
 })
 
-function handleThreadCheck(thread: Gitification.api.Types.Thread) {
-  Gitification.state.checkedThreadIds.add(thread.id)
+function handleThreadCheckToggle(thread: Gitification.api.Types.Thread) {
+  const set = Gitification.state.checkedThreadIds
+  if (set.has(thread.id)) {
+    set.delete(thread.id)
+  }
+  else {
+    set.add(thread.id)
+  }
 }
 
-async function handleThreadClick(event: MouseEvent, thread: Gitification.api.Types.Thread) {
-  if (event.ctrlKey || event.metaKey) {
-    handleThreadCheck(thread)
+function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.MinimalRepository, threads: Gitification.api.Types.Thread[]) {
+  if (event?.ctrlKey || event?.metaKey) {
+    for (const thread of threads) {
+      Gitification.state.checkedThreadIds.add(thread.id)
+    }
+
+    return
+  }
+
+  Gitification.actions.openURL(`https://github.com/${repo.full_name}`)
+}
+
+async function handleThreadClick(event: MouseEvent | null, thread: Gitification.api.Types.Thread) {
+  if (event?.ctrlKey || event?.metaKey) {
+    handleThreadCheckToggle(thread)
     return
   }
 
@@ -43,6 +62,47 @@ async function handleThreadClick(event: MouseEvent, thread: Gitification.api.Typ
 useKey('esc', () => {
   Gitification.state.checkedThreadIds.clear()
 })
+
+onScopeDispose(() => {
+  Gitification.state.checkedThreadIds.clear()
+})
+
+useEventListener(() => document.querySelector('#app') as HTMLElement, 'click', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    return
+  }
+
+  Gitification.state.checkedThreadIds.clear()
+})
+
+function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
+  type Item = InstanceType<typeof UI.ContextMenu>['items'][number]
+
+  const items: Item[] = [
+    {
+      text: 'Select',
+      hotkey: '1',
+      action: () => void handleThreadCheckToggle(thread),
+    },
+    {
+      text: 'Open',
+      hotkey: '2',
+      action: () => void handleThreadClick(null, thread),
+    },
+    {
+      text: 'Mark as Read',
+      hotkey: '3',
+      action: () => void 0,
+    },
+    {
+      text: 'Unsubscribe',
+      hotkey: '4',
+      action: () => void 0,
+    },
+  ]
+
+  return items
+}
 </script>
 
 <template>
@@ -121,24 +181,37 @@ useKey('esc', () => {
 
     <UI.PageContent
       v-else
-      class="space-y-4"
+      class="flex flex-col gap-y-4"
     >
       <div
         v-for="[repoId, repoThreads] of groupedThreads"
         :key="repoId"
-        class="space-y-2"
+        class="flex flex-col gap-y-2"
       >
         <UI.Repository
           :threads="repoThreads"
           :repo="repoThreads[0].repository"
+          @click="handleRepoClick($event, repoThreads[0].repository, repoThreads)"
         />
-        <UI.Thread
+
+        <UI.ContextMenu
           v-for="thread in repoThreads"
           :key="thread.id"
-          :thread="thread"
-          :checked="Gitification.state.checkedThreadIds.has(thread.id)"
-          @click="handleThreadClick($event, thread)"
-        />
+          :items="getThreadContextMenuItems(thread)"
+        >
+          <UI.Thread
+            :thread="thread"
+            :checked="Gitification.state.checkedThreadIds.has(thread.id)"
+            @click="handleThreadClick($event, thread)"
+            @contextmenu="() => {
+              const unchecked = !Gitification.state.checkedThreadIds.has(thread.id)
+              if (unchecked) {
+                Gitification.state.checkedThreadIds.clear()
+                Gitification.state.checkedThreadIds.add(thread.id)
+              }
+            }"
+          />
+        </UI.ContextMenu>
       </div>
     </UI.PageContent>
   </UI.Page>

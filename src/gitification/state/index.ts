@@ -16,6 +16,14 @@ export function createState() {
 
   const osType = ref('Darwin' as OsType)
 
+  const checkedThreadsSize = computed(() => (
+    threads.value.reduce((total, thread) => (
+      checkedThreadIds.has(thread.id)
+        ? total + 1
+        : total
+    ), 0)
+  ))
+
   const users = computed({
     get: () => Gitification.storage.value.users,
     set: (value) => void (Gitification.storage.value.users = value),
@@ -64,5 +72,6 @@ export function createState() {
     settings,
     currentUser,
     theme,
+    checkedThreadsSize,
   })
 }

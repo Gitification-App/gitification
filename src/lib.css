@@ -37,3 +37,12 @@ html, body, #app {
 
   @apply select-none;
 }
+
+:root:has(.attention-overlay) .with-attention:not(.attention-active) {
+  @apply blur-[6px]
+}
+
+.with-attention {
+  will-change: filter;
+  @apply transition-all duration-150
+}

@@ -51,16 +51,19 @@ const reason = computed(() => Gitification.i18n.reason[props.thread.reason])
 
 <template>
   <button
-    :data-blurrable-id="thread.id"
-    class="isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 hover:bg-surface-3"
+    class="with-attention isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 group"
     :class="{
-      'bg-primary': checked,
+      'bg-primary attention-active': checked,
     }"
     type="button"
   >
     <div
+      class="invisible group-hover:visible bg-linear-45 from-surface-6 to-transparent size-full left-0 top-0 absolute -z-2 rounded-[inherit]"
+    />
+
+    <div
       v-if="checked"
-      class="bg-linear-60 from-primary/30 to-transparent size-full left-0 top-0 absolute -z-1 rounded-[inherit]"
+      class="bg-linear-45 from-primary/30 to-transparent size-full left-0 top-0 absolute -z-1 rounded-[inherit]"
     />
 
     <ThreadIcon class="text-[16px] text-txt-3 shrink-0" />

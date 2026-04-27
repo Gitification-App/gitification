@@ -3,6 +3,8 @@
 export { default as ActionSection } from './ActionSection/ActionSection.vue'
 export { default as Button } from './Button/Button.vue'
 export { default as Container } from './Container/Container.vue'
+export { default as ContextMenu } from './ContextMenu/ContextMenu.vue'
+export { default as FloatingContent } from './FloatingContent/FloatingContent.vue'
 export * as Icons from './Icons'
 export { default as Key } from './Key/Key.vue'
 export { default as MenuItems } from './MenuItems/MenuItems.vue'

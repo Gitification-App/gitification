@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
   <button
-    class="sticky top-0 z-[5] rounded-xl w-full bg-surface-1/50 backdrop-blur-[8px] hover:bg-surface-3 py-2 px-2  flex flex-row justify-start text-left items-center gap-2"
+    class="with-attention sticky top-0 z-[5] rounded-xl w-full bg-surface-1/50 backdrop-blur-[8px] hover:bg-surface-3 py-2 px-2  flex flex-row justify-start text-left items-center gap-2"
     type="button"
   >
     <img
