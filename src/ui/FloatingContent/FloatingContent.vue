@@ -85,6 +85,7 @@ const source = () => !props.detached && props.visible && props.target != null
 let origin = null as HTMLElement | null
 
 watch(source, (value) => {
+  console.log('visible changed', value)
   if (value) {
     origin = document.activeElement as HTMLElement
   }
@@ -92,9 +93,13 @@ watch(source, (value) => {
     origin?.focus({ preventScroll: true })
     origin = null
   }
-}, { immediate: true, flush: 'pre' })
+}, { flush: 'pre' })
 
 function updateVisibleFalse() {
+  if (!props.visible) {
+    return
+  }
+
   emit('update:visible', false)
 }
 

@@ -67,7 +67,7 @@ const visible = useElementVisibility(useTemplateRef('el'), {
   >
     <div
       v-if="props.thread.unread"
-      class="absolute ring-offset-primary ring-offset-3 size-[6px] right-[8px] top-[8px] bg-primary rounded-full"
+      class="absolute ring-offset-primary ring-offset-3 w-[8px] h-[4px] right-[8px] top-[8px] bg-primary rounded-full"
     />
 
     <div
