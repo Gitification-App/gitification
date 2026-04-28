@@ -2,6 +2,7 @@
 import { useEventListener } from '@vueuse/core'
 import { computed, onMounted, onScopeDispose } from 'vue'
 import { useKey } from '../composables/useKey'
+import { useTauriEvent } from '../composables/useTauriEvent'
 import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
 
@@ -9,7 +10,7 @@ const groupedThreads = computed(() => (
   Object.entries(
     Gitification.utils.object.groupBy(
       Gitification.state.threads,
-      // By default js orders object keys if they are number, so we avoid it by prefix and suffix
+      // By default js orders object keys, so we avoid it by prefix and suffix
       (thread) => `::${thread.repository.id}::`,
     ),
   )
@@ -18,6 +19,42 @@ const groupedThreads = computed(() => (
 onMounted(() => {
   Gitification.actions.fetchThreads(Gitification.state.threads.length === 0)
 })
+
+useKey('esc', () => {
+  Gitification.state.checkedThreadIds.clear()
+})
+
+useKey('cmd+a,ctrl+a', () => {
+  for (const thread of Gitification.state.threads) {
+    Gitification.state.checkedThreadIds.add(thread.id)
+  }
+}, { prevent: true })
+
+useTauriEvent('window:hidden', () => {
+  Gitification.state.checkedThreadIds.clear()
+})
+
+onScopeDispose(() => {
+  Gitification.state.checkedThreadIds.clear()
+})
+
+useEventListener(
+  () => document.querySelector('#app') as HTMLElement,
+  'mousedown',
+  (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+      return
+    }
+
+    const target = e.target as HTMLElement
+
+    if (target.closest('.thread,.repository')) {
+      return
+    }
+
+    Gitification.state.checkedThreadIds.clear()
+  },
+)
 
 function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.MinimalRepository, threads: Gitification.api.Types.Thread[]) {
   if (event?.ctrlKey || event?.metaKey) {
@@ -53,32 +90,6 @@ async function handleThreadClick(event: MouseEvent | null, thread: Gitification.
   Gitification.actions.openURL(data)
   Gitification.actions.markThreadAsRead(thread)
 }
-
-useKey('esc', () => {
-  Gitification.state.checkedThreadIds.clear()
-})
-
-useKey('cmd+a,ctrl+a', () => {
-  for (const thread of Gitification.state.threads) {
-    Gitification.state.checkedThreadIds.add(thread.id)
-  }
-}, { prevent: true })
-
-onScopeDispose(() => {
-  Gitification.state.checkedThreadIds.clear()
-})
-
-useEventListener(
-  () => document.querySelector('#app') as HTMLElement,
-  'click',
-  (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      return
-    }
-
-    Gitification.state.checkedThreadIds.clear()
-  },
-)
 
 function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
   type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]

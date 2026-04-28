@@ -48,5 +48,5 @@ html, body, #app {
 
 .with-attention {
   will-change: filter;
-  @apply transition-[filter,transform] duration-300
+  @apply transition-[filter,transform,opacity,translate,scale] duration-300
 }

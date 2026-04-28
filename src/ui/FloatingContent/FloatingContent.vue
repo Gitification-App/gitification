@@ -3,6 +3,7 @@ import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from
 import { Wowerlay } from 'wowerlay'
 import { useFloatingShouldClose } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
+import { useTauriEvent } from '../../composables/useTauriEvent'
 
 type Props = {
   target: WowerlayProps['target'] | null | undefined
@@ -87,6 +88,10 @@ useFloatingShouldClose(source, () => {
 useKey('esc', () => {
   emit('update:visible', false)
 }, { prevent: true, source })
+
+useTauriEvent('window:hidden', () => {
+  emit('update:visible', false)
+})
 </script>
 
 <template>
