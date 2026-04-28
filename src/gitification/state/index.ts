@@ -3,7 +3,7 @@ import type { UpdateManifest } from '@tauri-apps/api/updater'
 
 import type { Option } from '../../types'
 import { useMediaQuery } from '@vueuse/core'
-import { computed, reactive, ref, shallowRef } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import * as Gitification from '../index'
 
 export type GitificationState = ReturnType<typeof createState>
@@ -43,20 +43,23 @@ export function createState() {
 
   const theme = computed({
     get() {
-      // let preference = Gitification.storage.value.settings.colorPreference
+      let preference = Gitification.storage.value.settings.colorPreference
 
-      // if (preference === 'system') {
-      //   preference = prefersDark.value ? 'dark' : 'light'
-      // }
+      if (preference === 'system') {
+        preference = prefersDark.value ? 'dark' : 'light'
+      }
 
-      return prefersDark.value ? 'dark' : 'light'
+      return preference
     },
     set(value: 'light' | 'dark' | 'system') {
       Gitification.storage.value.settings.colorPreference = value
     },
   })
 
-  return reactive({
+  const lastModified = ref<Option<string>>(null)
+
+  const state = {
+    lastModified,
     threads,
     threadLoadStatus,
     checkedThreadIds,
@@ -65,7 +68,12 @@ export function createState() {
     users,
     settings,
     currentUser,
-    theme,
     checkedThreads,
+    theme,
+  }
+
+  return reactive({
+    ...state,
+    asRefs: () => state,
   })
 }

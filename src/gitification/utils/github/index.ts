@@ -22,24 +22,24 @@ const api = ky.create({
 export type GithubApiRequestOptions = {
   method: NonNullable<KyOptions['method']>
   searchParams?: NonNullable<KyOptions['searchParams']>
-  headers?: Record<string, string>
+  headers?: HeadersInit
   accessToken: string
 }
 
-export function sendRequest<T>(url: string, options: GithubApiRequestOptions) {
+export async function sendRequest<T>(url: string, options: GithubApiRequestOptions) {
   const { method, searchParams, headers: _headers = {}, accessToken } = options
 
-  const headers = {
-    ..._headers,
-    Authorization: `token ${accessToken}`,
-  }
+  const headers = new Headers(_headers)
 
-  return api(url, {
+  headers.set('Authorization', `token ${accessToken}`)
+
+  const response = await api(url, {
     method,
     searchParams,
     headers,
   })
-    .json<T>()
+
+  return [await response.json() as T, response] as const
 }
 
 export function createThreadReferrerId(
@@ -96,12 +96,17 @@ export async function createThreadHtmlURL({ thread, user }: CreateThreadUrlArgs)
     url = `https://github.com/${thread.repository.full_name}/commit/${commitId}`
   }
   else if (thread.subject.url != null) {
-    const response = await sendRequest<{ html_url?: string }>(thread.subject.url, {
-      method: 'GET',
-      accessToken: user.accessToken,
-    }).catch(() => null)
+    try {
+      const [data] = await sendRequest<{ html_url?: string }>(thread.subject.url, {
+        method: 'GET',
+        accessToken: user.accessToken,
+      })
 
-    url = response?.html_url ?? null
+      url = data?.html_url ?? null
+    }
+    catch {
+      url = null
+    }
   }
 
   if (url == null) {

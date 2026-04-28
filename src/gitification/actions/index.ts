@@ -1,7 +1,9 @@
+import type { HTTPError } from 'ky'
 import { invoke } from '@tauri-apps/api'
 import { sendNotification } from '@tauri-apps/api/notification'
 import { exit } from '@tauri-apps/api/process'
 import { open } from '@tauri-apps/api/shell'
+import { isKyError } from 'ky'
 import * as Gitification from '../index'
 
 export function openURL(url: string) {
@@ -66,6 +68,7 @@ export function resetThreadsState() {
   Gitification.state.checkedThreadIds.clear()
   Gitification.state.threads = []
   Gitification.state.threadLoadStatus = 'idle'
+  Gitification.state.lastModified = null
 }
 
 export function logout() {
@@ -96,7 +99,7 @@ export function switchToAccount(userId: Gitification.api.Types.SimpleUser['id'])
   resetThreadsState()
   Gitification.state.currentUser = Gitification.state.users
     .find(({ user }) => user.id === userId) ?? null
-  fetchThreads()
+  fetchThreads(true)
   Gitification.router.navigate('home')
 }
 
@@ -119,28 +122,42 @@ export function pushThreadNotification(thread: Gitification.api.Types.Thread) {
   }
 }
 
-export async function fetchThreads(withLoader = true) {
+export async function fetchThreads(withLoader = false) {
   if (Gitification.state.currentUser == null) {
     return
   }
 
   if (withLoader) {
     clearThreadSelection()
+    Gitification.state.lastModified = null
   }
 
   Gitification.state.threadLoadStatus = withLoader ? 'loading' : 'syncing'
 
-  const threads = await Gitification.api
+  const result = await Gitification.api
     .getThreads({
       all: Gitification.state.settings.showReadNotifications,
       accessToken: Gitification.state.currentUser.accessToken,
       onlyParticipating: Gitification.state.settings.onlyParticipating,
+      ifModifiedSince: Gitification.state.lastModified ?? undefined,
     })
-    .catch(() => new Error('Failed to fetch threads'))
+    .catch((error) => error as HTTPError)
 
-  if (threads instanceof Error) {
+  if (isKyError(result)) {
+    if (result.response.status === 304) {
+      Gitification.state.threadLoadStatus = 'idle'
+      return
+    }
+
     Gitification.state.threadLoadStatus = 'failed'
+    Gitification.state.lastModified = null
     return
+  }
+
+  const [threads, response] = result
+
+  if (response.headers.has('last-modified')) {
+    Gitification.state.lastModified = response.headers.get('last-modified')
   }
 
   const newThreads = Gitification.utils.array.filterNewItems(

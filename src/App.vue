@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, watch } from 'vue'
+import { computed, watch, watchEffect } from 'vue'
+import { useTauriEvent } from './composables/useTauriEvent'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
 import * as Views from './views'
@@ -21,12 +22,13 @@ const Route = computed(() => {
   }
 })
 
-watch(() => Gitification.state.threads, (threads) => {
-  Gitification.actions.setMenubarIcon(threads.length === 0)
-}, { immediate: true })
+watchEffect(() => {
+  Gitification.actions.setMenubarIcon(
+    !Gitification.state.threads.some((t) => t.unread),
+  )
+})
 
 watch(() => Gitification.state.theme, (theme) => {
-  console.log('Theme changed to', theme)
   if (theme === 'light') {
     document.documentElement.classList.add('light')
   }
@@ -34,6 +36,12 @@ watch(() => Gitification.state.theme, (theme) => {
     document.documentElement.classList.remove('light')
   }
 }, { immediate: true })
+
+useTauriEvent('window:hidden', () => {
+  if (Gitification.state.currentUser != null) {
+    Gitification.router.navigate('home')
+  }
+})
 </script>
 
 <template>

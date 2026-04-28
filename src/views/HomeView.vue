@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, whenever } from '@vueuse/core'
 import { computed, onMounted, onScopeDispose } from 'vue'
+import { useCountDown } from '../composables/useCountDown'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import * as Gitification from '../gitification/index'
@@ -15,10 +16,6 @@ const groupedThreads = computed(() => (
     ),
   )
 ))
-
-onMounted(() => {
-  Gitification.actions.fetchThreads(Gitification.state.threads.length === 0)
-})
 
 useKey('esc', () => {
   Gitification.state.checkedThreadIds.clear()
@@ -167,6 +164,20 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
       hotkey: String(index + 1),
     }))
 }
+
+const [countDownFinished, restartCountdown] = useCountDown(5)
+
+whenever(countDownFinished, () => {
+  Gitification.actions
+    .fetchThreads()
+    .finally(restartCountdown)
+})
+
+onMounted(() => {
+  Gitification.actions
+    .fetchThreads(Gitification.state.threads.length === 0)
+    .finally(restartCountdown)
+})
 </script>
 
 <template>

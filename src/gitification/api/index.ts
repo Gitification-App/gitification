@@ -51,14 +51,22 @@ export type GetThreadsArgs = {
   onlyParticipating: boolean
   all: boolean
   accessToken: string
+  ifModifiedSince?: string
 }
 
-export async function getThreads(args: GetThreadsArgs) {
-  const { onlyParticipating, all, accessToken } = args
+export function getThreads(args: GetThreadsArgs) {
+  const { onlyParticipating, all, accessToken, ifModifiedSince } = args
+
+  const headers = new Headers()
+
+  if (ifModifiedSince) {
+    headers.set('If-Modified-Since', ifModifiedSince)
+  }
 
   return Gitification.utils.github.sendRequest<ApiTypes.Thread[]>('https://api.github.com/notifications', {
     accessToken,
     method: 'get',
+    headers,
     searchParams: {
       participating: onlyParticipating,
       all,

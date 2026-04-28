@@ -2,7 +2,6 @@
 import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
 import { shallowRef, watch } from 'vue'
 import { Wowerlay } from 'wowerlay'
-import { useFloatingVisibility } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
 import { useTauriEvent } from '../../composables/useTauriEvent'
 

@@ -53,7 +53,7 @@ export function useKey(
     .filter(Boolean)
 
   const handler: UseKeyCallback = (event, hotkeysEvent) => {
-    if (toValue(disabledOverlay) && document.body.querySelector('.wowerlay')) {
+    if (toValue(disabledOverlay) && document.body.classList.contains('attention-overlay')) {
       return
     }
 

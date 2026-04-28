@@ -1,6 +1,5 @@
-import type { MaybeRefOrGetter } from 'vue'
 import { whenever } from '@vueuse/core'
-import { computed, onScopeDispose, onWatcherCleanup, shallowRef, toValue, watch } from 'vue'
+import { computed, onWatcherCleanup, shallowRef } from 'vue'
 
 const activeSym = shallowRef<null | symbol>(null)
 
