@@ -157,6 +157,11 @@ export async function fetchThreads(withLoader = false) {
   const [threads, response] = result
 
   if (response.headers.has('last-modified')) {
+    if (Gitification.state.lastModified) {
+      // This means that there are changes so we should fetch without "If-Modified-Since" header to get the full data and update the state accordingly
+      Gitification.state.lastModified = null
+      return fetchThreads(withLoader)
+    }
     Gitification.state.lastModified = response.headers.get('last-modified')
   }
 
