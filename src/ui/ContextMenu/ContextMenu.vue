@@ -40,7 +40,12 @@ function handleEvent(event: MouseEvent) {
 </script>
 
 <template>
-  <TargetWrapper @contextmenu="handleEvent">
+  <TargetWrapper
+    :class="{
+      'attention-active': virtualTarget != null,
+    }"
+    @contextmenu="handleEvent"
+  >
     <slot />
   </TargetWrapper>
 

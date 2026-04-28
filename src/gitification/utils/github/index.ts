@@ -66,7 +66,7 @@ export async function createThreadHtmlURL({ thread, user }: CreateThreadUrlArgs)
     url = `https://github.com/${thread.repository.full_name}/invitations`
   }
   else if (thread.subject.type === 'Discussion') {
-    url = (thread.subject.url as string).replace('api.gthub.com/repos/', `https://github.com/`)
+    url = (thread.subject.url as string).replace('api.github.com/repos/', `https://github.com/`)
   }
   else if (thread.subject.type === 'Release') {
     url = `https://github.com/${thread.repository.full_name}/releases/`

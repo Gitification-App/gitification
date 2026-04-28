@@ -28,7 +28,7 @@ useKey('cmd+a,ctrl+a', () => {
   for (const thread of Gitification.state.threads) {
     Gitification.state.checkedThreadIds.add(thread.id)
   }
-}, { prevent: true })
+}, { prevent: true, disabledOverlay: true })
 
 useTauriEvent('window:hidden', () => {
   Gitification.state.checkedThreadIds.clear()
@@ -139,6 +139,8 @@ function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
 
 function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository) {
   type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]
+
+  Gitification.actions.clearThreadSelection()
 
   return ([
     {

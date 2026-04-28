@@ -75,7 +75,7 @@ useKey('m', () => {
       <template #target>
         <UI.Tooltip
           position="right"
-          title="Switch Account [p]"
+          :title="`${Gitification.state.currentUser.user.login} [p]`"
         >
           <UI.Button
             variant="ghost"
@@ -88,7 +88,6 @@ useKey('m', () => {
               class="rounded-full size-[20px]"
               width="20"
               height="20"
-              :title="Gitification.state.currentUser.user.url.split('/').slice(-1)[0]"
             >
           </UI.Button>
         </UI.Tooltip>

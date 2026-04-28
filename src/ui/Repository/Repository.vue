@@ -15,9 +15,9 @@ defineProps<{
   >
     <img
       draggable="false"
-      class="size-6 rounded-lg bg-surface-6"
-      width="24"
-      height="24"
+      class="size-[20] rounded-lg bg-surface-6"
+      width="20"
+      height="20"
       :src="repo.owner.avatar_url"
       alt="repo logo"
     >

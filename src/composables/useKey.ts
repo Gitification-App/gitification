@@ -2,7 +2,7 @@ import type { HotkeysEvent } from 'hotkeys-js'
 import type { Ref } from 'vue'
 import { tryOnScopeDispose } from '@vueuse/core'
 import hotkeys from 'hotkeys-js'
-import { isRef, unref, watch } from 'vue'
+import { isRef, toValue, unref, watch } from 'vue'
 
 type MaybeRef<T> = T | Ref<T>
 
@@ -12,6 +12,7 @@ export type UseKeyOptions = {
   repeat?: MaybeRef<boolean>
   input?: MaybeRef<boolean>
   source?: (() => boolean) | Ref<boolean>
+  disabledOverlay?: MaybeRef<boolean>
 }
 
 export type UseKeyCallback = (event: KeyboardEvent, hotkeysEvent: HotkeysEvent) => void
@@ -41,6 +42,7 @@ export function useKey(
     prevent = false,
     repeat = false,
     stop = false,
+    disabledOverlay = false,
   }: UseKeyOptions = {},
 ) {
   let initialized = false
@@ -51,6 +53,10 @@ export function useKey(
     .filter(Boolean)
 
   const handler: UseKeyCallback = (event, hotkeysEvent) => {
+    if (toValue(disabledOverlay) && document.body.querySelector('.wowerlay')) {
+      return
+    }
+
     if (!unref(input) && isInputing()) {
       return
     }

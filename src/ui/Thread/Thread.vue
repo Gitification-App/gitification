@@ -52,6 +52,8 @@ const reason = computed(() => Gitification.i18n.reason[props.thread.reason])
 const visible = useElementVisibility(useTemplateRef('el'), {
   initialValue: true,
 })
+
+const animDelay = Math.random() * 600
 </script>
 
 <template>
@@ -62,6 +64,9 @@ const visible = useElementVisibility(useTemplateRef('el'), {
       'bg-primary attention-active': checked,
       'opacity-50 scale-85 -translate-y-5': !visible,
       // 'scale-100': visible,
+    }"
+    :style="{
+      animationDelay: `-${animDelay}ms`,
     }"
     type="button"
   >
