@@ -53,11 +53,19 @@ useKey('p', () => {
 useKey('r', () => {
   Gitification.actions.fetchThreads(true)
 })
+
+useKey('m', () => {
+  if (Gitification.state.checkedThreads.length > 1) {
+    for (const checkedThread of Gitification.state.checkedThreads) {
+      Gitification.actions.markThreadAsRead(checkedThread)
+    }
+  }
+})
 </script>
 
 <template>
   <div
-    class="bg-surface-1 flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full  border-r-2 border-surface-2"
+    class="flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full border-r-1 border-surface-3"
   >
     <UI.Popover
       v-if="Gitification.state.currentUser != null"
@@ -90,6 +98,34 @@ useKey('r', () => {
         <UI.PopoverContentAccountSwitch />
       </template>
     </UI.Popover>
+
+    <UI.Tooltip
+      v-if="Gitification.state.checkedThreads.length > 1"
+      title="Mark selected as read [m]"
+      position="right"
+    >
+      <UI.Button
+        variant="ghost"
+        paddingVariant="icon"
+        :badge="String(Gitification.state.checkedThreads.length)"
+      >
+        <UI.Icons.TickDouble04 />
+      </UI.Button>
+    </UI.Tooltip>
+
+    <UI.Tooltip
+      v-if="Gitification.state.checkedThreads.length > 1"
+      title="Clear selection [esc]"
+      position="right"
+    >
+      <UI.Button
+        variant="ghost"
+        paddingVariant="icon"
+        @click="Gitification.actions.clearThreadSelection()"
+      >
+        <UI.Icons.Cancel01 />
+      </UI.Button>
+    </UI.Tooltip>
 
     <UI.Tooltip
       position="right"

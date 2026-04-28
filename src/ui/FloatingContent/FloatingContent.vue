@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
+import { watch } from 'vue'
 import { Wowerlay } from 'wowerlay'
 import { useFloatingShouldClose } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
@@ -81,17 +82,25 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
 
 const source = () => !props.detached && props.visible && props.target != null
 
-useFloatingShouldClose(source, () => {
-  emit('update:visible', false)
-})
+let origin = null as HTMLElement | null
 
-useKey('esc', () => {
-  emit('update:visible', false)
-}, { prevent: true, source })
+watch(source, (value) => {
+  if (value) {
+    origin = document.activeElement as HTMLElement
+  }
+  else {
+    origin?.focus({ preventScroll: true })
+    origin = null
+  }
+}, { immediate: true, flush: 'pre' })
 
-useTauriEvent('window:hidden', () => {
+function updateVisibleFalse() {
   emit('update:visible', false)
-})
+}
+
+useFloatingShouldClose(source, updateVisibleFalse)
+useKey('esc', updateVisibleFalse, { prevent: true, source })
+useTauriEvent('window:hidden', updateVisibleFalse)
 </script>
 
 <template>

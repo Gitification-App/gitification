@@ -38,6 +38,7 @@ onScopeDispose(() => {
   Gitification.state.checkedThreadIds.clear()
 })
 
+// Click empty space to clear selection
 useEventListener(
   () => document.querySelector('#app') as HTMLElement,
   'mousedown',
@@ -48,7 +49,7 @@ useEventListener(
 
     const target = e.target as HTMLElement
 
-    if (target.closest('.thread,.repository')) {
+    if (target.closest('button')) {
       return
     }
 
@@ -69,7 +70,7 @@ function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.
 }
 
 async function handleThreadClick(event: MouseEvent | null, thread: Gitification.api.Types.Thread) {
-  if (event?.ctrlKey || event?.metaKey) {
+  if (event?.ctrlKey || event?.metaKey || event?.shiftKey) {
     Gitification.actions.toggleThreadSelection(thread)
     return
   }

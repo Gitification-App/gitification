@@ -36,7 +36,7 @@ export const ButtonVariantStyles = {
   },
   ghostPrimary: {
     bg: '',
-    fg: 'text-primary-500 hover:text-primary-400',
+    fg: 'text-primary',
     shadow: '',
   },
 

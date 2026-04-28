@@ -44,7 +44,7 @@ const visible = customRef((track, trigger) => {
       timeout = window.setTimeout(() => {
         value = true
         trigger()
-      }, 250)
+      }, 100)
     },
   }
 })

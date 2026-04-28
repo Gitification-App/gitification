@@ -60,11 +60,16 @@ const visible = useElementVisibility(useTemplateRef('el'), {
     class="with-attention thread isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 group"
     :class="{
       'bg-primary attention-active': checked,
-      'scale-75': !visible,
+      'not-focus-visible:scale-85': !visible,
       'scale-100': visible,
     }"
     type="button"
   >
+    <div
+      v-if="props.thread.unread"
+      class="absolute ring-offset-primary ring-offset-3 size-[6px] right-[8px] top-[8px] bg-primary rounded-full"
+    />
+
     <div
       class="invisible group-hover:visible bg-linear-45 from-surface-6 to-transparent size-full left-0 top-0 absolute -z-2 rounded-[inherit]"
     />
@@ -77,7 +82,12 @@ const visible = useElementVisibility(useTemplateRef('el'), {
     <ThreadIcon class="text-[16px] text-txt-3 shrink-0" />
 
     <div class="text-left w-full items-start flex flex-col gap-1 flex-nowrap min-w-0">
-      <h2 class="shrink text-txt-1 text-[14px] font-[450] w-full truncate min-w-0">
+      <h2
+        class="shrink text-[14px] font-[525] w-full truncate min-w-0"
+        :class="[
+          thread.unread ? 'text-txt-1' : 'text-txt-3',
+        ]"
+      >
         {{ thread.subject.title }}
       </h2>
 

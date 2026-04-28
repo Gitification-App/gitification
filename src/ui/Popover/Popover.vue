@@ -56,6 +56,7 @@ if (props.control) {
     v-model:visible="visible"
     :target="target"
     :position="position"
+    @update:visible="!$event && target?.focus({ preventScroll: true })"
   >
     <slot
       name="default"

@@ -24,8 +24,8 @@ export function useFloatingShouldClose(visible: MaybeRefOrGetter<boolean>, hook:
     }
   }, { immediate: true })
 
-  watch(activeSym, (active) => {
-    if (active !== sym) {
+  watch(activeSym, (active, prev) => {
+    if (active !== sym && sym === prev) {
       hook()
     }
   })

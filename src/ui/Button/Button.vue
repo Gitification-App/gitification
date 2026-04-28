@@ -9,6 +9,7 @@ type ButtonProps = {
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
   loading?: boolean
+  badge?: string
 }
 
 withDefaults(defineProps<ButtonProps>(), {
@@ -42,6 +43,13 @@ const iconWrapperStyles = 'text-[16px] shrink-0 inline-grid place-items-center'
     ]"
     :disabled="loading || disabled"
   >
+    <div
+      v-if="badge"
+      class="rounded-lg absolute bottom-full left-full -translate-x-2/3 translate-y-2/3 px-1 bg-primary font-mono text-white text-[10px]"
+    >
+      {{ badge }}
+    </div>
+
     <div
       v-if="loading"
       class="aspect-square animate-spin loading absolute size-full grid place-items-center z-[5] left-0 right-0 top-0 bottom-0"

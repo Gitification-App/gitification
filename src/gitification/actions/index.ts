@@ -124,6 +124,10 @@ export async function fetchThreads(withLoader = true) {
     return
   }
 
+  if (withLoader) {
+    Gitification.state.checkedThreadIds.clear()
+  }
+
   Gitification.state.threadLoadStatus = withLoader ? 'loading' : 'syncing'
 
   const threads = await Gitification.api
