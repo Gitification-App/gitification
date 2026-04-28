@@ -16,3 +16,4 @@ export { default as PopoverContentAccountSwitch } from './PopoverContentAccountS
 export { default as Repository } from './Repository/Repository.vue'
 export { default as Sidebar } from './Sidebar/Sidebar.vue'
 export { default as Thread } from './Thread/Thread.vue'
+export { default as Tooltip } from './Tooltip/Tooltip.vue'

@@ -8,6 +8,7 @@ type Props = {
   target: WowerlayProps['target'] | null | undefined
   position: WowerlayProps['position']
   visible: WowerlayProps['visible']
+  detached?: boolean
 }
 
 type Emits = {
@@ -15,7 +16,9 @@ type Emits = {
   'update:el': [el: HTMLElement | null]
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  detached: false,
+})
 const emit = defineEmits<Emits>()
 
 const transformOriginMap: Record<AlignedPlacement | Side, string> = {
@@ -55,7 +58,7 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
 
   if (type === 'leave') {
     const background = popover.parentElement
-    if (background) {
+    if (background && background.classList.contains('wowerlay-background')) {
       background.style.setProperty('pointer-events', 'none')
       popover.style.setProperty('pointer-events', 'auto')
     }
@@ -75,7 +78,7 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
   }
 }
 
-const source = () => props.visible && props.target != null
+const source = () => !props.detached && props.visible && props.target != null
 
 useFloatingShouldClose(source, () => {
   emit('update:visible', false)
@@ -93,6 +96,7 @@ useKey('esc', () => {
     :target="target"
     :position="position"
     :gap="2"
+    :no-background="detached"
     :backgroundAttrs="{
       style: { zIndex: 1500 },
     }"
@@ -100,7 +104,7 @@ useKey('esc', () => {
     class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
     @update:visible="emit('update:visible', $event)"
     @update:el="(el) => {
-      if (el) {
+      if (!detached && el) {
         el.focus({ preventScroll: true })
       }
       emit('update:el', el);

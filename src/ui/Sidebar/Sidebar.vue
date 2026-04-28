@@ -49,6 +49,10 @@ useKey('.', () => {
 useKey('p', () => {
   profilePopoverControl.toggle()
 })
+
+useKey('r', () => {
+  Gitification.actions.fetchThreads(true)
+})
 </script>
 
 <template>
@@ -61,20 +65,25 @@ useKey('p', () => {
       :control="profilePopoverControl"
     >
       <template #target>
-        <UI.Button
-          variant="ghost"
-          paddingVariant="icon"
-          hotkey="p"
+        <UI.Tooltip
+          position="right"
+          title="Switch Account [p]"
         >
-          <img
-            :draggable="false"
-            :src="Gitification.state.currentUser.user.avatar_url"
-            class="rounded-full size-[20px]"
-            width="20"
-            height="20"
-            :title="Gitification.state.currentUser.user.url.split('/').slice(-1)[0]"
+          <UI.Button
+            variant="ghost"
+            paddingVariant="icon"
+            hotkey="p"
           >
-        </UI.Button>
+            <img
+              :draggable="false"
+              :src="Gitification.state.currentUser.user.avatar_url"
+              class="rounded-full size-[20px]"
+              width="20"
+              height="20"
+              :title="Gitification.state.currentUser.user.url.split('/').slice(-1)[0]"
+            >
+          </UI.Button>
+        </UI.Tooltip>
       </template>
 
       <template #default>
@@ -82,33 +91,42 @@ useKey('p', () => {
       </template>
     </UI.Popover>
 
-    <UI.Button
-      class="mt-auto"
-      variant="ghost"
-      paddingVariant="icon"
-      title="Fetch Notifications"
-      @click="Gitification.actions.fetchThreads(true)"
+    <UI.Tooltip
+      position="right"
+      title="Fetch Notifications [r]"
     >
-      <UI.Icons.Reload
-        :class="{
-          'animate-spin': Gitification.state.threadLoadStatus === 'loading' || Gitification.state.threadLoadStatus === 'syncing',
-        }"
-      />
-    </UI.Button>
+      <UI.Button
+        class="mt-auto"
+        variant="ghost"
+        paddingVariant="icon"
+        title="Fetch Notifications"
+        @click="Gitification.actions.fetchThreads(true)"
+      >
+        <UI.Icons.Reload
+          :class="{
+            'animate-spin': Gitification.state.threadLoadStatus === 'loading' || Gitification.state.threadLoadStatus === 'syncing',
+          }"
+        />
+      </UI.Button>
+    </UI.Tooltip>
 
     <UI.Popover
       position="right-end"
       :control="menuPopoverControl"
     >
       <template #target>
-        <UI.Button
-          variant="ghost"
-          paddingVariant="icon"
-          title="Menu"
-          hotkey="."
+        <UI.Tooltip
+          position="right"
+          title="Menu [.]"
         >
-          <UI.Icons.Menu02 />
-        </UI.Button>
+          <UI.Button
+            variant="ghost"
+            paddingVariant="icon"
+            hotkey="."
+          >
+            <UI.Icons.Menu02 />
+          </UI.Button>
+        </UI.Tooltip>
       </template>
 
       <UI.MenuItems :items="settingsItems" />
