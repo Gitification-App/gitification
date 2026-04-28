@@ -79,6 +79,10 @@ async function handleThreadClick(event: MouseEvent | null, thread: Gitification.
     return
   }
 
+  if (event) {
+    Gitification.actions.clearThreadSelection()
+  }
+
   const data = await Gitification.utils.github.createThreadHtmlURL({
     thread,
     user: Gitification.state.currentUser,

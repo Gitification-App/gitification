@@ -32,14 +32,6 @@ export default defineConfig({
     __APP_VERSION__: `'${version}'`,
   },
 
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: '@use "/src/assets/mixins.scss" as *;',
-      },
-    },
-  },
-
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
-import { watch } from 'vue'
+import { shallowRef, watch } from 'vue'
 import { Wowerlay } from 'wowerlay'
 import { useFloatingShouldClose } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
@@ -106,6 +106,8 @@ function updateVisibleFalse() {
 useFloatingShouldClose(source, updateVisibleFalse)
 useKey('esc', updateVisibleFalse, { prevent: true, source })
 useTauriEvent('window:hidden', updateVisibleFalse)
+
+const didFocus = shallowRef(false)
 </script>
 
 <template>
@@ -123,7 +125,8 @@ useTauriEvent('window:hidden', updateVisibleFalse)
     class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
     @update:visible="emit('update:visible', $event)"
     @update:el="(el) => {
-      if (!detached && el) {
+      if (!detached && el && !didFocus) {
+        didFocus = true
         el.focus({ preventScroll: true })
       }
       emit('update:el', el);

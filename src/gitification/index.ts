@@ -6,7 +6,6 @@ import * as StorageTypes from './storage/types'
 export * as actions from './actions'
 export * as api from './api'
 export { default as i18n } from './i18n'
-export * as mock from './mock'
 export * as server from './server'
 export * as utils from './utils'
 

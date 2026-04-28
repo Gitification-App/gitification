@@ -57,26 +57,21 @@ const visible = useElementVisibility(useTemplateRef('el'), {
 <template>
   <button
     ref="el"
-    class="with-attention thread isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap p-3 ring ring-surface-3 bg-surface-2 group"
+    class="origin-top with-attention thread isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap px-3 py-2 ring ring-surface-3 bg-surface-2 group"
     :class="{
       'bg-primary attention-active': checked,
-      'not-focus-visible:scale-85': !visible,
-      'scale-100': visible,
+      'opacity-50 scale-85 -translate-y-5': !visible,
+      // 'scale-100': visible,
     }"
     type="button"
   >
-    <div
-      v-if="props.thread.unread"
-      class="absolute ring-offset-primary ring-offset-3 w-[8px] h-[4px] right-[8px] top-[8px] bg-primary rounded-full"
-    />
-
     <div
       class="invisible group-hover:visible bg-linear-45 from-surface-6 to-transparent size-full left-0 top-0 absolute -z-2 rounded-[inherit]"
     />
 
     <div
       v-if="checked"
-      class="bg-linear-45 from-primary/30 to-transparent size-full left-0 top-0 absolute -z-1 rounded-[inherit]"
+      class="bg-linear-45 from-primary/50 to-transparent size-full left-0 top-0 absolute -z-1 rounded-[inherit]"
     />
 
     <ThreadIcon class="text-[16px] text-txt-3 shrink-0" />
