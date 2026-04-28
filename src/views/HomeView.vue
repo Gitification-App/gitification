@@ -165,7 +165,7 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
     }))
 }
 
-const [countDownFinished, restartCountdown] = useCountDown(5)
+const [countDownFinished, restartCountdown] = useCountDown(60)
 
 whenever(countDownFinished, () => {
   Gitification.actions
