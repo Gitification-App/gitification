@@ -2,7 +2,7 @@
 import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
 import { shallowRef, watch } from 'vue'
 import { Wowerlay } from 'wowerlay'
-import { useFloatingShouldClose } from '../../composables/useFloatingEvent'
+import { useFloatingVisibility } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
 import { useTauriEvent } from '../../composables/useTauriEvent'
 
@@ -85,7 +85,6 @@ const source = () => !props.detached && props.visible && props.target != null
 let origin = null as HTMLElement | null
 
 watch(source, (value) => {
-  console.log('visible changed', value)
   if (value) {
     origin = document.activeElement as HTMLElement
   }
@@ -96,14 +95,9 @@ watch(source, (value) => {
 }, { flush: 'pre' })
 
 function updateVisibleFalse() {
-  if (!props.visible) {
-    return
-  }
-
   emit('update:visible', false)
 }
 
-useFloatingShouldClose(source, updateVisibleFalse)
 useKey('esc', updateVisibleFalse, { prevent: true, source })
 useTauriEvent('window:hidden', updateVisibleFalse)
 
@@ -125,7 +119,7 @@ const didFocus = shallowRef(false)
     class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
     @update:visible="emit('update:visible', $event)"
     @update:el="(el) => {
-      if (!detached && el && !didFocus) {
+      if (!didFocus && !detached && el) {
         didFocus = true
         el.focus({ preventScroll: true })
       }

@@ -1,13 +1,9 @@
 <script lang="ts" setup>
 import type { Placement } from 'wowerlay'
 import type { PopoverControl } from '../../composables/usePopoverControl'
-import { ref } from 'vue'
+import { useFloatingVisibility } from '../../composables/useFloatingEvent'
 import { useTargetWrapper } from '../../composables/useTargetWrapper'
 import * as UI from '../index'
-
-type SlotProps = {
-  visible: boolean
-}
 
 defineOptions({
   inheritAttrs: false,
@@ -15,8 +11,8 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {})
 defineSlots<{
-  default: (props: SlotProps) => any
-  target: (props: SlotProps) => any
+  default: () => any
+  target: () => any
 }>()
 type Props = {
   control?: PopoverControl
@@ -24,7 +20,7 @@ type Props = {
 }
 
 const { target, TargetWrapper } = useTargetWrapper()
-const visible = ref(false)
+const visible = useFloatingVisibility()
 
 if (props.control) {
   props.control.onControl((state) => {
@@ -58,9 +54,6 @@ if (props.control) {
     :position="position"
     @update:visible="!$event && target?.focus({ preventScroll: true })"
   >
-    <slot
-      name="default"
-      :visible="visible"
-    />
+    <slot name="default" />
   </UI.FloatingContent>
 </template>

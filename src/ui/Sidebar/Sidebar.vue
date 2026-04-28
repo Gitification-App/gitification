@@ -44,10 +44,12 @@ const menuPopoverControl = usePopoverControl()
 
 useKey('.', () => {
   menuPopoverControl.toggle()
+  Gitification.actions.clearThreadSelection()
 })
 
 useKey('p', () => {
   profilePopoverControl.toggle()
+  Gitification.actions.clearThreadSelection()
 })
 
 useKey('r', () => {
@@ -81,6 +83,7 @@ useKey('m', () => {
             variant="ghost"
             paddingVariant="icon"
             hotkey="p"
+            @click="Gitification.actions.clearThreadSelection()"
           >
             <img
               :draggable="false"
@@ -158,6 +161,7 @@ useKey('m', () => {
             variant="ghost"
             paddingVariant="icon"
             hotkey="."
+            @click="Gitification.actions.clearThreadSelection()"
           >
             <UI.Icons.Menu02 />
           </UI.Button>

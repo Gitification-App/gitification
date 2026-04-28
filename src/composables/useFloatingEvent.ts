@@ -1,6 +1,6 @@
 import type { MaybeRefOrGetter } from 'vue'
 import { whenever } from '@vueuse/core'
-import { onWatcherCleanup, shallowRef, toValue, watch } from 'vue'
+import { computed, onScopeDispose, onWatcherCleanup, shallowRef, toValue, watch } from 'vue'
 
 const activeSym = shallowRef<null | symbol>(null)
 
@@ -12,22 +12,19 @@ whenever(activeSym, () => {
   })
 })
 
-export function useFloatingShouldClose(visible: MaybeRefOrGetter<boolean>, hook: () => void) {
-  const sym = Symbol('floating-event')
+export function useFloatingVisibility() {
+  const sym = Symbol('floating')
 
-  watch(() => toValue(visible), (visible) => {
-    if (visible) {
-      activeSym.value = sym
-    }
-    else if (activeSym.value === sym) {
-      activeSym.value = null
-    }
-  }, { immediate: true })
-
-  watch(activeSym, (active, prev) => {
-    if (active !== sym && sym === prev) {
-      hook()
-    }
+  return computed({
+    get: () => activeSym.value === sym,
+    set: (value) => {
+      if (value) {
+        activeSym.value = sym
+      }
+      else if (activeSym.value === sym) {
+        activeSym.value = null
+      }
+    },
   })
 }
 
