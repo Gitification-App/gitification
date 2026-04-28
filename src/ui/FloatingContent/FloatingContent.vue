@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { AlignedPlacement, Side, WowerlayProps, WowerlayTransitionFn } from 'wowerlay'
 import { Wowerlay } from 'wowerlay'
+import { useFloatingShouldClose } from '../../composables/useFloatingEvent'
+import { useKey } from '../../composables/useKey'
 
 type Props = {
   target: WowerlayProps['target'] | null | undefined
@@ -13,7 +15,7 @@ type Emits = {
   'update:el': [el: HTMLElement | null]
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const transformOriginMap: Record<AlignedPlacement | Side, string> = {
@@ -72,6 +74,16 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
     done()
   }
 }
+
+const source = () => props.visible && props.target != null
+
+useFloatingShouldClose(source, () => {
+  emit('update:visible', false)
+})
+
+useKey('esc', () => {
+  emit('update:visible', false)
+}, { prevent: true, source })
 </script>
 
 <template>
@@ -87,7 +99,12 @@ const handleTransition: WowerlayTransitionFn = (type, { popover }, done) => {
     :transition="handleTransition"
     class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
     @update:visible="emit('update:visible', $event)"
-    @update:el="emit('update:el', $event)"
+    @update:el="(el) => {
+      if (el) {
+        el.focus({ preventScroll: true })
+      }
+      emit('update:el', el);
+    }"
   >
     <slot
       name="default"

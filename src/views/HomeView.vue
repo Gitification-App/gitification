@@ -19,20 +19,10 @@ onMounted(() => {
   Gitification.actions.fetchThreads(Gitification.state.threads.length === 0)
 })
 
-function handleThreadCheckToggle(thread: Gitification.api.Types.Thread) {
-  const set = Gitification.state.checkedThreadIds
-  if (set.has(thread.id)) {
-    set.delete(thread.id)
-  }
-  else {
-    set.add(thread.id)
-  }
-}
-
 function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.MinimalRepository, threads: Gitification.api.Types.Thread[]) {
   if (event?.ctrlKey || event?.metaKey) {
     for (const thread of threads) {
-      Gitification.state.checkedThreadIds.add(thread.id)
+      Gitification.actions.selectThread(thread)
     }
 
     return
@@ -43,7 +33,7 @@ function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.
 
 async function handleThreadClick(event: MouseEvent | null, thread: Gitification.api.Types.Thread) {
   if (event?.ctrlKey || event?.metaKey) {
-    handleThreadCheckToggle(thread)
+    Gitification.actions.toggleThreadSelection(thread)
     return
   }
 
@@ -56,52 +46,108 @@ async function handleThreadClick(event: MouseEvent | null, thread: Gitification.
     user: Gitification.state.currentUser,
   })
 
-  console.log(data)
+  if (data == null) {
+    return
+  }
+
+  Gitification.actions.openURL(data)
+  Gitification.actions.markThreadAsRead(thread)
 }
 
 useKey('esc', () => {
   Gitification.state.checkedThreadIds.clear()
 })
 
+useKey('cmd+a,ctrl+a', () => {
+  for (const thread of Gitification.state.threads) {
+    Gitification.state.checkedThreadIds.add(thread.id)
+  }
+}, { prevent: true })
+
 onScopeDispose(() => {
   Gitification.state.checkedThreadIds.clear()
 })
 
-useEventListener(() => document.querySelector('#app') as HTMLElement, 'click', (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    return
-  }
+useEventListener(
+  () => document.querySelector('#app') as HTMLElement,
+  'click',
+  (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      return
+    }
 
-  Gitification.state.checkedThreadIds.clear()
-})
+    Gitification.state.checkedThreadIds.clear()
+  },
+)
 
 function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
-  type Item = InstanceType<typeof UI.ContextMenu>['items'][number]
+  type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]
+
+  if (!Gitification.state.checkedThreadIds.has(thread.id)) {
+    Gitification.actions.clearThreadSelection()
+    Gitification.actions.selectThread(thread)
+  }
 
   const items: Item[] = [
     {
-      text: 'Select',
-      hotkey: '1',
-      action: () => void handleThreadCheckToggle(thread),
-    },
-    {
       text: 'Open',
-      hotkey: '2',
-      action: () => void handleThreadClick(null, thread),
+      action: () => {
+        for (const checkedThread of Gitification.state.checkedThreads) {
+          handleThreadClick(null, checkedThread)
+        }
+      },
+      icon: UI.Icons.LinkSquare01,
     },
     {
       text: 'Mark as Read',
-      hotkey: '3',
-      action: () => void 0,
+      action: () => {
+        for (const checkedThread of Gitification.state.checkedThreads) {
+          Gitification.actions.markThreadAsRead(checkedThread)
+        }
+      },
+      icon: UI.Icons.TickDouble04,
     },
     {
       text: 'Unsubscribe',
-      hotkey: '4',
       action: () => void 0,
+      icon: UI.Icons.NotificationOff01,
     },
   ]
+    .map((item, index) => ({
+      ...item,
+      hotkey: String(index + 1),
+    }))
 
   return items
+}
+
+function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository) {
+  type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]
+
+  return ([
+    {
+      text: 'Select all notifications',
+      action: () => {
+        for (const thread of Gitification.state.threads) {
+          if (thread.repository.id === repo.id) {
+            Gitification.actions.selectThread(thread)
+          }
+        }
+      },
+      icon: UI.Icons.CheckmarkCircle01,
+    },
+    {
+      text: 'Open repository',
+      action: () => {
+        Gitification.actions.openURL(`https://github.com/${repo.full_name}`)
+      },
+      icon: UI.Icons.LinkSquare01,
+    },
+  ] as Item[])
+    .map((item, index) => ({
+      ...item,
+      hotkey: String(index + 1),
+    }))
 }
 </script>
 
@@ -188,28 +234,23 @@ function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
         :key="repoId"
         class="flex flex-col gap-y-2"
       >
-        <UI.Repository
-          :threads="repoThreads"
-          :repo="repoThreads[0].repository"
-          @click="handleRepoClick($event, repoThreads[0].repository, repoThreads)"
-        />
+        <UI.ContextMenu :getItems="() => getRepoContextMenuItems(repoThreads[0].repository)">
+          <UI.Repository
+            :threads="repoThreads"
+            :repo="repoThreads[0].repository"
+            @click="handleRepoClick($event, repoThreads[0].repository, repoThreads)"
+          />
+        </UI.ContextMenu>
 
         <UI.ContextMenu
           v-for="thread in repoThreads"
           :key="thread.id"
-          :items="getThreadContextMenuItems(thread)"
+          :getItems="() => getThreadContextMenuItems(thread)"
         >
           <UI.Thread
             :thread="thread"
             :checked="Gitification.state.checkedThreadIds.has(thread.id)"
             @click="handleThreadClick($event, thread)"
-            @contextmenu="() => {
-              const unchecked = !Gitification.state.checkedThreadIds.has(thread.id)
-              if (unchecked) {
-                Gitification.state.checkedThreadIds.clear()
-                Gitification.state.checkedThreadIds.add(thread.id)
-              }
-            }"
           />
         </UI.ContextMenu>
       </div>

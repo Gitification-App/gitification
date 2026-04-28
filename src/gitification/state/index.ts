@@ -3,7 +3,7 @@ import type { UpdateManifest } from '@tauri-apps/api/updater'
 
 import type { Option } from '../../types'
 import { useMediaQuery } from '@vueuse/core'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, shallowRef } from 'vue'
 import * as Gitification from '../index'
 
 export type GitificationState = ReturnType<typeof createState>
@@ -12,17 +12,11 @@ export function createState() {
   const threads = ref([] as Gitification.api.Types.Thread[])
   const threadLoadStatus = ref('idle' as 'idle' | 'syncing' | 'loading' | 'failed')
   const checkedThreadIds = reactive(new Set<string>())
+  const checkedThreads = computed(() => threads.value
+    .filter((thread) => checkedThreadIds.has(thread.id)))
   const newRelease = ref(null as Option<UpdateManifest>)
 
   const osType = ref('Darwin' as OsType)
-
-  const checkedThreadsSize = computed(() => (
-    threads.value.reduce((total, thread) => (
-      checkedThreadIds.has(thread.id)
-        ? total + 1
-        : total
-    ), 0)
-  ))
 
   const users = computed({
     get: () => Gitification.storage.value.users,
@@ -72,6 +66,6 @@ export function createState() {
     settings,
     currentUser,
     theme,
-    checkedThreadsSize,
+    checkedThreads,
   })
 }

@@ -1,62 +1,58 @@
 <script lang="ts" setup>
+import type { ItemRenderList } from 'vue-selectable-items'
 import type { VirtualElement } from 'wowerlay'
+import type { ItemMeta } from '../MenuItems/MenuItems.vue'
 import { shallowRef } from 'vue'
-import { useKey } from '../../composables/useKey'
+import { useTargetWrapper } from '../../composables/useTargetWrapper'
 import * as UI from '../index'
 import MenuItems, { menuItem } from '../MenuItems/MenuItems.vue'
 
 type Props = {
-  items: {
+  getItems: () => {
     text: string
     hotkey?: string
     action: () => void
+    icon?: any
   }[]
 }
 
 const props = defineProps<Props>()
-const target = shallowRef<VirtualElement | null>(null)
+const { TargetWrapper } = useTargetWrapper()
+const virtualTarget = shallowRef<VirtualElement | null>(null)
+const items = shallowRef<ItemRenderList<ItemMeta>>([])
 
 function handleEvent(event: MouseEvent) {
   event.preventDefault()
-  target.value = {
+
+  virtualTarget.value = {
     getBoundingClientRect: () => new DOMRect(event.clientX, event.clientY, 0, 0),
   }
+  items.value = props.getItems().map((item) => menuItem({
+    key: item.text,
+    onSelect: item.action,
+    meta: {
+      key: item.hotkey,
+      text: item.text,
+      icon: item.icon,
+    },
+  }))
 }
-
-useKey('esc', () => {
-  target.value = null
-}, { source: () => target.value != null })
 </script>
 
 <template>
-  <div
-    class="contents!"
-    @contextmenu="handleEvent"
-  >
+  <TargetWrapper @contextmenu="handleEvent">
     <slot />
-  </div>
+  </TargetWrapper>
 
   <UI.FloatingContent
-    :target="target"
-    :visible="target !== null"
+    :target="virtualTarget"
+    :visible="true"
     position="right-start"
-    class="attention-overlay"
-    @update:visible="(value) => {
-      if (!value) {
-        target = null
-      }
-    }"
+    @update:visible="virtualTarget = null"
   >
     <MenuItems
-      :items="props.items.map(item => menuItem({
-        key: item.text,
-        onSelect: item.action,
-        meta: {
-          key: item.hotkey,
-          text: item.text,
-        },
-      }))"
-      @select="target = null"
+      :items="items"
+      @select="virtualTarget = null"
     />
   </UI.FloatingContent>
 </template>

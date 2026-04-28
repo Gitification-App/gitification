@@ -8,6 +8,60 @@ export function openURL(url: string) {
   open(url)
 }
 
+export async function markThreadAsRead(thread: Gitification.api.Types.Thread) {
+  if (Gitification.state.currentUser == null) {
+    return
+  }
+
+  Gitification.state.checkedThreadIds.delete(thread.id)
+
+  if (Gitification.state.settings.showReadNotifications) {
+    thread.unread = false
+    return
+  }
+  else {
+    Gitification.state.threads = Gitification.state.threads
+      .filter((t) => t.id !== thread.id)
+  }
+
+  Gitification.api.markThreadAsRead(thread.id, Gitification.state.currentUser.accessToken)
+}
+
+export function selectThread(thread: Gitification.api.Types.Thread) {
+  Gitification.state.checkedThreadIds.add(thread.id)
+}
+
+export function deselectThread(thread: Gitification.api.Types.Thread) {
+  Gitification.state.checkedThreadIds.delete(thread.id)
+}
+
+export function clearThreadSelection() {
+  Gitification.state.checkedThreadIds.clear()
+}
+
+export function toggleThreadSelection(thread: Gitification.api.Types.Thread) {
+  const set = Gitification.state.checkedThreadIds
+  if (set.has(thread.id)) {
+    set.delete(thread.id)
+  }
+  else {
+    set.add(thread.id)
+  }
+}
+
+export function unsubscribeThread(thread: Gitification.api.Types.Thread) {
+  if (Gitification.state.currentUser == null) {
+    return
+  }
+
+  Gitification.state.checkedThreadIds.delete(thread.id)
+  Gitification.state.threads = Gitification.state.threads
+    .filter((t) => t.id !== thread.id)
+
+  Gitification.api.markThreadAsRead(thread.id, Gitification.state.currentUser.accessToken)
+  Gitification.api.unsubscribeThread(thread.id, Gitification.state.currentUser.accessToken)
+}
+
 export function resetThreadsState() {
   Gitification.state.checkedThreadIds.clear()
   Gitification.state.threads = []

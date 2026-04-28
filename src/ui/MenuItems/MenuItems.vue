@@ -8,9 +8,9 @@ import {
   item,
   SelectableItems,
 } from 'vue-selectable-items'
+import { hideFloatingContent } from '../../composables/useFloatingEvent'
 import { useKey } from '../../composables/useKey'
 import * as UI from '../index'
-import { usePopoverContext } from '../Popover/Popover.vue'
 
 export type ItemMeta = {
   text: string
@@ -60,12 +60,8 @@ function setupHandle(ctx: Context) {
     el?.focus()
   })
 
-  const popoverContext = usePopoverContext()
-
   ctx.onSelect((meta, item) => {
-    if (popoverContext) {
-      popoverContext.visible.value = false
-    }
+    hideFloatingContent()
   })
 
   onMounted(() => {

@@ -39,10 +39,14 @@ html, body, #app {
 }
 
 :root:has(.attention-overlay) .with-attention:not(.attention-active) {
-  @apply blur-[6px]
+  filter: blur(4px);
+}
+
+.attention-active .with-attention {
+  filter: blur(0px) !important;
 }
 
 .with-attention {
   will-change: filter;
-  @apply transition-all duration-150
+  @apply transition-[filter,transform] duration-300
 }
