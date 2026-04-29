@@ -8,7 +8,7 @@ import {
   item,
   SelectableItems,
 } from 'vue-selectable-items'
-import { hideFloatingContent } from '../../composables/useFloatingEvent'
+import { hideFloatingContent } from '../../composables/useFloatingVisibility'
 import { useKey } from '../../composables/useKey'
 import * as UI from '../index'
 

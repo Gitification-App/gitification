@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Placement } from 'wowerlay'
 import type { PopoverControl } from '../../composables/usePopoverControl'
-import { useFloatingVisibility } from '../../composables/useFloatingEvent'
+import { useFloatingVisibility } from '../../composables/useFloatingVisibility'
 import { useTargetWrapper } from '../../composables/useTargetWrapper'
 import * as UI from '../index'
 

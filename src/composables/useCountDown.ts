@@ -1,4 +1,4 @@
-import { computed, onScopeDispose, readonly, ref } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
 
 export function useCountDown(from: number) {
   const count = ref(from)

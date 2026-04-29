@@ -12,14 +12,10 @@ const groupedThreads = computed(() => (
     Gitification.utils.object.groupBy(
       Gitification.state.threads,
       // By default js orders object keys, so we avoid it by prefix and suffix
-      (thread) => `::${thread.repository.id}::`,
+      (thread) => `::${thread.repository.id}`,
     ),
   )
 ))
-
-useKey('esc', () => {
-  Gitification.state.checkedThreadIds.clear()
-})
 
 useKey('cmd+a,ctrl+a', () => {
   for (const thread of Gitification.state.threads) {
@@ -27,12 +23,22 @@ useKey('cmd+a,ctrl+a', () => {
   }
 }, { prevent: true, disabledOverlay: true })
 
-useTauriEvent('window:hidden', () => {
-  Gitification.state.checkedThreadIds.clear()
+useKey('esc', Gitification.actions.clearThreadSelection)
+useTauriEvent('window:hidden', Gitification.actions.clearThreadSelection)
+onScopeDispose(Gitification.actions.clearThreadSelection)
+
+const [timerZero, resetTimer] = useCountDown(60)
+
+whenever(timerZero, () => {
+  Gitification.actions
+    .fetchThreads()
+    .finally(resetTimer)
 })
 
-onScopeDispose(() => {
-  Gitification.state.checkedThreadIds.clear()
+onMounted(() => {
+  Gitification.actions
+    .fetchThreads(Gitification.state.threads.length === 0)
+    .finally(resetTimer)
 })
 
 // Click empty space to clear selection
@@ -164,20 +170,6 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
       hotkey: String(index + 1),
     }))
 }
-
-const [countDownFinished, restartCountdown] = useCountDown(60)
-
-whenever(countDownFinished, () => {
-  Gitification.actions
-    .fetchThreads()
-    .finally(restartCountdown)
-})
-
-onMounted(() => {
-  Gitification.actions
-    .fetchThreads(Gitification.state.threads.length === 0)
-    .finally(restartCountdown)
-})
 </script>
 
 <template>
@@ -218,7 +210,7 @@ onMounted(() => {
       <template #action>
         <UI.Button
           class="mt-2"
-          variant="light"
+          variant="secondary"
           paddingVariant="sm"
         >
           Retry
@@ -245,7 +237,7 @@ onMounted(() => {
       <template #action>
         <UI.Button
           class="mt-2"
-          variant="light"
+          variant="secondary"
           paddingVariant="sm"
           @click="Gitification.actions.fetchThreads(true)"
         >

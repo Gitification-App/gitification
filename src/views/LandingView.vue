@@ -20,7 +20,13 @@ useTauriEvent<string>('code', async ({ payload }) => {
       code: payload,
     })
 
-    const user = await Gitification.api.getUser(accessToken)
+    const result = await Gitification.api.getUser(accessToken)
+
+    if (result == null) {
+      throw new Error('Failed to fetch user data')
+    }
+
+    const [user] = result
 
     if (user) {
       Gitification.state.currentUser = {
@@ -28,14 +34,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
         accessToken,
       }
 
-      Gitification.state.users = [
-        ...Gitification.state.users,
-        {
-          user,
-          accessToken,
-        },
-      ]
-
+      Gitification.state.users.push()
       Gitification.router.navigate('home')
     }
   }
@@ -74,7 +73,7 @@ onMounted(async () => {
         <template #action>
           <UI.Button
             class="mt-2"
-            variant="light"
+            variant="secondary"
             paddingVariant="md"
             :loading="processing"
             @click="handleLogin"

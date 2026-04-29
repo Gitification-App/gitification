@@ -20,7 +20,9 @@ export function createState() {
 
   const users = computed({
     get: () => Gitification.storage.value.users,
-    set: (value) => void (Gitification.storage.value.users = value),
+    set: (value) => {
+      Gitification.storage.value.users = value
+    },
   })
 
   const settings = computed({

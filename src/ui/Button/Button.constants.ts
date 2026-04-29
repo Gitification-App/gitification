@@ -1,45 +1,16 @@
+const shadow = 'shadow-[0_12px_16px_0_rgba(255,_255,_255,_0.04)_inset,_0_16px_6px_0_rgba(27,_27,_111,_0.02),_0_8px_4px_0_rgba(27,_27,_111,_0.04),_0_4px_4px_0_rgba(27,_27,_111,_0.08),_0_1px_2px_0_rgba(27,_27,_111,_0.10)]'
+
 export const ButtonVariantStyles = {
   primary: {
-    bg: 'bg-primary-500 hover:bg-primary-400',
-    fg: 'text-primary-50',
-    shadow: 'shadow-[0_12px_16px_0_rgba(255,_255,_255,_0.04)_inset,_0_16px_6px_0_rgba(27,_27,_111,_0.02),_0_8px_4px_0_rgba(27,_27,_111,_0.04),_0_4px_4px_0_rgba(27,_27,_111,_0.08),_0_1px_2px_0_rgba(27,_27,_111,_0.10)]',
+    bg: 'bg-primary  hover:bg-primary/80',
+    fg: 'text-white',
+    shadow,
   },
-  dark: {
-    bg: 'bg-gray-900 hover:bg-gray-800',
-    fg: 'text-gray-50',
-    shadow: 'shadow-[0_12px_16px_0_rgba(255,_255,_255,_0.04)_inset,_0_16px_6px_0_rgba(9,_10,_11,_0.02),_0_8px_4px_0_rgba(9,_10,_11,_0.04),_0_4px_4px_0_rgba(9,_10,_11,_0.08),_0_1px_2px_0_rgba(9,_10,_11,_0.10)]',
+  secondary: {
+    bg: 'light:bg-gray-900 light:hover:bg-gray-800 bg-white hover:bg-gray-100/50',
+    fg: 'light:text-gray-50 text-gray-950',
+    shadow,
   },
-  light: {
-    bg: 'bg-white hover:bg-gray-100/50',
-    fg: 'text-gray-950',
-    shadow: 'shadow-sm',
-  },
-  lightPrimary: {
-    bg: 'bg-white hover:bg-gray-100/80',
-    fg: 'text-primary-500',
-    shadow: 'shadow-sm',
-  },
-  gray: {
-    bg: 'bg-gray-100 hover:bg-gray-200',
-    fg: 'text-gray-950',
-    shadow: 'shadow-sm',
-  },
-  ghostLight: {
-    bg: 'bg-transparent',
-    fg: 'text-gray-50 hover:text-gray-500',
-    shadow: '',
-  },
-  ghostDark: {
-    bg: '',
-    fg: 'text-gray-950 hover:text-gray-500',
-    shadow: '',
-  },
-  ghostPrimary: {
-    bg: '',
-    fg: 'text-primary',
-    shadow: '',
-  },
-
   ghost: {
     bg: 'hover:bg-surface-3 focus-visible:bg-surface-3',
     fg: 'text-txt-1 hover:text-txt-2',

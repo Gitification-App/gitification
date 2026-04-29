@@ -30,6 +30,8 @@
   --color-txt-3: rgb(100, 100, 100);
 }
 
+@custom-variant light (.light &);
+
 html,
 body,
 #app {
