@@ -1,11 +1,16 @@
 import type { HTTPError } from 'ky'
 import type { StorageUser } from '../storage/types'
 import { invoke } from '@tauri-apps/api'
-import { sendNotification } from '@tauri-apps/api/notification'
-import { exit } from '@tauri-apps/api/process'
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification'
+import { exit, relaunch } from '@tauri-apps/api/process'
 import { open } from '@tauri-apps/api/shell'
+import { installUpdate } from '@tauri-apps/api/updater'
 import { isKyError } from 'ky'
 import * as Gitification from '../index'
+
+export function requestNotificationPermission() {
+  return requestPermission()
+}
 
 export function openURL(url: string) {
   open(url)
@@ -117,12 +122,19 @@ export function playNotificationSound() {
   }
 }
 
-export function pushThreadNotification(thread: Gitification.api.Types.Thread) {
+export async function pushThreadNotification(thread: Gitification.api.Types.Thread) {
+  if (import.meta.env.DEV) {
+    // It crashes the app on dev mode.
+    return
+  }
+
   if (Gitification.state.settings.showSystemNotifications) {
-    sendNotification({
-      title: thread.repository.full_name,
-      body: thread.subject.title,
-    })
+    if (await isPermissionGranted()) {
+      sendNotification({
+        title: thread.repository.full_name,
+        body: thread.subject.title,
+      })
+    }
   }
 }
 
@@ -189,4 +201,21 @@ export async function fetchThreads(withLoader = false) {
 
 export function setMenubarIcon(isTemplate: boolean) {
   invoke('set_icon_template', { isTemplate })
+}
+
+let installing = false
+export async function updateApp() {
+  if (installing || Gitification.state.newRelease == null) {
+    return
+  }
+
+  installing = true
+
+  try {
+    await installUpdate()
+    await relaunch()
+  }
+  catch {
+    installing = false
+  }
 }

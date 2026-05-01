@@ -5,6 +5,7 @@ export { default as CheckmarkCircle01 } from 'virtual:icons/hugeicons/checkmark-
 export { default as CheckmarkSquare01 } from 'virtual:icons/hugeicons/checkmark-square-01'
 export { default as Comment01 } from 'virtual:icons/hugeicons/comment-01'
 export { default as CursorRectangleSelection01 } from 'virtual:icons/hugeicons/cursor-rectangle-selection-01'
+export { default as DownloadSquare02 } from 'virtual:icons/hugeicons/download-square-02'
 export { default as GitCommit } from 'virtual:icons/hugeicons/git-commit'
 export { default as GitPullRequest } from 'virtual:icons/hugeicons/git-pull-request'
 export { default as Github01 } from 'virtual:icons/hugeicons/github-01'

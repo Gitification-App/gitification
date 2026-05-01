@@ -1321,6 +1321,7 @@ name = "gitification"
 version = "1.3.2"
 dependencies = [
  "ascii",
+ "notify-rust",
  "port_scanner",
  "rodio",
  "serde",

@@ -1,28 +1,59 @@
-use std::{fs::File, io::BufReader, sync::Mutex};
+use std::{
+    io::Cursor,
+    sync::{
+        mpsc::{self, Sender},
+        Mutex, OnceLock,
+    },
+};
 
 use rodio::{Decoder, OutputStream, Sink};
 use tauri::{AppHandle, State, Window};
 
 use crate::{server::AuthServer, utils::get_available_socket_addr};
 
+static NOTIFICATION_SOUND_BYTES: &[u8] = include_bytes!("../resources/mee-too.mp3");
+static AUDIO_THREAD: OnceLock<Sender<()>> = OnceLock::new();
+
+fn audio_sender() -> &'static Sender<()> {
+    AUDIO_THREAD.get_or_init(|| {
+        let (tx, rx) = mpsc::channel::<()>();
+        std::thread::spawn(move || {
+            let (_stream, stream_handle) = match OutputStream::try_default() {
+                Ok(p) => p,
+                Err(e) => {
+                    eprintln!("audio thread: no default output stream: {}", e);
+                    return;
+                }
+            };
+            while rx.recv().is_ok() {
+                let source = match Decoder::new(Cursor::new(NOTIFICATION_SOUND_BYTES)) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        eprintln!("audio thread: decode failed: {}", e);
+                        continue;
+                    }
+                };
+                let sink = match Sink::try_new(&stream_handle) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        eprintln!("audio thread: sink creation failed: {}", e);
+                        continue;
+                    }
+                };
+                sink.set_volume(0.5);
+                sink.append(source);
+                sink.sleep_until_end();
+            }
+        });
+        tx
+    })
+}
+
 #[tauri::command]
-pub fn play_notification_sound(app: AppHandle) {
-    let audio_path = app
-        .path_resolver()
-        .resolve_resource("resources/mee-too.mp3")
-        .expect("failed to load it");
-
-    std::thread::spawn(move || {
-        let file = File::open(audio_path).unwrap();
-        let buf_reader = BufReader::new(file);
-        let source = Decoder::new(buf_reader).unwrap();
-        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-        let sink = Sink::try_new(&stream_handle).unwrap();
-
-        sink.append(source);
-        sink.set_volume(0.5);
-        sink.sleep_until_end();
-    });
+pub fn play_notification_sound() {
+    if let Err(e) = audio_sender().send(()) {
+        eprintln!("play_notification_sound: audio thread channel closed: {}", e);
+    }
 }
 
 #[cfg(target_os = "macos")]

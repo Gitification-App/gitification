@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import * as Gitification from '../gitification'
+import * as Gitification from '../gitification/index'
 import * as UI from '../ui'
 </script>
 
@@ -32,7 +32,15 @@ import * as UI from '../ui'
           <UI.PickGroup
             :modelValue="Gitification.state.settings.showSystemNotifications ? 'On' : 'Off'"
             :values="['On', 'Off']"
-            @update:modelValue="Gitification.state.settings.showSystemNotifications = $event === 'On'"
+            @update:modelValue="async (value) => {
+              Gitification.state.settings.showSystemNotifications = value === 'On'
+              if (value === 'On') {
+                const permission = await Gitification.actions.requestNotificationPermission()
+                if (permission === 'denied') {
+                  Gitification.state.settings.showSystemNotifications = false
+                }
+              }
+            }"
           />
         </UI.SettingsItem>
       </UI.SettingsGroup>

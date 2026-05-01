@@ -98,12 +98,28 @@ useKey('r', () => {
       </UI.Button>
     </UI.Tooltip>
 
+    <span class="mb-auto" />
+
+    <UI.Tooltip
+      v-if="Gitification.state.newRelease != null"
+      position="right"
+      title="A new version is available!"
+    >
+      <UI.Button
+        variant="ghost"
+        paddingVariant="icon"
+        badge="!"
+        @click="Gitification.actions.updateApp()"
+      >
+        <UI.Icons.DownloadSquare02 class="text-primary" />
+      </UI.Button>
+    </UI.Tooltip>
+
     <UI.Tooltip
       position="right"
       title="Fetch Notifications [r]"
     >
       <UI.Button
-        class="mt-auto"
         variant="ghost"
         paddingVariant="icon"
         title="Fetch Notifications"

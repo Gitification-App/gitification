@@ -1,12 +1,12 @@
 import { type as osType } from '@tauri-apps/api/os'
-import { checkUpdate } from '@tauri-apps/api/updater'
 
+import { checkUpdate } from '@tauri-apps/api/updater'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { useKey } from './composables/useKey'
 
+import { useKey } from './composables/useKey'
 import * as Gitification from './gitification/index'
 import 'wowerlay/style.css'
 import './lib.css'

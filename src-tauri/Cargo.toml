@@ -21,6 +21,7 @@ window-vibrancy = "0.3.2"
 tiny_http = "0.12.0"
 ascii = "1.1.0"
 rodio = "0.17"
+notify-rust = "4.7"
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", rev = "bf1106a0a5e178ce38ecde56751ba037307a7ae8" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", rev = "bf1106a0a5e178ce38ecde56751ba037307a7ae8" }
 port_scanner = "*"
