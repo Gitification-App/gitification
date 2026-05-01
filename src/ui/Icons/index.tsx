@@ -22,7 +22,6 @@ export { default as Settings03 } from 'virtual:icons/hugeicons/settings-03'
 export { default as Tag01 } from 'virtual:icons/hugeicons/tag-01'
 export { default as Tick01 } from 'virtual:icons/hugeicons/tick-01'
 export { default as TickDouble04 } from 'virtual:icons/hugeicons/tick-double-04'
-export { default as User02 } from 'virtual:icons/hugeicons/user-02'
 export { default as UserAdd01 } from 'virtual:icons/hugeicons/user-add-01'
 
 export function IssueOpened24() {
