@@ -1,56 +1,52 @@
-<script setup lang="ts">
-import { onMounted, watchEffect } from 'vue'
-import AppScroller from './components/AppScroller.vue'
-import AppSidebar from './components/AppSidebar.vue'
-import HomePage from './pages/HomePage.vue'
-import SettingsPage from './pages/SettingsPage.vue'
-import { ColorPreference, FETCH_INTERVAL_DURATION, InvokeCommand } from './constants'
-import LandingPage from './pages/LandingPage.vue'
-import { useInterval } from './composables/useInterval'
-import { AppStorage } from './storage'
-import ContextMenu from './components/ContextMenu.vue'
-import { useTheme } from './composables/useTheme'
-import { Page, useRoute } from './composables/useRoute'
-import { useContextMenu } from './composables/useContextMenu'
-import { useCommonCalls } from './composables/useCommonCalls'
+<script lang="ts" setup>
+import { computed, watch, watchEffect } from 'vue'
+import { useTauriEvent } from './composables/useTauriEvent'
+import * as Gitification from './gitification/index'
+import * as UI from './ui'
+import * as Views from './views'
 
-const { currentPage } = useRoute()
-const contextmenu = useContextMenu()
-const commonCalls = useCommonCalls()
+const Route = computed(() => {
+  const current = Gitification.router.current.value
 
-useInterval(() => {
-  if (AppStorage.get('accessToken') && AppStorage.get('user')) {
-    commonCalls.fetchThreads(false)
+  switch (current) {
+    case 'home':
+      return Views.HomeView
+    case 'settings':
+      return Views.SettingsView
+    case 'addAccount':
+      return Views.AddAccountView
+    case 'landing':
+      return Views.LandingView
+    default:
+      return null
   }
-}, FETCH_INTERVAL_DURATION)
-
-const { theme } = useTheme()
+})
 
 watchEffect(() => {
-  if (theme.value === ColorPreference.Dark) {
-    document.documentElement.classList.remove('light-theme')
+  Gitification.actions.setMenubarIcon(
+    !Gitification.state.threads.some((t) => t.unread),
+  )
+})
+
+watch(() => Gitification.state.theme, (theme) => {
+  if (theme === 'light') {
+    document.documentElement.classList.add('light')
   }
   else {
-    document.documentElement.classList.add('light-theme')
+    document.documentElement.classList.remove('light')
+  }
+}, { immediate: true })
+
+useTauriEvent('window:hidden', () => {
+  if (Gitification.state.currentUser != null) {
+    Gitification.router.navigate('home')
   }
 })
 </script>
 
 <template>
-  <Teleport to="body">
-    <div id="app-border" />
-  </Teleport>
-
-  <AppSidebar />
-
-  <AppScroller>
-    <HomePage v-if="currentPage === Page.Home" />
-    <SettingsPage v-else-if="currentPage === Page.Settings" />
-    <LandingPage v-else-if="currentPage === Page.Landing" />
-  </AppScroller>
-
-  <ContextMenu
-    :state="contextmenu.state.value"
-    @close="contextmenu.clear()"
-  />
+  <UI.Container class="border border-surface-3 flex flex-row">
+    <UI.Sidebar />
+    <Route />
+  </UI.Container>
 </template>

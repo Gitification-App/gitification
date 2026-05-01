@@ -1,8 +1,8 @@
 name: Release
 on:
   push:
-    branches:
-      - release
+    tags: 
+      - 'v*.*.*'
 
 jobs:
   publish-tauri:
@@ -19,7 +19,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 24
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install dependencies (ubuntu only)

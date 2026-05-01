@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-1: rgb(20, 20, 20);
+  --color-surface-2: rgb(30, 30, 30);
+  --color-surface-3: rgb(36, 36, 36);
+  --color-surface-4: rgb(42, 42, 42);
+  --color-surface-5: rgb(51, 51, 51);
+  --color-surface-6: rgb(60, 60, 60);
+  --color-surface-7: rgb(70, 70, 70);
+
+  --color-txt-1: rgb(255, 255, 255);
+  --color-txt-2: rgb(200, 200, 200);
+  --color-txt-3: rgb(180, 180, 180);
+
+  --color-primary: rgb(100, 149, 237);
+  --font-sans: 'Inter', sans-serif;
+}
+
+.light {
+  --color-surface-1: rgb(255, 255, 255);
+  --color-surface-2: rgb(245, 245, 245);
+  --color-surface-3: rgb(239, 239, 239);
+  --color-surface-4: rgb(233, 233, 233);
+  --color-surface-5: rgb(224, 224, 224);
+  --color-surface-6: rgb(215, 215, 215);
+  --color-surface-7: rgb(205, 205, 205);
+
+  --color-txt-1: rgb(0, 0, 0);
+  --color-txt-2: rgb(55, 55, 55);
+  --color-txt-3: rgb(100, 100, 100);
+}
+
+@custom-variant light (.light &);
+
+html,
+body,
+#app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+  interpolate-size: allow-keywords;
+
+  @apply select-none;
+}
+
+
+:root:has(.attention-overlay) .with-attention:not(.attention-active) {
+  filter: blur(4px);
+}
+
+.attention-active .with-attention {
+  filter: blur(0px) !important;
+}
+
+.with-attention {
+  will-change: filter;
+  @apply transition-[filter,transform,opacity,translate,scale] duration-300
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/Inter.ttf") format("truetype");
+}

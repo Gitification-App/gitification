@@ -1,6 +1,8 @@
+import type { HotkeysEvent } from 'hotkeys-js'
+import type { Ref } from 'vue'
 import { tryOnScopeDispose } from '@vueuse/core'
-import hotkeys, { type HotkeysEvent } from 'hotkeys-js'
-import { type Ref, isRef, unref, watch } from 'vue'
+import hotkeys from 'hotkeys-js'
+import { isRef, toValue, unref, watch } from 'vue'
 
 type MaybeRef<T> = T | Ref<T>
 
@@ -10,11 +12,12 @@ export type UseKeyOptions = {
   repeat?: MaybeRef<boolean>
   input?: MaybeRef<boolean>
   source?: (() => boolean) | Ref<boolean>
+  disabledOverlay?: MaybeRef<boolean>
 }
 
 export type UseKeyCallback = (event: KeyboardEvent, hotkeysEvent: HotkeysEvent) => void
 
-const getLast = <T>(arr: T[]) => arr[arr.length - 1]
+const getLast = <T>(arr: T[]) => arr.at(-1)
 
 function isInputing() {
   return document.activeElement instanceof HTMLTextAreaElement
@@ -39,16 +42,21 @@ export function useKey(
     prevent = false,
     repeat = false,
     stop = false,
+    disabledOverlay = false,
   }: UseKeyOptions = {},
 ) {
   let initialized = false
 
   const keyList = keys
     .split(',')
-    .map(key => key.trim())
+    .map((key) => key.trim())
     .filter(Boolean)
 
   const handler: UseKeyCallback = (event, hotkeysEvent) => {
+    if (toValue(disabledOverlay) && document.body.classList.contains('attention-overlay')) {
+      return
+    }
+
     if (!unref(input) && isInputing()) {
       return
     }
@@ -80,7 +88,7 @@ export function useKey(
         bindings.set(key, [handler])
         hotkeys(key, (...args) => {
           const func = getLast(bindings.get(key)!)
-          func(...args)
+          func?.(...args)
         })
       }
     }
@@ -96,7 +104,7 @@ export function useKey(
     for (const key of keyList) {
       bindings.set(
         key,
-        bindings.get(key)!.filter(cb => cb !== handler),
+        bindings.get(key)!.filter((cb) => cb !== handler),
       )
       if (bindings.get(key)!.length === 0) {
         bindings.delete(key)

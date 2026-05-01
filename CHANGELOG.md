@@ -1,3 +1,15 @@
+### 2.0.0
+  - Now you can add `Multiple` accounts and switch between them.
+  - Now fetching notifications are `change aware`. Instead of fetching all notificaitons every 60 seconds, now Gitification only fetches notifications if `Github API` hints that notifications are modified.
+    - This will reduce network usage but might make content stale if Github API fails to hint modified notifications.
+  - A new look for Gitification.
+  - Vibrancy is removed.
+  - Checkboxes are removed, now it mimics finder/explorer style selection with CMD/CTRL + Click, Shift + Click and right click highlights.
+  - Shift + Click is range aware.
+  - Mark as read on open is default behavior, cannot be changed.
+  - Turkish language support is removed, now only single language support is provided, English.
+  
+
 ### 1.3.1
   - Fixed app always starts in Turkish. (Sorry for that :sweat_smile:)
 
