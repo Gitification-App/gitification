@@ -62,8 +62,8 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: __VERSION__
-          releaseName: __VERSION__
+          tagName: v__VERSION__
+          releaseName: v__VERSION__
           releaseDraft: false
           prerelease: false
           args: ${{ steps.set-args.outputs.result }}
