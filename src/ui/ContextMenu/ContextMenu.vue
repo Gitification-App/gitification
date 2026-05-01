@@ -15,6 +15,7 @@ type Props = {
     action: () => void
     icon?: any
   }[]
+  badge?: string
 }
 
 const props = defineProps<Props>()
@@ -55,18 +56,29 @@ function handleHide() {
     }"
     @contextmenu="handleEvent"
   >
-    <slot />
+    <slot :visible="Boolean(virtualTarget && visible)" />
   </TargetWrapper>
 
   <UI.FloatingContent
     :target="virtualTarget"
-    :visible="visible"
+    :visible
+    :gap="6"
     position="right-start"
+    class="overflow-visible!"
     @update:visible="handleHide"
   >
-    <MenuItems
-      :items="items"
-      @select="handleHide"
-    />
+    <div class="rounded-[inherit] overflow-clip">
+      <MenuItems
+        :items="items"
+        @select="handleHide"
+      />
+    </div>
+
+    <div
+      v-if="badge"
+      class="outline-2 outline-surface-3 absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 font-mono text-xs inline-grid place-items-center size-[20px] leading-0 text-primary font-bold rounded-full bg-surface-5"
+    >
+      {{ badge }}
+    </div>
   </UI.FloatingContent>
 </template>

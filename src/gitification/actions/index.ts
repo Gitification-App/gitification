@@ -1,4 +1,5 @@
 import type { HTTPError } from 'ky'
+import type { StorageUser } from '../storage/types'
 import { invoke } from '@tauri-apps/api'
 import { sendNotification } from '@tauri-apps/api/notification'
 import { exit } from '@tauri-apps/api/process'
@@ -71,13 +72,16 @@ export function resetThreadsState() {
   Gitification.state.lastModified = null
 }
 
-export function logout() {
-  if (Gitification.state.currentUser == null) {
+export function logout(id: StorageUser['user']['id']) {
+  const user = Gitification.state.users
+    .find(({ user }) => user.id === id) ?? null
+
+  if (user == null) {
     return
   }
 
   Gitification.state.users = Gitification.state.users
-    .filter(({ user }) => user.id !== Gitification.state.currentUser?.user.id)
+    .filter((item) => item.user.id !== user.user.id)
 
   const nextUser = Gitification.state.users.at(0)
 

@@ -14,6 +14,7 @@
   --color-txt-3: rgb(180, 180, 180);
 
   --color-primary: rgb(100, 149, 237);
+  --font-sans: 'Inter', sans-serif;
 }
 
 .light {
@@ -56,4 +57,12 @@ body,
 .with-attention {
   will-change: filter;
   @apply transition-[filter,transform,opacity,translate,scale] duration-300
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/Inter.ttf") format("truetype");
 }

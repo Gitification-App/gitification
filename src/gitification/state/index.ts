@@ -10,6 +10,13 @@ export type GitificationState = ReturnType<typeof createState>
 
 export function createState() {
   const threads = ref([] as Gitification.api.Types.Thread[])
+  const threadLookup = computed(() => {
+    const lookup: Record<string, Gitification.api.Types.Thread> = {}
+    for (const thread of threads.value) {
+      lookup[thread.id] = thread
+    }
+    return lookup
+  })
   const threadLoadStatus = ref('idle' as 'idle' | 'syncing' | 'loading' | 'failed')
   const checkedThreadIds = reactive(new Set<string>())
   const checkedThreads = computed(() => threads.value
@@ -66,6 +73,7 @@ export function createState() {
     threadLoadStatus,
     checkedThreadIds,
     newRelease,
+    threadLookup,
     osType,
     users,
     settings,

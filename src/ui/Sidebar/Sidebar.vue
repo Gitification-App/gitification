@@ -20,15 +20,6 @@ const settingsItems = computed(() => [
     onSelect: () => Gitification.router.navigate('settings'),
   }),
   menuItem({
-    key: 'logout',
-    onSelect: Gitification.actions.logout,
-    meta: {
-      text: 'Logout',
-      icon: UI.Icons.Logout05,
-      key: '3',
-    },
-  }),
-  menuItem({
     key: 'quit',
     onSelect: () => Gitification.actions.quitApp(),
     meta: {
@@ -54,14 +45,6 @@ useKey('p', () => {
 
 useKey('r', () => {
   Gitification.actions.fetchThreads(true)
-})
-
-useKey('m', () => {
-  if (Gitification.state.checkedThreads.length > 1) {
-    for (const checkedThread of Gitification.state.checkedThreads) {
-      Gitification.actions.markThreadAsRead(checkedThread)
-    }
-  }
 })
 </script>
 
@@ -102,21 +85,7 @@ useKey('m', () => {
     </UI.Popover>
 
     <UI.Tooltip
-      v-if="Gitification.state.checkedThreads.length > 1"
-      title="Mark selected as read [m]"
-      position="right"
-    >
-      <UI.Button
-        variant="ghost"
-        paddingVariant="icon"
-        :badge="String(Gitification.state.checkedThreads.length)"
-      >
-        <UI.Icons.TickDouble04 />
-      </UI.Button>
-    </UI.Tooltip>
-
-    <UI.Tooltip
-      v-if="Gitification.state.checkedThreads.length > 1"
+      v-if="Gitification.state.checkedThreads.length !== 0"
       title="Clear selection [esc]"
       position="right"
     >

@@ -34,7 +34,7 @@ useTauriEvent<string>('code', async ({ payload }) => {
         accessToken,
       }
 
-      Gitification.state.users.push()
+      Gitification.state.users.push({ user, accessToken })
       Gitification.router.navigate('home')
     }
   }

@@ -12,7 +12,7 @@ useKey('esc', () => {
 </script>
 
 <template>
-  <div class="shrink-0 flex flex-row gap-2 px-2 py-3 items-center">
+  <div class="border-b border-b-surface-2 shrink-0 flex flex-row gap-2 px-2 py-3 items-center">
     <UI.Button
       variant="ghost"
       paddingVariant="md"
@@ -22,7 +22,7 @@ useKey('esc', () => {
         <UI.Icons.ArrowLeft01 />
       </template>
 
-      <span><slot /></span>
+      <h1><slot /></h1>
 
       <UI.Key hotkey="esc" />
     </UI.Button>

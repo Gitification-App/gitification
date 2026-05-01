@@ -8,8 +8,10 @@ import { useTauriEvent } from '../../composables/useTauriEvent'
 type Props = {
   target: WowerlayProps['target'] | null | undefined
   position: WowerlayProps['position']
+  gap?: WowerlayProps['gap']
   visible: WowerlayProps['visible']
   detached?: boolean
+  noTransition?: boolean
 }
 
 type Emits = {
@@ -19,6 +21,7 @@ type Emits = {
 
 const props = withDefaults(defineProps<Props>(), {
   detached: false,
+  gap: 2,
 })
 const emit = defineEmits<Emits>()
 
@@ -105,17 +108,17 @@ const didFocus = shallowRef(false)
 
 <template>
   <Wowerlay
-    :visible="visible"
     tabindex="-1"
-    :target="target"
-    :position="position"
-    :gap="2"
+    :visible
+    :target
+    :position
+    :gap
     :no-background="detached"
     :backgroundAttrs="{
       style: { zIndex: 1500 },
     }"
-    :transition="handleTransition"
-    class="outline-none rounded-lg bg-surface-1 border border-surface-3 shadow-md overflow-clip flex"
+    :transition="noTransition ? undefined : handleTransition"
+    class="outline-none rounded-lg overflow-clip bg-surface-1 border border-surface-3 shadow-md flex"
     @update:visible="emit('update:visible', $event)"
     @update:el="(el) => {
       if (!didFocus && !detached && el) {
@@ -127,7 +130,7 @@ const didFocus = shallowRef(false)
   >
     <slot
       name="default"
-      :visible="visible"
+      :visible
     />
   </Wowerlay>
 </template>

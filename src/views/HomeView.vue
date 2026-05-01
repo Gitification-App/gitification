@@ -17,6 +17,8 @@ const groupedThreads = computed(() => (
   )
 ))
 
+const flatThreads = computed(() => Object.values(groupedThreads.value).flatMap(([, threads]) => threads))
+
 useKey('cmd+a,ctrl+a', () => {
   for (const thread of Gitification.state.threads) {
     Gitification.state.checkedThreadIds.add(thread.id)
@@ -37,7 +39,7 @@ whenever(timerZero, () => {
 
 onMounted(() => {
   Gitification.actions
-    .fetchThreads(Gitification.state.threads.length === 0)
+    .fetchThreads(true)
     .finally(resetTimer)
 })
 
@@ -72,8 +74,43 @@ function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.
   Gitification.actions.openURL(`https://github.com/${repo.full_name}`)
 }
 
+function handleThreadShiftClick(thread: Gitification.api.Types.Thread) {
+  const index = flatThreads.value.findIndex((t) => t.id === thread.id)
+
+  if (index === -1) {
+    return
+  }
+
+  const lastCheckedThreadId = Gitification.state.checkedThreads.at(-1)?.id
+
+  if (lastCheckedThreadId == null) {
+    Gitification.actions.selectThread(thread)
+    return
+  }
+
+  const lastCheckedThreadIndex = flatThreads.value.findIndex((t) => t.id === lastCheckedThreadId)
+
+  if (lastCheckedThreadIndex === -1) {
+    Gitification.actions.selectThread(thread)
+    return
+  }
+
+  const [start, end] = index < lastCheckedThreadIndex
+    ? [index, lastCheckedThreadIndex]
+    : [lastCheckedThreadIndex, index]
+
+  for (let i = start; i <= end; i++) {
+    Gitification.actions.selectThread(flatThreads.value[i])
+  }
+}
+
 async function handleThreadClick(event: MouseEvent | null, thread: Gitification.api.Types.Thread) {
-  if (event?.ctrlKey || event?.metaKey || event?.shiftKey) {
+  if (event?.shiftKey) {
+    handleThreadShiftClick(thread)
+    return
+  }
+
+  if (event?.ctrlKey || event?.metaKey) {
     Gitification.actions.toggleThreadSelection(thread)
     return
   }
@@ -267,6 +304,9 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
           v-for="thread in repoThreads"
           :key="thread.id"
           :getItems="() => getThreadContextMenuItems(thread)"
+          :badge="Gitification.state.checkedThreads.length > 1
+            ? String(Gitification.state.checkedThreads.length)
+            : undefined"
         >
           <UI.Thread
             :thread="thread"

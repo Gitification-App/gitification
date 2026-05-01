@@ -59,10 +59,10 @@ const animDelay = Math.random() * 600
 <template>
   <button
     ref="el"
-    class="origin-top with-attention thread isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap px-3 py-2 ring ring-surface-3 bg-surface-2 group"
+    class="with-attention thread isolate flex flex-row relative gap-3 w-full items-center rounded-xl min-w-0 flex-nowrap px-3 py-2 ring ring-surface-3 bg-surface-2 group"
     :class="{
       'bg-primary attention-active': checked,
-      'opacity-50 scale-85 -translate-y-5': !visible,
+      'opacity-50 scale-90 -translate-y-5': !visible,
       // 'scale-100': visible,
     }"
     :style="{
