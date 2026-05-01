@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Gitification",
-    "version": "2.0.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "systemTray": {
@@ -88,7 +88,7 @@
     "updater": {
       "active": true,
       "dialog": false,
-      "endpoints": ["https://gitification.app/latest-update"],
+      "endpoints": ["https://github.com/Gitification-App/gitification/releases/latest/download/latest.json"],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
     },
     "macOSPrivateApi": true,
