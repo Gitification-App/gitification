@@ -12,7 +12,7 @@ defineProps<{
     />
     <h2
       v-else
-      class="text-[15px] font-[300] tracking-tight text-txt-2"
+      class="with-attention text-[15px] font-[300] tracking-tight text-txt-2"
     >
       {{ title }}
     </h2>

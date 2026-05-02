@@ -39,15 +39,16 @@ export function createStorage() {
       const values = await store.entries()
         .catch(() => [])
 
+      const persistedObject = Object.fromEntries(values)
       let ctx: StorageTypes.AppStorageContextV2
 
       if (values.length === 0) {
         ctx = storage.value
       }
-      else if (values.some(([key]) => key === 'markAsReadOnOpen')) {
-      // We need to upgrade from old storage format to new one.
+      else if (persistedObject.version !== storage.value.version) {
+        // We need to upgrade from old storage format to new one.
+        const oldStorage = persistedObject as unknown as StorageTypes.AppStorageContextV1
 
-        const oldStorage = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV1
         ctx = {
           ...storage.value,
           activeUserId: oldStorage.user?.id ?? null,
@@ -74,7 +75,7 @@ export function createStorage() {
         ctx = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV2
       }
 
-      storage.value = ctx
+      Object.assign(storage.value, ctx)
     }
     finally {
       saveWatchHandle.resume()
