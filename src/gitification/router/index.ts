@@ -1,7 +1,7 @@
 import type { Option } from '../../types'
 import { shallowRef } from 'vue'
 
-export const routes = ['home', 'addAccount', 'landing', 'settings'] as const
+export const routes = ['home', 'addAccount', 'landing', 'settings', 'about'] as const
 export type RouteName = typeof routes[number]
 
 export function createRouter(defaultPage: RouteName) {

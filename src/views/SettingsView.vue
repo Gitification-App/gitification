@@ -9,7 +9,7 @@ import * as UI from '../ui'
       Settings
     </UI.PageHeader>
 
-    <UI.PageContent class="space-y-5 pb-20">
+    <UI.PageContent class="space-y-5">
       <UI.SettingsGroup title="Appearence">
         <UI.SettingsItem title="Theme">
           <UI.PickGroup
@@ -106,13 +106,44 @@ import * as UI from '../ui'
             paddingVariant="md"
             @click="Gitification.actions.logout(user.id)"
           >
-            <template #rightIcon>
-              <UI.Icons.Logout05 />
-            </template>
-            Log out
+            Remove
           </UI.Button>
         </UI.SettingsItem>
       </UI.SettingsGroup>
+
+      <div class="flex flex-row justify-end gap-2 border-t py-6 border-t-surface-2">
+        <UI.Tooltip
+          position="top"
+          title="Reset all settings to default values"
+        >
+          <UI.Button
+            variant="secondary"
+            paddingVariant="md"
+            @click="Gitification.storage.resetSettings()"
+          >
+            <template #leftIcon>
+              <UI.Icons.Reload />
+            </template>
+            Reset
+          </UI.Button>
+        </UI.Tooltip>
+
+        <UI.Tooltip
+          position="top-end"
+          title="Exit Gitification application"
+        >
+          <UI.Button
+            variant="danger"
+            paddingVariant="md"
+            @click="Gitification.actions.quitApp()"
+          >
+            <template #leftIcon>
+              <UI.Icons.Cancel01 />
+            </template>
+            Exit App
+          </UI.Button>
+        </UI.Tooltip>
+      </div>
     </UI.PageContent>
   </UI.Page>
 </template>

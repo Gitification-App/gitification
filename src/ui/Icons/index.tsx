@@ -9,6 +9,7 @@ export { default as DownloadSquare02 } from 'virtual:icons/hugeicons/download-sq
 export { default as GitCommit } from 'virtual:icons/hugeicons/git-commit'
 export { default as GitPullRequest } from 'virtual:icons/hugeicons/git-pull-request'
 export { default as Github01 } from 'virtual:icons/hugeicons/github-01'
+export { default as InformationCircle } from 'virtual:icons/hugeicons/information-circle'
 export { default as License } from 'virtual:icons/hugeicons/license'
 export { default as LinkSquare01 } from 'virtual:icons/hugeicons/link-square-01'
 export { default as Loading03 } from 'virtual:icons/hugeicons/loading-03'

@@ -18,11 +18,13 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "@tauri-apps/api": "^1.5.3",
+    "@types/markdown-it": "^14.1.2",
     "@vueuse/core": "^14.2.1",
     "dayjs": "^1.11.10",
     "es-toolkit": "^1.45.1",
     "klona": "^2.0.6",
     "ky": "^1.14.3",
+    "markdown-it": "^14.1.1",
     "overlayscrollbars": "^2.5.0",
     "overlayscrollbars-vue": "^0.5.7",
     "p-all": "^5.0.0",

@@ -1,6 +1,7 @@
 import { extendRef } from '@vueuse/core'
 import { Store } from 'tauri-plugin-store-api'
 import { ref, watch } from 'vue'
+import * as Gitification from '../index'
 import * as StorageTypes from './types'
 
 export function createStorage() {
@@ -84,6 +85,19 @@ export function createStorage() {
 
   return extendRef(storage, {
     syncFromDisk,
+    resetSettings() {
+      Gitification.actions.requestNotificationPermission()
+
+      storage.value.settings = {
+        onlyParticipating: false,
+        openAtStartup: false,
+        soundsEnabled: false,
+        showReadNotifications: false,
+        showSystemNotifications: true,
+        markAsReadOnOpen: true,
+        colorPreference: 'system',
+      }
+    },
     logDisk() {
       store.entries().then((entries) => {
         console.log('Storage entries on disk:', Object.fromEntries(entries))

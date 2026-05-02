@@ -66,3 +66,36 @@ body,
   font-display: swap;
   src: url("/Inter.ttf") format("truetype");
 }
+
+.prose {
+  @apply text-txt-2 text-sm space-y-2;
+
+  code {
+    @apply text-primary text-xs bg-surface-3 rounded-md px-2;
+  }
+
+  h1,h2,h3,h4,h5,h6 {
+    @apply text-txt-1 font-bold;
+  }
+  
+
+  h1 {
+    @apply text-xl
+  }
+
+  h2 {
+    @apply text-lg
+  }
+
+  h3,h4,h5 {
+    @apply text-base
+  }
+  
+  ul, ol {
+    @apply list-disc list-inside pl-4 space-y-1;
+  }
+
+  li li {
+    @apply mt-1;
+  }
+}

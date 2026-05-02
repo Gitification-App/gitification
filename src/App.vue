@@ -17,6 +17,8 @@ const Route = computed(() => {
       return Views.AddAccountView
     case 'landing':
       return Views.LandingView
+    case 'about':
+      return Views.AboutView
     default:
       return null
   }

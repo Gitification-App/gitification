@@ -8,25 +8,14 @@ import { menuItem } from '../MenuItems/MenuItems.vue'
 
 const settingsItems = computed(() => [
   menuItem({
-    key: 'repository',
-    meta: { text: 'Repository', icon: UI.Icons.Github01, key: '1' },
-    onSelect() {
-      Gitification.actions.openURL('https://github.com/Gitification-App/gitification')
-    },
-  }),
-  menuItem({
     key: 'settings',
-    meta: { text: 'Settings', icon: UI.Icons.Settings03, key: '2' },
+    meta: { text: 'Settings', icon: UI.Icons.Settings03, key: '1' },
     onSelect: () => Gitification.router.navigate('settings'),
   }),
   menuItem({
-    key: 'quit',
-    onSelect: () => Gitification.actions.quitApp(),
-    meta: {
-      text: 'Quit App',
-      icon: UI.Icons.Cancel01,
-      key: '4',
-    },
+    key: 'about',
+    meta: { text: 'App Info', icon: UI.Icons.InformationCircle, key: '2' },
+    onSelect: () => Gitification.router.navigate('about'),
   }),
 ])
 

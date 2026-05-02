@@ -17,8 +17,8 @@ export const ButtonVariantStyles = {
     shadow: '',
   },
   danger: {
-    bg: 'bg-red-800 hover:bg-red-700',
-    fg: 'text-txt-2',
+    bg: 'bg-red-700 hover:bg-red-500',
+    fg: 'text-white',
     shadow,
   },
 }
