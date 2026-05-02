@@ -13,3 +13,8 @@ Manage your notifications easily on your menubar.
 
 - Lightweight `Nearly 10mb`
 - Easy to login `Uses Github Oauth flow`.
+
+<br>
+<br>
+
+![App Image](images/image.png)

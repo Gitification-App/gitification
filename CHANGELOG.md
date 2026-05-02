@@ -1,3 +1,6 @@
+### 2.0.1, 2.0.2
+  - Fixed v1 to v2 store migration.
+
 ### 2.0.0
   - Now you can add `Multiple` accounts and switch between them.
   - Now fetching notifications are `change aware`. Instead of fetching all notificaitons every 60 seconds, now Gitification only fetches notifications if `Github API` hints that notifications are modified.
