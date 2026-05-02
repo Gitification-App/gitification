@@ -1,3 +1,6 @@
+### 2.0.7
+  - Removed debug value.
+
 ### 2.0.6
   - Fixed adding account failing because Home redirect on app window hide, causing `Add account` page to unmount.
 

@@ -40,7 +40,7 @@ watch(() => Gitification.state.theme, (theme) => {
   }
 }, { immediate: true })
 
-const [timerZero, resetTimer] = useCountDown(5)
+const [timerZero, resetTimer] = useCountDown(60)
 
 whenever(timerZero, () => {
   resetTimer()

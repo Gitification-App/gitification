@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { useEventListener, whenever } from '@vueuse/core'
-import { computed, onMounted, onScopeDispose } from 'vue'
-import { useCountDown } from '../composables/useCountDown'
+import { useEventListener } from '@vueuse/core'
+import { computed, onScopeDispose } from 'vue'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import * as Gitification from '../gitification/index'
