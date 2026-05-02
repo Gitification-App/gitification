@@ -1,3 +1,9 @@
+### 2.0.4
+  - Added `about` page.
+    - Repository button is moved to about page.
+    - Changelog is added to about page.
+  - Logout and Exit App buttons are moved to settings page.
+
 ### 2.0.3
   - Added `Open at startup`. (My stupid ass forgot to add Open At Startup option.)
   - Fixed local server stop after account add.
