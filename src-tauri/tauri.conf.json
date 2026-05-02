@@ -101,7 +101,9 @@
         "width": 500,
         "transparent": true,
         "decorations": false,
-        "visible": false
+        "visible": false,
+        "skipTaskbar": true,
+        "alwaysOnTop": true
       }
     ]
   }

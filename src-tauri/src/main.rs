@@ -68,6 +68,11 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let win = app.get_window("main").expect("window not found");
     let _ = win.set_always_on_top(true);
 
+    #[cfg(target_os = "macos")] {
+        use tauri::ActivationPolicy;
+        app.set_activation_policy(ActivationPolicy::Accessory);
+    }
+
     Ok(())
 }
 

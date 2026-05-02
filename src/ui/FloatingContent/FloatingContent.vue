@@ -97,6 +97,10 @@ watch(source, (value) => {
 }, { flush: 'pre' })
 
 function updateVisibleFalse() {
+  if (!props.visible) {
+    return
+  }
+
   emit('update:visible', false)
 }
 

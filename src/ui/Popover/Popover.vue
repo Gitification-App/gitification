@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Placement } from 'wowerlay'
 import type { PopoverControl } from '../../composables/usePopoverControl'
+import { whenever } from '@vueuse/core'
 import { useFloatingVisibility } from '../../composables/useFloatingVisibility'
 import { useTargetWrapper } from '../../composables/useTargetWrapper'
 import * as UI from '../index'
@@ -32,6 +33,10 @@ if (props.control) {
     }
   })
 }
+
+whenever(() => !visible.value, () => {
+  target.value?.focus({ preventScroll: true })
+})
 </script>
 
 <template>
@@ -52,7 +57,6 @@ if (props.control) {
     v-model:visible="visible"
     :target="target"
     :position="position"
-    @update:visible="!$event && target?.focus({ preventScroll: true })"
   >
     <slot name="default" />
   </UI.FloatingContent>
