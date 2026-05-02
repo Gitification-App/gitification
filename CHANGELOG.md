@@ -1,3 +1,7 @@
+### 2.0.3
+  - Added `Open at startup`. (My stupid ass forgot to add Open At Startup option.)
+  - Fixed local server stop after account add.
+
 ### 2.0.1, 2.0.2
   - Fixed v1 to v2 store migration.
 

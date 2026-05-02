@@ -6,6 +6,7 @@ import { exit, relaunch } from '@tauri-apps/api/process'
 import { open } from '@tauri-apps/api/shell'
 import { installUpdate } from '@tauri-apps/api/updater'
 import { isKyError } from 'ky'
+import * as AutoStart from 'tauri-plugin-autostart-api'
 import * as Gitification from '../index'
 
 export function requestNotificationPermission() {
@@ -42,6 +43,8 @@ export function selectThread(thread: Gitification.api.Types.Thread) {
 export function deselectThread(thread: Gitification.api.Types.Thread) {
   Gitification.state.checkedThreadIds.delete(thread.id)
 }
+
+export { AutoStart }
 
 export function clearThreadSelection() {
   Gitification.state.checkedThreadIds.clear()

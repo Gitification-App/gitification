@@ -20,6 +20,28 @@ import * as UI from '../ui'
       </UI.SettingsGroup>
 
       <UI.SettingsGroup title="System">
+        <UI.SettingsItem title="Open at startup">
+          <UI.PickGroup
+            :modelValue="Gitification.state.settings.openAtStartup ? 'On' : 'Off'"
+            :values="['On', 'Off']"
+            @update:modelValue="async (value) => {
+              Gitification.state.settings.openAtStartup = value === 'On'
+              if (value === 'On') {
+                Gitification.actions.AutoStart.enable()
+                  .catch(() => {
+                    Gitification.state.settings.openAtStartup = false
+                  })
+              }
+              else {
+                Gitification.actions.AutoStart.disable()
+                  .catch(() => {
+                    Gitification.state.settings.openAtStartup = true
+                  })
+              }
+            }"
+          />
+        </UI.SettingsItem>
+
         <UI.SettingsItem title="Sounds">
           <UI.PickGroup
             :modelValue="Gitification.state.settings.soundsEnabled ? 'On' : 'Off'"

@@ -42,7 +42,6 @@ useTauriEvent<string>('code', async ({ payload }) => {
       }
     }
 
-    Gitification.server.stop()
     Gitification.router.navigate('home')
   }
   finally {
