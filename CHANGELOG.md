@@ -1,3 +1,6 @@
+### 2.0.5
+  - Fixed app is visible in dock/taskbar.
+
 ### 2.0.4
   - Added `about` page.
     - Repository button is moved to about page.
