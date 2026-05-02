@@ -29,20 +29,6 @@ useKey('esc', Gitification.actions.clearThreadSelection)
 useTauriEvent('window:hidden', Gitification.actions.clearThreadSelection)
 onScopeDispose(Gitification.actions.clearThreadSelection)
 
-const [timerZero, resetTimer] = useCountDown(60)
-
-whenever(timerZero, () => {
-  Gitification.actions
-    .fetchThreads()
-    .finally(resetTimer)
-})
-
-onMounted(() => {
-  Gitification.actions
-    .fetchThreads(true)
-    .finally(resetTimer)
-})
-
 // Click empty space to clear selection
 useEventListener(
   () => document.querySelector('#app') as HTMLElement,

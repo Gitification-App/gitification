@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { whenever } from '@vueuse/core'
 import { computed, watch, watchEffect } from 'vue'
-import { useTauriEvent } from './composables/useTauriEvent'
+import { useCountDown } from './composables/useCountDown'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
 import * as Views from './views'
@@ -39,11 +40,21 @@ watch(() => Gitification.state.theme, (theme) => {
   }
 }, { immediate: true })
 
-useTauriEvent('window:hidden', () => {
-  if (Gitification.state.currentUser != null) {
-    Gitification.router.navigate('home')
-  }
+const [timerZero, resetTimer] = useCountDown(5)
+
+whenever(timerZero, () => {
+  resetTimer()
+
+  Gitification.actions
+    .fetchThreads()
 })
+
+whenever(() => Gitification.state.currentUser, () => {
+  resetTimer()
+
+  Gitification.actions
+    .fetchThreads()
+}, { immediate: true })
 </script>
 
 <template>
