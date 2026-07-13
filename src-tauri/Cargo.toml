@@ -16,19 +16,18 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = [ "derive" ] }
-tauri = { version = "2", features = [ "tray-icon", "image-png", "image-ico"] }
-tiny_http = "0.12.0"
-ascii = "1.1.0"
+tauri = { version = "2", features = ["macos-private-api", "tray-icon", "image-png", "image-ico"] }
 rodio = "0.20.1"
 tauri-plugin-store = ">=2.1.0, <3"
 tauri-plugin-autostart = { version = "2" }
-port_scanner = "*"
 tauri-plugin-os = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-shell = "2"
 tauri-plugin-process = "2"
 tauri-plugin-http = "2"
 tauri-plugin-notification = "2"
+tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
+tauri-plugin-deep-link = "2"
 
 [features]
 # by default Tauri runs in production mode

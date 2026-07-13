@@ -2,9 +2,12 @@
 import { whenever } from '@vueuse/core'
 import { computed, watch, watchEffect } from 'vue'
 import { useCountDown } from './composables/useCountDown'
+import { useOauthListener } from './composables/useOauthListener'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
 import * as Views from './views'
+
+useOauthListener()
 
 const Route = computed(() => {
   const current = Gitification.router.current.value
@@ -14,8 +17,6 @@ const Route = computed(() => {
       return Views.HomeView
     case 'settings':
       return Views.SettingsView
-    case 'addAccount':
-      return Views.AddAccountView
     case 'landing':
       return Views.LandingView
     case 'about':

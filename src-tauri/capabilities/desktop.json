@@ -3,5 +3,9 @@
   "description": "Desktop application permissions",
   "platforms": ["macOS", "windows", "linux"],
   "windows": ["main"],
-  "permissions": ["updater:default", "autostart:default"]
+  "permissions": [
+    "updater:default",
+    "autostart:default",
+    "deep-link:default"
+  ]
 }

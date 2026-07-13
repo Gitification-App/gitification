@@ -1,9 +1,7 @@
-use std::{fs::File, io::BufReader, sync::Mutex};
+use std::{fs::File, io::BufReader};
 
 use rodio::{Decoder, OutputStream, Sink};
-use tauri::{image::Image, path::BaseDirectory, AppHandle, Manager, State, Window};
-
-use crate::{server::AuthServer, utils::get_available_socket_addr};
+use tauri::{image::Image, path::BaseDirectory, AppHandle, Manager};
 
 #[tauri::command]
 pub fn play_notification_sound(app: AppHandle) {
@@ -45,19 +43,6 @@ pub fn set_icon_template(is_template: bool, app: AppHandle) {
         include_bytes!("../icons/tray/icon.png")
     };
     tray.set_icon(Some(Image::from_bytes(icon).unwrap())).unwrap();
-}
-
-#[tauri::command]
-pub fn start_server(window: Window, state: State<'_, Mutex<AuthServer>>) {
-    let mut server = state.lock().unwrap();
-    let addr = get_available_socket_addr();
-    server.listen(window, addr);
-}
-
-#[tauri::command]
-pub fn stop_server(state: State<'_, Mutex<AuthServer>>) {
-    let mut server = state.lock().unwrap();
-    server.stop();
 }
 
 #[cfg(target_os = "linux")]

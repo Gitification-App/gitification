@@ -35,7 +35,7 @@ const items = computed(() => {
     ...accountItems,
     menuItem({
       key: 'add-account',
-      onSelect: () => Gitification.router.navigate('addAccount'),
+      onSelect: () => Gitification.auth.openAuthorization(),
       meta: {
         text: 'Add Account',
         icon: UI.Icons.UserAdd01,

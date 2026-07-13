@@ -36,8 +36,6 @@ async function main() {
     })
 
   Gitification.state.osType = osType()
-  await Gitification.server.start()
-
   Gitification.state.settings.openAtStartup = await Gitification.actions.AutoStart.isEnabled()
     .catch(() => false)
 

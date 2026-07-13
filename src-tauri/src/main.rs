@@ -4,16 +4,10 @@
 )]
 
 mod commands;
-mod server;
-mod utils;
-
-use std::sync::Mutex;
 
 use commands::{
-    go_to_notification_settings, play_notification_sound, set_icon_template, start_server,
-    stop_server,
+    go_to_notification_settings, play_notification_sound, set_icon_template,
 };
-use server::AuthServer;
 use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
     App, Emitter, Manager, PhysicalPosition, WindowEvent,
@@ -81,6 +75,8 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
+        .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -90,12 +86,9 @@ fn main() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
-        .manage(Mutex::new(AuthServer::new()))
         .invoke_handler(tauri::generate_handler![
             play_notification_sound,
             set_icon_template,
-            start_server,
-            stop_server,
             go_to_notification_settings
         ])
         .setup(handle_setup)

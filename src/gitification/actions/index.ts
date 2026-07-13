@@ -1,6 +1,7 @@
 import type { HTTPError } from 'ky'
 import type { StorageUser } from '../storage/types'
 import { invoke } from '@tauri-apps/api/core'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import * as AutoStart from '@tauri-apps/plugin-autostart'
 
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification'
@@ -14,6 +15,12 @@ export function requestNotificationPermission() {
 
 export function openURL(url: string) {
   open(url)
+}
+
+export async function showWindow() {
+  const window = getCurrentWindow()
+  await window.show()
+  await window.setFocus()
 }
 
 export async function markThreadAsRead(thread: Gitification.api.Types.Thread) {

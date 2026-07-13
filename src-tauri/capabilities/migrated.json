@@ -12,10 +12,7 @@
       "identifier": "http:default",
       "allow": [
         { "url": "https://github.com/*" },
-        { "url": "https://api.github.com/*" },
-        { "url": "http://localhost:23846/*" },
-        { "url": "http://localhost:15830/*" },
-        { "url": "http://localhost:12840/*" }
+        { "url": "https://api.github.com/*" }
       ]
     },
     "notification:default",

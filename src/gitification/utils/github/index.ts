@@ -119,7 +119,7 @@ export async function createThreadHtmlURL({ thread, user }: CreateThreadUrlArgs)
   return uri.toString()
 }
 
-export function createCodeCallbackURL(port: number) {
+export function createCodeCallbackURL(redirectUri: string) {
   const endpoint = 'https://github.com/login/oauth/authorize'
   const scopes = ['notifications', 'read:user']
 
@@ -127,7 +127,7 @@ export function createCodeCallbackURL(port: number) {
 
   url.searchParams.set('client_id', import.meta.env.VITE_CLIENT_ID)
   url.searchParams.set('scope', scopes.join(' '))
-  url.searchParams.set('redirect_uri', `http://localhost:${port}/callback`)
+  url.searchParams.set('redirect_uri', redirectUri)
   url.searchParams.set('prompt', 'select_account')
 
   return url.toString()

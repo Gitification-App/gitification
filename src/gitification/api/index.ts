@@ -22,16 +22,22 @@ export type GetAccessTokenArgs = {
   clientId: string
   clientSecret: string
   code: string
+  redirectUri: string
 }
 
-export async function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenArgs) {
+export async function getAccessToken({ clientId, clientSecret, code, redirectUri }: GetAccessTokenArgs) {
   const res = await tFetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code }),
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      redirect_uri: redirectUri,
+    }),
   })
 
   if (!res.ok) {
