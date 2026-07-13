@@ -1,3 +1,7 @@
+### 2.1.0
+  - Upgraded to Tauri v2
+  - OAuth now uses deep linking via `gitification://` instead of local server.
+
 ### 2.0.9
   - Added time query parameter to disable caching.
 
