@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { whenever } from '@vueuse/core'
-import { computed, watch, watchEffect } from 'vue'
-import { useCountDown } from './composables/useCountDown'
+import { computed, onScopeDispose, watch, watchEffect } from 'vue'
 import { useOauthListener } from './composables/useOauthListener'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
@@ -41,18 +40,16 @@ watch(() => Gitification.state.theme, (theme) => {
   }
 }, { immediate: true })
 
-const [timerZero, resetTimer] = useCountDown(60)
-
-whenever(timerZero, () => {
-  resetTimer()
-
+const timer = setInterval(() => {
   Gitification.actions
     .fetchThreads()
+}, 60_000)
+
+onScopeDispose(() => {
+  clearInterval(timer)
 })
 
 whenever(() => Gitification.state.currentUser, () => {
-  resetTimer()
-
   Gitification.actions
     .fetchThreads()
 }, { immediate: true })
