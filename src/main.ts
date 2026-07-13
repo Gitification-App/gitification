@@ -1,7 +1,7 @@
-import { isPermissionGranted } from '@tauri-apps/api/notification'
+import { isPermissionGranted } from '@tauri-apps/plugin-notification'
 
-import { type as osType } from '@tauri-apps/api/os'
-import { checkUpdate } from '@tauri-apps/api/updater'
+import { type as osType } from '@tauri-apps/plugin-os'
+import { check } from '@tauri-apps/plugin-updater'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { createApp } from 'vue'
@@ -28,14 +28,14 @@ async function main() {
     Gitification.router.navigate('home')
   }
 
-  checkUpdate()
-    .then(({ shouldUpdate, manifest }) => {
-      if (shouldUpdate && manifest != null) {
-        Gitification.state.newRelease = manifest
+  check()
+    .then((update) => {
+      if (update != null) {
+        Gitification.state.newRelease = update
       }
     })
 
-  Gitification.state.osType = await osType()
+  Gitification.state.osType = osType()
   await Gitification.server.start()
 
   Gitification.state.settings.openAtStartup = await Gitification.actions.AutoStart.isEnabled()

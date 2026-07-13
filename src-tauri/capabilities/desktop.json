@@ -1,0 +1,7 @@
+{
+  "identifier": "desktop-capability",
+  "description": "Desktop application permissions",
+  "platforms": ["macOS", "windows", "linux"],
+  "windows": ["main"],
+  "permissions": ["updater:default", "autostart:default"]
+}

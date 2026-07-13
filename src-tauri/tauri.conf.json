@@ -2,109 +2,80 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Gitification",
-    "version": "2.0.9"
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
+    "targets": "all",
+    "externalBin": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png",
+      "icons/Square30x30Logo.png",
+      "icons/Square44x44Logo.png",
+      "icons/Square71x71Logo.png",
+      "icons/Square89x89Logo.png",
+      "icons/Square107x107Logo.png",
+      "icons/Square142x142Logo.png",
+      "icons/Square150x150Logo.png",
+      "icons/Square284x284Logo.png",
+      "icons/Square310x310Logo.png",
+      "icons/StoreLogo.png"
+    ],
+    "publisher": "Gitification",
+    "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
+    "shortDescription": "Manage your Github notifications",
+    "resources": ["resources/*"],
+    "linux": { "deb": { "depends": [] } },
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "createUpdaterArtifacts": "v1Compatible"
   },
-  "tauri": {
-    "systemTray": {
+  "productName": "Gitification",
+  "version": "2.0.9",
+  "identifier": "app.gitification",
+  "plugins": {
+    "updater": {
+      "endpoints": ["https://github.com/Gitification-App/gitification/releases/latest/download/latest.json"],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
+    }
+  },
+  "app": {
+    "windows": [{
+      "fullscreen": false,
+      "height": 400,
+      "resizable": false,
+      "title": "Gitification",
+      "width": 500,
+      "transparent": true,
+      "decorations": false,
+      "visible": false,
+      "skipTaskbar": true,
+      "alwaysOnTop": true
+    }],
+    "withGlobalTauri": false,
+    "macOSPrivateApi": false,
+    "security": { "csp": null },
+    "trayIcon": {
       "iconPath": "icons/tray/icon.png",
       "iconAsTemplate": true,
       "menuOnLeftClick": false
-    },
-    "allowlist": {
-      "os": {
-        "all": true
-      },
-      "http": {
-        "request": true,
-        "scope": ["https://github.com/*", "https://api.github.com/*", "http://localhost:23846/*", "http://localhost:15830/*", "http://localhost:12840/*"]
-      },
-      "process": {
-        "exit": true,
-        "relaunch": true
-      },
-      "notification": {
-        "all": true
-      },
-      "shell": {
-        "open": true
-      },
-      "dialog": {
-        "confirm": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico",
-        "icons/icon.png",
-        "icons/Square30x30Logo.png",
-        "icons/Square44x44Logo.png",
-        "icons/Square71x71Logo.png",
-        "icons/Square89x89Logo.png",
-        "icons/Square107x107Logo.png",
-        "icons/Square142x142Logo.png",
-        "icons/Square150x150Logo.png",
-        "icons/Square284x284Logo.png",
-        "icons/Square310x310Logo.png",
-        "icons/StoreLogo.png"
-      ],
-      "publisher": "Gitification",
-      "identifier": "app.gitification",
-      "longDescription": "Gitification helps you to see your Github notifications with a single click and notifies you with sound.",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": ["resources/*"],
-      "shortDescription": "Manage your Github notifications",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": true,
-      "dialog": false,
-      "endpoints": ["https://github.com/Gitification-App/gitification/releases/latest/download/latest.json"],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFRTJCQzVBRDQ5NzQwQzUKUldURlFKZlVXcnppTHY2VjRlMzY2NHdJVUZicWVuN29xSVh2cGFwdHJFVndZS1R6NDdxdTJTR3gK"
-    },
-    "macOSPrivateApi": true,
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 400,
-        "resizable": false,
-        "title": "Gitification",
-        "width": 500,
-        "transparent": true,
-        "decorations": false,
-        "visible": false,
-        "skipTaskbar": true,
-        "alwaysOnTop": true
-      }
-    ]
+    }
   }
 }

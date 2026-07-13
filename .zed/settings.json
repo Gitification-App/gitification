@@ -1,0 +1,58 @@
+// Project-local Zed settings — mirrors .vscode/seam-ui.code-workspace
+{
+  "format_on_save": "on",
+  "formatter": [],
+  "code_actions_on_format": {
+    "source.fixAll.eslint": true,
+  },
+  "linked_edits": true,
+  // Matches search.exclude.
+  "file_scan_exclusions": [
+    "**/node_modules",
+    "**/bower_components",
+    "**/*.code-search",
+    "**/.next",
+  ],
+  "lsp": {
+    "eslint": {
+      // Monorepo: each package has its own flat config
+      // (packages/*/eslint.config.mjs, libs/*/eslint.config.ts).
+      // Resolve config per-file from its package, matching the VSCode
+      // workspace's eslint.workingDirectories + useFlatConfig.
+      "settings": {
+        "useFlatConfig": true,
+        "workingDirectories": [{ "mode": "auto" }],
+        "codeActionOnSave": {
+          "rules": ["*"],
+        },
+      },
+    },
+    // Non-relative import specifiers, matching
+    // js/ts.preferences.importModuleSpecifier: "non-relative".
+    "typescript-language-server": {
+      "initialization_options": {
+        "preferences": {
+          "importModuleSpecifierPreference": "non-relative",
+          // Excludes match resolved physical file paths, not the import
+          // specifier — storybook/preview-api and storybook/internal/preview-api
+          // both resolve to dist/preview-api/index.d.ts, which re-exports React
+          // hooks like useCallback. Excluding the file blocks both specifiers.
+          "autoImportFileExcludePatterns": [
+            "**/node_modules/storybook/dist/preview-api/**",
+          ],
+        },
+      },
+    },
+    // Tailwind class detection in cva/cn/cx etc., matching
+    // tailwindCSS.experimental.classRegex and the lint overrides.
+    "tailwindcss-language-server": {
+      "settings": {
+        "classFunctions": ["cva", "cx", "cn", "clsx", "twMerge"],
+        "lint": {
+          "suggestCanonicalClasses": "ignore",
+          "cssConflict": "ignore",
+        },
+      },
+    },
+  },
+}

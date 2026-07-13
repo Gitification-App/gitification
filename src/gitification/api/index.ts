@@ -1,5 +1,5 @@
 import type * as ApiTypes from './types'
-import * as TauriHTTP from '@tauri-apps/api/http'
+import { fetch as tFetch } from '@tauri-apps/plugin-http'
 import { Mutex } from 'async-mutex'
 import * as Gitification from '../index'
 
@@ -25,26 +25,20 @@ export type GetAccessTokenArgs = {
 }
 
 export async function getAccessToken({ clientId, clientSecret, code }: GetAccessTokenArgs) {
-  const body = TauriHTTP.Body.json({
-    client_id: clientId,
-    client_secret: clientSecret,
-    code,
-  })
-
-  const res = await TauriHTTP.fetch<ApiTypes.AccessToken>('https://github.com/login/oauth/access_token', {
+  const res = await tFetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
-    body,
-    responseType: TauriHTTP.ResponseType.JSON,
+    body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code }),
   })
 
   if (!res.ok) {
     throw res
   }
 
-  return res
+  return { ...res, data: await res.json() as ApiTypes.AccessToken }
 }
 
 export type GetThreadsArgs = {

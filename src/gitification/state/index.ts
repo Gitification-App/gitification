@@ -1,5 +1,5 @@
-import type { OsType } from '@tauri-apps/api/os'
-import type { UpdateManifest } from '@tauri-apps/api/updater'
+import type { OsType } from '@tauri-apps/plugin-os'
+import type { Update } from '@tauri-apps/plugin-updater'
 
 import type { Option } from '../../types'
 import { useMediaQuery } from '@vueuse/core'
@@ -21,7 +21,7 @@ export function createState() {
   const checkedThreadIds = reactive(new Set<string>())
   const checkedThreads = computed(() => threads.value
     .filter((thread) => checkedThreadIds.has(thread.id)))
-  const newRelease = ref(null as Option<UpdateManifest>)
+  const newRelease = ref(null as Option<Update>)
 
   const osType = ref('Darwin' as OsType)
 

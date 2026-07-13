@@ -1,11 +1,11 @@
+import * as TauriStore from '@tauri-apps/plugin-store'
 import { extendRef } from '@vueuse/core'
-import { Store } from 'tauri-plugin-store-api'
 import { ref, watch } from 'vue'
 import * as Gitification from '../index'
 import * as StorageTypes from './types'
 
 export function createStorage() {
-  const store = new Store('.storage.dat')
+  const storePromise = TauriStore.load('.storage.dat', { autoSave: false, defaults: {} })
   const storage = ref<StorageTypes.AppStorageContextV2>({
     version: 2,
     activeUserId: null,
@@ -23,10 +23,11 @@ export function createStorage() {
 
   async function save() {
     for (const [key, value] of Object.entries(storage.value)) {
+      const store = await storePromise
       await store.set(key, value)
     }
 
-    void store.save()
+    void storePromise.then((store) => store.save())
   }
 
   const saveWatchHandle = watch(storage, () => {
@@ -37,7 +38,7 @@ export function createStorage() {
     saveWatchHandle.pause()
 
     try {
-      const values = await store.entries()
+      const values = await storePromise.then((store) => store.entries())
         .catch(() => [])
 
       const persistedObject = Object.fromEntries(values)
@@ -70,7 +71,7 @@ export function createStorage() {
               return settings
             }, { ...storage.value.settings } as StorageTypes.StorageSettings),
         }
-        store.clear()
+        void storePromise.then((store) => store.clear())
       }
       else {
         ctx = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV2
@@ -99,7 +100,7 @@ export function createStorage() {
       }
     },
     logDisk() {
-      store.entries().then((entries) => {
+      storePromise.then((store) => store.entries()).then((entries) => {
         console.log('Storage entries on disk:', Object.fromEntries(entries))
       })
     },

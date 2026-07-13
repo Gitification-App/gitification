@@ -1,70 +1,34 @@
-use std::{
-    io::Cursor,
-    sync::{
-        mpsc::{self, Sender},
-        Mutex, OnceLock,
-    },
-};
+use std::{fs::File, io::BufReader, sync::Mutex};
 
 use rodio::{Decoder, OutputStream, Sink};
-use tauri::{AppHandle, State, Window};
+use tauri::{image::Image, path::BaseDirectory, AppHandle, Manager, State, Window};
 
 use crate::{server::AuthServer, utils::get_available_socket_addr};
 
-static NOTIFICATION_SOUND_BYTES: &[u8] = include_bytes!("../resources/mee-too.mp3");
-static AUDIO_THREAD: OnceLock<Sender<()>> = OnceLock::new();
-
-fn audio_sender() -> &'static Sender<()> {
-    AUDIO_THREAD.get_or_init(|| {
-        let (tx, rx) = mpsc::channel::<()>();
-        std::thread::spawn(move || {
-            let (_stream, stream_handle) = match OutputStream::try_default() {
-                Ok(p) => p,
-                Err(e) => {
-                    eprintln!("audio thread: no default output stream: {}", e);
-                    return;
-                }
-            };
-            while rx.recv().is_ok() {
-                let source = match Decoder::new(Cursor::new(NOTIFICATION_SOUND_BYTES)) {
-                    Ok(s) => s,
-                    Err(e) => {
-                        eprintln!("audio thread: decode failed: {}", e);
-                        continue;
-                    }
-                };
-                let sink = match Sink::try_new(&stream_handle) {
-                    Ok(s) => s,
-                    Err(e) => {
-                        eprintln!("audio thread: sink creation failed: {}", e);
-                        continue;
-                    }
-                };
-                sink.set_volume(0.5);
-                sink.append(source);
-                sink.sleep_until_end();
-            }
-        });
-        tx
-    })
-}
-
 #[tauri::command]
-pub fn play_notification_sound() {
-    if let Err(e) = audio_sender().send(()) {
-        eprintln!("play_notification_sound: audio thread channel closed: {}", e);
-    }
+pub fn play_notification_sound(app: AppHandle) {
+    let audio_path = app
+        .path()
+        .resolve("resources/mee-too.mp3", BaseDirectory::Resource)
+        .expect("failed to resolve notification sound");
+
+    std::thread::spawn(move || {
+        let file = File::open(audio_path).unwrap();
+        let source = Decoder::new(BufReader::new(file)).unwrap();
+        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+        let sink = Sink::try_new(&stream_handle).unwrap();
+        sink.set_volume(0.5);
+        sink.append(source);
+        sink.sleep_until_end();
+    });
 }
 
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_icon_template(is_template: bool, app: AppHandle) {
-    app.tray_handle().set_icon_as_template(is_template).unwrap();
-
-    app.tray_handle()
-        .set_icon(tauri::Icon::Raw(
-            include_bytes!("../icons/tray/icon.png").to_vec(),
-        ))
+    let tray = app.tray_by_id("main").expect("tray 'main' not found");
+    tray.set_icon_as_template(is_template).unwrap();
+    tray.set_icon(Some(Image::from_bytes(include_bytes!("../icons/tray/icon.png")).unwrap()))
         .unwrap();
 }
 
@@ -74,19 +38,13 @@ pub fn set_icon_template(is_template: bool, app: AppHandle) {
     // In other systems there is no template option for tray icons
     // So we just simulate like it has.
 
-    if is_template {
-        app.tray_handle()
-            .set_icon(tauri::Icon::Raw(
-                include_bytes!("../icons/128x128.png").to_vec(),
-            ))
-            .unwrap();
+    let tray = app.tray_by_id("main").expect("tray 'main' not found");
+    let icon = if is_template {
+        include_bytes!("../icons/128x128.png")
     } else {
-        app.tray_handle()
-            .set_icon(tauri::Icon::Raw(
-                include_bytes!("../icons/tray/icon.png").to_vec(),
-            ))
-            .unwrap();
-    }
+        include_bytes!("../icons/tray/icon.png")
+    };
+    tray.set_icon(Some(Image::from_bytes(icon).unwrap())).unwrap();
 }
 
 #[tauri::command]
