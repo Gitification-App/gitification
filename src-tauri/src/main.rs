@@ -26,10 +26,7 @@ fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 
         loop {
             interval.tick().await;
-
-            if app_handle.emit("poll_tick", ()).is_err() {
-                break;
-            }
+            let _ = app_handle.emit("poll_tick", ());
         }
     });
 
