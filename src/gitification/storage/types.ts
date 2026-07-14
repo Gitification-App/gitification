@@ -27,6 +27,7 @@ export type ColorPreference = 'light' | 'dark' | 'system'
 export type StorageSettings = {
   onlyParticipating: boolean
   openAtStartup: boolean
+  pollInterval: 30 | 60 | 90 | 120
   soundsEnabled: boolean
   showReadNotifications: boolean
   showSystemNotifications: boolean

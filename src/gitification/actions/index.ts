@@ -7,10 +7,17 @@ import * as AutoStart from '@tauri-apps/plugin-autostart'
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification'
 import { exit, relaunch } from '@tauri-apps/plugin-process'
 import { open } from '@tauri-apps/plugin-shell'
+import { InvokeCommand } from '../../constants'
 import * as Gitification from '../index'
+
+let lastFetchThreadsAt = 0
 
 export function requestNotificationPermission() {
   return requestPermission()
+}
+
+export function getLastFetchThreadsAt() {
+  return lastFetchThreadsAt
 }
 
 export function openURL(url: string) {
@@ -126,7 +133,7 @@ export function quitApp() {
 
 export function playNotificationSound() {
   if (Gitification.state.settings.soundsEnabled) {
-    invoke('play_notification_sound')
+    invoke(InvokeCommand.PlayNotificationSound)
   }
 }
 
@@ -150,6 +157,8 @@ export async function fetchThreads(withLoader = false) {
   if (Gitification.state.currentUser == null) {
     return
   }
+
+  lastFetchThreadsAt = Date.now()
 
   if (withLoader) {
     clearThreadSelection()
@@ -190,7 +199,7 @@ export async function fetchThreads(withLoader = false) {
 }
 
 export async function setMenubarIcon(isTemplate: boolean) {
-  await invoke('set_icon_template', { isTemplate })
+  await invoke(InvokeCommand.SetIconTemplate, { isTemplate })
 }
 
 let installing = false

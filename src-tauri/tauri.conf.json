@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/refs/heads/dev/crates/tauri-schema-generator/schemas/config.schema.json",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
@@ -80,7 +81,7 @@
     "trayIcon": {
       "iconPath": "icons/tray/icon.png",
       "iconAsTemplate": true,
-      "menuOnLeftClick": false
+      "showMenuOnLeftClick": false
     }
   }
 }

@@ -83,6 +83,13 @@ import * as UI from '../ui'
             @update:modelValue="Gitification.state.settings.onlyParticipating = $event === 'On'"
           />
         </UI.SettingsItem>
+
+        <UI.SettingsItem title="Poll interval">
+          <UI.PickGroup
+            v-model="Gitification.state.settings.pollInterval"
+            :values="[30, 60, 90, 120]"
+          />
+        </UI.SettingsItem>
       </UI.SettingsGroup>
 
       <UI.SettingsGroup title="Accounts">

@@ -8,6 +8,7 @@ mod commands;
 use commands::{
     go_to_notification_settings, play_notification_sound, set_icon_template,
 };
+use std::time::Duration;
 use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
     App, Emitter, Manager, PhysicalPosition, WindowEvent,
@@ -17,6 +18,20 @@ use tauri_plugin_autostart::MacosLauncher;
 fn handle_setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let window = app.get_webview_window("main").expect("window not found");
     window.set_always_on_top(true)?;
+
+    let app_handle = app.handle().clone();
+    tauri::async_runtime::spawn(async move {
+        let mut interval = tokio::time::interval(Duration::from_secs(10));
+        interval.tick().await;
+
+        loop {
+            interval.tick().await;
+
+            if app_handle.emit("poll_tick", ()).is_err() {
+                break;
+            }
+        }
+    });
 
     #[cfg(target_os = "macos")]
     {
