@@ -13,15 +13,15 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="bg-surface-2 rounded-lg pick-group flex flex-row flex-nowrap min-w-0 *:shrink-0">
+  <div class="pick-group flex min-w-0 flex-row flex-nowrap rounded-lg border border-surface-3 bg-surface-2/35 p-0.5 *:shrink-0">
     <UI.Button
       v-for="value in values"
       :key="String(value)"
       variant="ghost"
       paddingVariant="none"
-      class="capitalize text-sm py-2 px-3 focus-visible:z-2"
+      class="h-7 rounded-md px-2.5 text-xs capitalize focus-visible:z-2"
       :class="{
-        'bg-surface-5': modelValue === value,
+        'bg-surface-5 text-txt-1': modelValue === value,
         'text-txt-3': modelValue !== value,
       }"
       @click="$emit('update:modelValue', value)"

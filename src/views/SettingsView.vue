@@ -9,7 +9,7 @@ import * as UI from '../ui'
       Settings
     </UI.PageHeader>
 
-    <UI.PageContent class="space-y-5">
+    <UI.PageContent class="space-y-3">
       <UI.SettingsGroup title="Appearence">
         <UI.SettingsItem title="Theme">
           <UI.PickGroup
