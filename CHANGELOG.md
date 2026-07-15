@@ -1,3 +1,8 @@
+### 2.2.0
+  - Smaller sidebar design
+  - New Settings Page design
+  - Fixed Gitification not polling notifications by using Rust based timer instead of JavaScript timer.
+
 ### 2.1.1
   - Fixed tray icon template on mac.
   - 
