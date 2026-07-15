@@ -1,4 +1,4 @@
-import { getCurrent, onOpenUrl } from '@tauri-apps/plugin-deep-link'
+import { onOpenUrl } from '@tauri-apps/plugin-deep-link'
 import * as Gitification from '../index'
 
 const REDIRECT_URI = 'gitification://oauth/callback'
@@ -81,16 +81,6 @@ async function handleUrl(rawUrl: string) {
   }
 }
 
-async function handleUrls(urls: string[] | null) {
-  if (urls == null) {
-    return
-  }
-
-  for (const url of urls) {
-    await handleUrl(url)
-  }
-}
-
 export function getRedirectUri() {
   return REDIRECT_URI
 }
@@ -103,10 +93,16 @@ export function openAuthorization() {
 
 export async function initialize() {
   const unlisten = await onOpenUrl((urls) => {
-    void handleUrls(urls)
-  })
+    void (async () => {
+      if (urls == null) {
+        return
+      }
 
-  await handleUrls(await getCurrent())
+      for (const url of urls) {
+        await handleUrl(url)
+      }
+    })()
+  })
 
   return unlisten
 }

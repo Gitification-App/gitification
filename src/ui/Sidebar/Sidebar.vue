@@ -6,16 +6,21 @@ import { usePopoverControl } from '../../composables/usePopoverControl'
 import * as Gitification from '../../gitification/index'
 import { menuItem } from '../MenuItems/MenuItems.vue'
 
-const settingsItems = computed(() => [
-  menuItem({
-    key: 'settings',
-    meta: { text: 'Settings', icon: UI.Icons.Settings03, key: '1' },
-    onSelect: () => Gitification.router.navigate('settings'),
-  }),
+const menuItems = computed(() => [
   menuItem({
     key: 'about',
-    meta: { text: 'App Info', icon: UI.Icons.InformationCircle, key: '2' },
+    meta: { text: 'About', icon: UI.Icons.InformationCircle, key: '1' },
     onSelect: () => Gitification.router.navigate('about'),
+  }),
+  menuItem({
+    key: 'report-bug',
+    meta: { text: 'Report bug', icon: UI.Icons.IssueOpened24, key: '2' },
+    onSelect: () => Gitification.actions.openURL('https://github.com/Gitification-App/gitification/issues/new'),
+  }),
+  menuItem({
+    key: 'repository',
+    meta: { text: 'See Repository', icon: UI.Icons.Github01, key: '3' },
+    onSelect: () => Gitification.actions.openURL('https://github.com/Gitification-App/gitification'),
   }),
 ])
 
@@ -39,7 +44,7 @@ useKey('r', () => {
 
 <template>
   <div
-    class="flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full border-r-1 border-surface-3"
+    class="flex flex-col shrink-0 p-2 h-full border-r-1 border-surface-3"
   >
     <UI.Popover
       v-if="Gitification.state.currentUser != null"
@@ -122,6 +127,19 @@ useKey('r', () => {
       </UI.Button>
     </UI.Tooltip>
 
+    <UI.Tooltip
+      position="right"
+      title="Settings"
+    >
+      <UI.Button
+        variant="ghost"
+        paddingVariant="icon"
+        @click="Gitification.router.navigate('settings')"
+      >
+        <UI.Icons.Settings03 />
+      </UI.Button>
+    </UI.Tooltip>
+
     <UI.Popover
       position="right-end"
       :control="menuPopoverControl"
@@ -137,12 +155,12 @@ useKey('r', () => {
             hotkey="."
             @click="Gitification.actions.clearThreadSelection()"
           >
-            <UI.Icons.Menu02 />
+            <UI.Icons.MoreHorizontal />
           </UI.Button>
         </UI.Tooltip>
       </template>
 
-      <UI.MenuItems :items="settingsItems" />
+      <UI.MenuItems :items="menuItems" />
     </UI.Popover>
   </div>
 </template>

@@ -72,6 +72,8 @@ const visible = customRef((track, trigger) => {
     :detached="true"
     class="font-mono text-txt-3 text-xs px-2 py-1 pointer-events-none"
   >
-    {{ title }}
+    <div className="max-w-[250px]">
+      {{ title }}
+    </div>
   </UI.FloatingContent>
 </template>

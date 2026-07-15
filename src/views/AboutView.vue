@@ -36,33 +36,9 @@ const version = __APP_VERSION__
     </UI.PageHeader>
 
     <UI.PageContent class="with-attention space-y-5 pb-20">
-      <div class="space-y-3">
+      <div>
         <div class="text-xl font-medium text-txt-1">
           Gitification <span class="font-mono font-medium tracking-tighter text-primary text-xs">{{ version }}</span>
-        </div>
-
-        <div class=" flex flex-row gap-2">
-          <UI.Button
-            paddingVariant="sm"
-            variant="secondary"
-            @click="Gitification.actions.openURL('https://github.com/Gitification-App/gitification/issues/new')"
-          >
-            <template #leftIcon>
-              <UI.Icons.IssueOpened24 />
-            </template>
-            Report bug
-          </UI.Button>
-
-          <UI.Button
-            paddingVariant="sm"
-            variant="secondary"
-            @click="Gitification.actions.openURL('https://github.com/Gitification-App/gitification')"
-          >
-            <template #leftIcon>
-              <UI.Icons.Github01 />
-            </template>
-            See Repository
-          </UI.Button>
         </div>
       </div>
 

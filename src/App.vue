@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { whenever } from '@vueuse/core'
-import { computed, onScopeDispose, watch, watchEffect } from 'vue'
+import { computed, watch } from 'vue'
 import { useOauthListener } from './composables/useOauthListener'
+import { usePollTick } from './composables/usePollTick'
 import * as Gitification from './gitification/index'
 import * as UI from './ui'
 import * as Views from './views'
@@ -25,11 +26,13 @@ const Route = computed(() => {
   }
 })
 
-watchEffect(() => {
-  Gitification.actions.setMenubarIcon(
-    !Gitification.state.threads.some((t) => t.unread),
-  )
-})
+watch(
+  () => Gitification.state.threads.some((t) => t.unread),
+  (hasUnread) => {
+    Gitification.actions.setMenubarIcon(!hasUnread)
+  },
+  { immediate: true },
+)
 
 watch(() => Gitification.state.theme, (theme) => {
   if (theme === 'light') {
@@ -40,19 +43,13 @@ watch(() => Gitification.state.theme, (theme) => {
   }
 }, { immediate: true })
 
-const timer = setInterval(() => {
-  Gitification.actions
-    .fetchThreads()
-}, 60_000)
+usePollTick(() => Gitification.actions.fetchThreads())
 
-onScopeDispose(() => {
-  clearInterval(timer)
-})
-
-whenever(() => Gitification.state.currentUser, () => {
-  Gitification.actions
-    .fetchThreads()
-}, { immediate: true })
+whenever(
+  () => Gitification.state.currentUser,
+  () => void Gitification.actions.fetchThreads(),
+  { immediate: true },
+)
 </script>
 
 <template>

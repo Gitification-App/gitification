@@ -13,6 +13,7 @@ export function createStorage() {
     settings: {
       onlyParticipating: false,
       openAtStartup: false,
+      pollInterval: 60,
       soundsEnabled: false,
       showReadNotifications: false,
       showSystemNotifications: true,
@@ -74,7 +75,16 @@ export function createStorage() {
         void storePromise.then((store) => store.clear())
       }
       else {
-        ctx = Object.fromEntries(values) as unknown as StorageTypes.AppStorageContextV2
+        const persistedContext = Object.fromEntries(values) as Partial<StorageTypes.AppStorageContextV2>
+
+        ctx = {
+          ...storage.value,
+          ...persistedContext,
+          settings: {
+            ...storage.value.settings,
+            ...persistedContext.settings,
+          },
+        }
       }
 
       Object.assign(storage.value, ctx)
@@ -92,6 +102,7 @@ export function createStorage() {
       storage.value.settings = {
         onlyParticipating: false,
         openAtStartup: false,
+        pollInterval: 60,
         soundsEnabled: false,
         showReadNotifications: false,
         showSystemNotifications: true,
