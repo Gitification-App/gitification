@@ -44,7 +44,7 @@ useKey('r', () => {
 
 <template>
   <div
-    class="flex flex-col shrink-0 gap-1 p-4 w-[64px] h-full border-r-1 border-surface-3"
+    class="flex flex-col shrink-0 p-2 h-full border-r-1 border-surface-3"
   >
     <UI.Popover
       v-if="Gitification.state.currentUser != null"

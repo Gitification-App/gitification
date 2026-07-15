@@ -46,7 +46,13 @@ import * as UI from '../ui'
           <UI.PickGroup
             :modelValue="Gitification.state.settings.soundsEnabled ? 'On' : 'Off'"
             :values="['On', 'Off']"
-            @update:modelValue="Gitification.state.settings.soundsEnabled = $event === 'On'"
+            @update:modelValue="(newValue) => {
+              const enabled = newValue === 'On'
+              Gitification.state.settings.soundsEnabled = enabled
+              if (enabled) {
+                Gitification.actions.playNotificationSound()
+              }
+            }"
           />
         </UI.SettingsItem>
 
@@ -84,7 +90,20 @@ import * as UI from '../ui'
           />
         </UI.SettingsItem>
 
-        <UI.SettingsItem title="Poll interval">
+        <UI.SettingsItem>
+          <template #title>
+            Poll interval
+
+            <UI.Tooltip
+              position="top-start"
+              title="Gitification fetches notifications from GitHub at a regular interval. You can set the interval here."
+            >
+              <button className="text-[10px] align-top">
+                <span class="font-mono inline-block px-1 text-primary">?</span>
+              </button>
+            </UI.Tooltip>
+          </template>
+
           <UI.PickGroup
             v-model="Gitification.state.settings.pollInterval"
             :values="[30, 60, 90, 120]"
@@ -131,13 +150,13 @@ import * as UI from '../ui'
             <template #leftIcon>
               <UI.Icons.Reload />
             </template>
-            Reset
+            Reset settings
           </UI.Button>
         </UI.Tooltip>
 
         <UI.Tooltip
           position="top-end"
-          title="Exit Gitification application"
+          title="Quit application"
         >
           <UI.Button
             variant="danger"
@@ -147,7 +166,6 @@ import * as UI from '../ui'
             <template #leftIcon>
               <UI.Icons.ShutDown />
             </template>
-            Exit App
           </UI.Button>
         </UI.Tooltip>
       </div>

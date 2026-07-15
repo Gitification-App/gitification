@@ -11,6 +11,11 @@ export const ButtonVariantStyles = {
     fg: 'light:text-gray-50 text-gray-950',
     shadow,
   },
+  tertiary: {
+    bg: 'light:bg-surface-3 light:hover:bg-surface-4 bg-surface-4 hover:bg-surface-5',
+    fg: 'text-txt-2 hover:text-txt-1',
+    shadow: '',
+  },
   ghost: {
     bg: 'hover:bg-surface-3 focus-visible:bg-surface-3',
     fg: 'text-txt-1 hover:text-txt-2',
@@ -27,5 +32,5 @@ export const PaddingVariantStyles = {
   none: '',
   sm: 'py-[4px] px-[6px] text-[10px]',
   md: 'py-[6px] px-[8px] text-[12px]',
-  icon: 'p-[8px] text-[16px] aspect-square',
+  icon: 'p-[6px] text-[15px] aspect-square',
 }

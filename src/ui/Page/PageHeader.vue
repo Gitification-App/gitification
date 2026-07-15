@@ -12,19 +12,22 @@ useKey('esc', () => {
 </script>
 
 <template>
-  <div class="border-b border-b-surface-2 shrink-0 flex flex-row gap-2 px-2 py-3 items-center">
-    <UI.Button
-      variant="ghost"
-      paddingVariant="md"
-      @click="emit('back')"
+  <div class="border-b border-b-surface-2 shrink-0 flex flex-row gap-3 tracking-wider px-2 py-4 items-center">
+    <UI.Tooltip
+      position="bottom-start"
+      title="Back [esc]"
     >
-      <template #leftIcon>
+      <UI.Button
+        variant="tertiary"
+        paddingVariant="icon"
+        @click="emit('back')"
+      >
         <UI.Icons.ArrowLeft01 />
-      </template>
+      </UI.Button>
+    </UI.Tooltip>
 
-      <h1><slot /></h1>
-
-      <UI.Key hotkey="esc" />
-    </UI.Button>
+    <h1 class="text-txt-2 text-sm">
+      <slot />
+    </h1>
   </div>
 </template>
