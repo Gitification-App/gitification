@@ -24,7 +24,7 @@ const slots = defineSlots<{
   default: () => VNode
 }>()
 
-const iconWrapperStyles = 'text-[16px] shrink-0 inline-grid place-items-center'
+const iconWrapperStyles = 'text-[14px] shrink-0 inline-grid place-items-center'
 </script>
 
 <template>

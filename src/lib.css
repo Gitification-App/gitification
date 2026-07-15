@@ -14,7 +14,8 @@
   --color-txt-3: rgb(180, 180, 180);
 
   --color-primary: rgb(100, 149, 237);
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Geist', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
 }
 
 .light {
@@ -60,11 +61,19 @@ body,
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Geist';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/Inter.ttf") format("truetype");
+  src: url("/Geist-wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/GeistMono-wght.ttf") format("truetype");
 }
 
 .prose {

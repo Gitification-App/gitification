@@ -7,7 +7,7 @@ export const ButtonVariantStyles = {
     shadow,
   },
   secondary: {
-    bg: 'light:bg-gray-900 light:hover:bg-gray-800 bg-white hover:bg-gray-300',
+    bg: 'light:bg-gray-900 light:hover:bg-gray-800 bg-gray-300 hover:bg-gray-200',
     fg: 'light:text-gray-50 text-gray-950',
     shadow,
   },
@@ -17,7 +17,7 @@ export const ButtonVariantStyles = {
     shadow: '',
   },
   danger: {
-    bg: 'bg-red-700 hover:bg-red-500',
+    bg: 'bg-[#ed1c46] hover:bg-red-500',
     fg: 'text-white',
     shadow,
   },
@@ -25,7 +25,7 @@ export const ButtonVariantStyles = {
 
 export const PaddingVariantStyles = {
   none: '',
-  sm: 'py-[4px] px-[6px] text-xs',
-  md: 'py-[6px] px-[8px] text-sm',
+  sm: 'py-[4px] px-[6px] text-[10px]',
+  md: 'py-[6px] px-[8px] text-[12px]',
   icon: 'p-[8px] text-[16px] aspect-square',
 }

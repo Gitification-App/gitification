@@ -37,7 +37,7 @@ function handleEvent(event: MouseEvent) {
     meta: {
       key: item.hotkey,
       text: item.text,
-      icon: item.icon,
+      // icon: item.icon,
     },
   }))
 }

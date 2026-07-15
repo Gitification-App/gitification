@@ -21,7 +21,7 @@ defineEmits<{
       paddingVariant="none"
       class="h-7 rounded-md px-2.5 text-xs capitalize focus-visible:z-2"
       :class="{
-        'bg-surface-5 text-txt-1': modelValue === value,
+        'bg-primary/20': modelValue === value,
         'text-txt-3': modelValue !== value,
       }"
       @click="$emit('update:modelValue', value)"

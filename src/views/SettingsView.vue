@@ -113,7 +113,7 @@ import * as UI from '../ui'
             paddingVariant="md"
             @click="Gitification.actions.logout(user.id)"
           >
-            Remove
+            <UI.Icons.Delete01 />
           </UI.Button>
         </UI.SettingsItem>
       </UI.SettingsGroup>
@@ -145,7 +145,7 @@ import * as UI from '../ui'
             @click="Gitification.actions.quitApp()"
           >
             <template #leftIcon>
-              <UI.Icons.Cancel01 />
+              <UI.Icons.ShutDown />
             </template>
             Exit App
           </UI.Button>
