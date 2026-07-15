@@ -1,9 +1,6 @@
-# Gitification 
-
-<br>
-  
 <img width="128" height="128" src="src-tauri/icons/128x128%402x.png" />
 
+# Gitification 
 Manage your notifications easily on your menubar.
 
 - Lightweight `Nearly 10mb`
@@ -15,12 +12,7 @@ Manage your notifications easily on your menubar.
 
 ### Screenshots
 
-<br>
-<br>
-
-![App Image](images/image.png)
-
-<br>
-<br>
-
-![App context menu Image](images/imagectx.png)
+<div>
+  <img width="350" src="images/image.png" />
+<img width="350" src="images/imagectx.png" />
+</div>
