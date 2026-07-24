@@ -1,11 +1,14 @@
 <img width="128" height="128" src="src-tauri/icons/128x128%402x.png" />
 
-# Gitification 
-Manage your notifications easily on your menubar.
+# Gitification - Menubar App for Github Notifications
 
-- Lightweight `Nearly 10mb`
+<br>
+
+Gitification is a lightweight desktop application that notifies you when you have new notifications on Github. It sits on your menubar and gets your attention with a sound.
+
+
+- Lightweight `Nearly 10mb`. Uses Tauri so doesn't ship with a browser engine.
 - Easy to login `Uses Github Oauth flow`.
-- Notifies you with a nice sound when new notifications arrive.
 
 [Download from releases](https://github.com/Gitification-App/gitification/releases)
 
