@@ -1,10 +1,10 @@
 // #NamespaceName: StorageTypes
 
 import type { Option } from '../../types'
-import type * as Gitification from '../index'
+import type { Types as ApiTypes } from '../api'
 
 export type AppStorageContextV1 = {
-  user: Option<Gitification.api.Types.SimpleUser>
+  user: Option<ApiTypes.SimpleUser>
   accessToken: Option<string>
   showOnlyParticipating: boolean
   openAtStartup: boolean
@@ -13,12 +13,12 @@ export type AppStorageContextV1 = {
   showSystemNotifications: boolean
   markAsReadOnOpen: boolean
   colorPreference: ColorPreference
-  allUsers: Gitification.api.Types.SimpleUser[]
-  userAccessTokens: Record<Gitification.api.Types.SimpleUser['id'], string>
+  allUsers: ApiTypes.SimpleUser[]
+  userAccessTokens: Record<ApiTypes.SimpleUser['id'], string>
 }
 
 export type StorageUser = {
-  user: Gitification.api.Types.SimpleUser
+  user: ApiTypes.SimpleUser
   accessToken: string
 }
 
@@ -37,7 +37,7 @@ export type StorageSettings = {
 
 export type AppStorageContextV2 = {
   version: number
-  activeUserId: Option<Gitification.api.Types.SimpleUser['id']>
+  activeUserId: Option<ApiTypes.SimpleUser['id']>
   users: StorageUser[]
   settings: StorageSettings
 }

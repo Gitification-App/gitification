@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { MinimalRepository } from '../../gitification/api/types'
-import type * as Gitification from '../../gitification/index'
+import type { Thread } from '../../gitification/api/types'
 
 defineProps<{
   repo: MinimalRepository
-  threads: Gitification.api.Types.Thread[]
+  threads: Thread[]
 }>()
 </script>
 

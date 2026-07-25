@@ -1,220 +1,271 @@
 import type { HTTPError } from 'ky'
+import type { Types as ApiTypes, GiApi } from '../api'
+import type { GiRouter } from '../router'
+import type { GiState } from '../state'
+import type { GitificationStorage } from '../storage'
 import type { StorageUser } from '../storage/types'
-import { invoke } from '@tauri-apps/api/core'
-import { getCurrentWindow } from '@tauri-apps/api/window'
-import * as AutoStart from '@tauri-apps/plugin-autostart'
+import type { GiTauriLayer } from '../tauri'
+import * as utils from '../utils'
 
-import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification'
-import { exit, relaunch } from '@tauri-apps/plugin-process'
-import { open } from '@tauri-apps/plugin-shell'
-import { InvokeCommand } from '../../constants'
-import * as Gitification from '../index'
-
-let lastFetchThreadsAt = 0
-
-export function requestNotificationPermission() {
-  return requestPermission()
+export type CreateActionsOptions = {
+  state: GiState
+  storage: GitificationStorage
+  api: GiApi
+  router: GiRouter
+  tauri: GiTauriLayer
 }
 
-export function getLastFetchThreadsAt() {
-  return lastFetchThreadsAt
-}
+export function createActions(deps: CreateActionsOptions) {
+  let lastFetchThreadsAt = 0
+  let fetchController: AbortController | null = null
+  let installing = false
 
-export function openURL(url: string) {
-  open(url)
-}
-
-export async function showWindow() {
-  const window = getCurrentWindow()
-  await window.show()
-  await window.setFocus()
-}
-
-export async function markThreadAsRead(thread: Gitification.api.Types.Thread) {
-  if (Gitification.state.currentUser == null) {
-    return
+  function requestNotificationPermission() {
+    return deps.tauri.requestNotificationPermission()
   }
 
-  Gitification.state.checkedThreadIds.delete(thread.id)
-
-  if (Gitification.state.settings.showReadNotifications) {
-    thread.unread = false
-    return
+  function getLastFetchThreadsAt() {
+    return lastFetchThreadsAt
   }
-  else {
-    Gitification.state.threads = Gitification.state.threads
+
+  function openURL(url: string) {
+    void deps.tauri.openURL(url)
+  }
+
+  async function showWindow() {
+    await deps.tauri.showWindow()
+  }
+
+  async function markThreadAsRead(thread: ApiTypes.Thread) {
+    const currentUser = deps.state.currentUser
+
+    if (currentUser == null) {
+      return
+    }
+
+    deps.state.checkedThreadIds.delete(thread.id)
+
+    if (deps.state.settings.showReadNotifications) {
+      thread.unread = false
+      return
+    }
+    else {
+      deps.state.threads = deps.state.threads
+        .filter((t) => t.id !== thread.id)
+    }
+
+    void deps.api.markThreadAsRead(thread.id, currentUser.accessToken)
+  }
+
+  function selectThread(thread: ApiTypes.Thread) {
+    deps.state.checkedThreadIds.add(thread.id)
+  }
+
+  function deselectThread(thread: ApiTypes.Thread) {
+    deps.state.checkedThreadIds.delete(thread.id)
+  }
+
+  function clearThreadSelection() {
+    deps.state.checkedThreadIds.clear()
+  }
+
+  function toggleThreadSelection(thread: ApiTypes.Thread) {
+    const set = deps.state.checkedThreadIds
+    if (set.has(thread.id)) {
+      set.delete(thread.id)
+    }
+    else {
+      set.add(thread.id)
+    }
+  }
+
+  function unsubscribeThread(thread: ApiTypes.Thread) {
+    const currentUser = deps.state.currentUser
+
+    if (currentUser == null) {
+      return
+    }
+
+    deps.state.checkedThreadIds.delete(thread.id)
+    deps.state.threads = deps.state.threads
       .filter((t) => t.id !== thread.id)
+
+    void deps.api.markThreadAsRead(thread.id, currentUser.accessToken)
+    void deps.api.unsubscribeThread(thread.id, currentUser.accessToken)
   }
 
-  Gitification.api.markThreadAsRead(thread.id, Gitification.state.currentUser.accessToken)
-}
-
-export function selectThread(thread: Gitification.api.Types.Thread) {
-  Gitification.state.checkedThreadIds.add(thread.id)
-}
-
-export function deselectThread(thread: Gitification.api.Types.Thread) {
-  Gitification.state.checkedThreadIds.delete(thread.id)
-}
-
-export { AutoStart }
-
-export function clearThreadSelection() {
-  Gitification.state.checkedThreadIds.clear()
-}
-
-export function toggleThreadSelection(thread: Gitification.api.Types.Thread) {
-  const set = Gitification.state.checkedThreadIds
-  if (set.has(thread.id)) {
-    set.delete(thread.id)
-  }
-  else {
-    set.add(thread.id)
-  }
-}
-
-export function unsubscribeThread(thread: Gitification.api.Types.Thread) {
-  if (Gitification.state.currentUser == null) {
-    return
+  function resetThreadsState() {
+    deps.state.checkedThreadIds.clear()
+    deps.state.threads = []
+    deps.state.threadLoadStatus = 'idle'
   }
 
-  Gitification.state.checkedThreadIds.delete(thread.id)
-  Gitification.state.threads = Gitification.state.threads
-    .filter((t) => t.id !== thread.id)
+  function logout(id: StorageUser['user']['id']) {
+    const user = deps.state.users
+      .find(({ user }) => user.id === id) ?? null
 
-  Gitification.api.markThreadAsRead(thread.id, Gitification.state.currentUser.accessToken)
-  Gitification.api.unsubscribeThread(thread.id, Gitification.state.currentUser.accessToken)
-}
+    if (user == null) {
+      return
+    }
 
-export function resetThreadsState() {
-  Gitification.state.checkedThreadIds.clear()
-  Gitification.state.threads = []
-  Gitification.state.threadLoadStatus = 'idle'
-}
+    deps.state.users = deps.state.users
+      .filter((item) => item.user.id !== user.user.id)
 
-export function logout(id: StorageUser['user']['id']) {
-  const user = Gitification.state.users
-    .find(({ user }) => user.id === id) ?? null
+    const nextUser = deps.state.users.at(0)
 
-  if (user == null) {
-    return
+    if (nextUser) {
+      switchToAccount(nextUser.user.id)
+      return
+    }
+
+    resetThreadsState()
+    deps.state.currentUser = null
+    deps.router.navigate('landing')
   }
 
-  Gitification.state.users = Gitification.state.users
-    .filter((item) => item.user.id !== user.user.id)
+  function switchToAccount(userId: ApiTypes.SimpleUser['id']) {
+    if (deps.state.currentUser?.user.id === userId) {
+      return
+    }
 
-  const nextUser = Gitification.state.users.at(0)
-
-  if (nextUser) {
-    switchToAccount(nextUser.user.id)
-    return
+    resetThreadsState()
+    deps.state.currentUser = deps.state.users
+      .find(({ user }) => user.id === userId) ?? null
+    void fetchThreads(true)
+    deps.router.navigate('home')
   }
 
-  resetThreadsState()
-  Gitification.state.currentUser = null
-  Gitification.router.navigate('landing')
-}
-
-export function switchToAccount(userId: Gitification.api.Types.SimpleUser['id']) {
-  if (Gitification.state.currentUser?.user.id === userId) {
-    return
+  function quitApp() {
+    void deps.tauri.quitApp()
   }
 
-  resetThreadsState()
-  Gitification.state.currentUser = Gitification.state.users
-    .find(({ user }) => user.id === userId) ?? null
-  fetchThreads(true)
-  Gitification.router.navigate('home')
-}
-
-export function quitApp() {
-  exit(0)
-}
-
-export function playNotificationSound() {
-  if (Gitification.state.settings.soundsEnabled) {
-    invoke(InvokeCommand.PlayNotificationSound)
-  }
-}
-
-export async function pushThreadNotification(thread: Gitification.api.Types.Thread) {
-  if (import.meta.env.DEV) {
-    // It crashes the app on dev mode.
-    return
+  function playNotificationSound() {
+    if (deps.state.settings.soundsEnabled) {
+      void deps.tauri.playNotificationSound()
+    }
   }
 
-  if (Gitification.state.settings.showSystemNotifications) {
-    if (await isPermissionGranted()) {
-      sendNotification({
+  async function pushThreadNotification(thread: ApiTypes.Thread) {
+    if (import.meta.env.DEV) {
+      // It crashes the app in dev mode.
+      return
+    }
+
+    if (deps.state.settings.showSystemNotifications
+      && await deps.tauri.hasNotificationPermission()) {
+      deps.tauri.notify({
         title: thread.repository.full_name,
         body: thread.subject.title,
       })
     }
   }
+
+  async function fetchThreads(withLoader = false) {
+    fetchController?.abort()
+    fetchController = null
+
+    const currentUser = deps.state.currentUser
+    if (currentUser == null) {
+      return
+    }
+
+    lastFetchThreadsAt = Date.now()
+
+    if (withLoader) {
+      clearThreadSelection()
+    }
+
+    deps.state.threadLoadStatus = withLoader ? 'loading' : 'syncing'
+
+    const controller = new AbortController()
+    fetchController = controller
+    const signal = controller.signal
+
+    const result = await deps.api
+      .getThreads({
+        all: deps.state.settings.showReadNotifications,
+        accessToken: currentUser.accessToken,
+        onlyParticipating: deps.state.settings.onlyParticipating,
+        signal,
+      })
+      .catch((error) => error as HTTPError)
+
+    if (signal.aborted) {
+      return
+    }
+
+    if (result instanceof Error) {
+      deps.state.threadLoadStatus = 'failed'
+      return
+    }
+
+    const [threads] = result
+    const newThreads = utils.array.filterNewItems(
+      deps.state.threads,
+      threads,
+      (thread) => thread.id,
+    )
+    const newUnread = newThreads.find((thread) => thread.unread)
+
+    if (newUnread) {
+      playNotificationSound()
+      void pushThreadNotification(newUnread)
+    }
+
+    deps.state.threads = threads
+    deps.state.threadLoadStatus = 'idle'
+  }
+
+  async function setMenubarIcon(isTemplate: boolean) {
+    await deps.tauri.setMenubarIcon(isTemplate)
+  }
+
+  async function updateApp() {
+    if (installing || deps.state.newRelease == null) {
+      return
+    }
+
+    installing = true
+
+    try {
+      await deps.state.newRelease.downloadAndInstall()
+      await deps.tauri.relaunchApp()
+    }
+    catch {
+      installing = false
+    }
+  }
+
+  return {
+    AutoStart: {
+      isEnabled: deps.tauri.isAutoStartEnabled,
+      enable: deps.tauri.enableAutoStart,
+      disable: deps.tauri.disableAutoStart,
+    },
+    resetSettings() {
+      void deps.tauri.requestNotificationPermission()
+      deps.storage.resetSettings()
+    },
+    requestNotificationPermission,
+    getLastFetchThreadsAt,
+    openURL,
+    showWindow,
+    markThreadAsRead,
+    selectThread,
+    deselectThread,
+    clearThreadSelection,
+    toggleThreadSelection,
+    unsubscribeThread,
+    resetThreadsState,
+    logout,
+    switchToAccount,
+    quitApp,
+    playNotificationSound,
+    pushThreadNotification,
+    fetchThreads,
+    setMenubarIcon,
+    updateApp,
+  }
 }
 
-export async function fetchThreads(withLoader = false) {
-  if (Gitification.state.currentUser == null) {
-    return
-  }
-
-  lastFetchThreadsAt = Date.now()
-
-  if (withLoader) {
-    clearThreadSelection()
-  }
-
-  Gitification.state.threadLoadStatus = withLoader ? 'loading' : 'syncing'
-
-  const result = await Gitification.api
-    .getThreads({
-      all: Gitification.state.settings.showReadNotifications,
-      accessToken: Gitification.state.currentUser.accessToken,
-      onlyParticipating: Gitification.state.settings.onlyParticipating,
-    })
-    .catch((error) => error as HTTPError)
-
-  if (result instanceof Error) {
-    Gitification.state.threadLoadStatus = 'failed'
-    return
-  }
-
-  const [threads] = result
-
-  const newThreads = Gitification.utils.array.filterNewItems(
-    Gitification.state.threads,
-    threads,
-    (thread) => thread.id,
-  )
-
-  const newUnread = newThreads.find((thread) => thread.unread)
-
-  if (newUnread) {
-    playNotificationSound()
-    pushThreadNotification(newUnread)
-  }
-
-  Gitification.state.threads = threads
-  Gitification.state.threadLoadStatus = 'idle'
-}
-
-export async function setMenubarIcon(isTemplate: boolean) {
-  await invoke(InvokeCommand.SetIconTemplate, { isTemplate })
-}
-
-let installing = false
-export async function updateApp() {
-  if (installing || Gitification.state.newRelease == null) {
-    return
-  }
-
-  installing = true
-
-  try {
-    await Gitification.state.newRelease.downloadAndInstall()
-    await relaunch()
-  }
-  catch {
-    installing = false
-  }
-}
+export type GiActions = ReturnType<typeof createActions>

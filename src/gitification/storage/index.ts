@@ -1,11 +1,18 @@
 import * as TauriStore from '@tauri-apps/plugin-store'
 import { extendRef } from '@vueuse/core'
 import { ref, watch } from 'vue'
-import * as Gitification from '../index'
 import * as StorageTypes from './types'
 
-export function createStorage() {
-  const storePromise = TauriStore.load('.storage.dat', { autoSave: false, defaults: {} })
+export type StorageStore = Awaited<ReturnType<typeof TauriStore.load>>
+
+export type CreateStorageOptions = {
+  getStorage?: () => Promise<StorageStore>
+}
+
+export function createStorage({
+  getStorage = () => TauriStore.load('.storage.dat', { autoSave: false, defaults: {} }),
+}: CreateStorageOptions = {}) {
+  const storePromise = getStorage()
   const storage = ref<StorageTypes.AppStorageContextV2>({
     version: 2,
     activeUserId: null,
@@ -97,8 +104,6 @@ export function createStorage() {
   return extendRef(storage, {
     syncFromDisk,
     resetSettings() {
-      Gitification.actions.requestNotificationPermission()
-
       storage.value.settings = {
         onlyParticipating: false,
         openAtStartup: false,
@@ -118,7 +123,7 @@ export function createStorage() {
   })
 }
 
-export type Storage = ReturnType<typeof createStorage>
+export type GitificationStorage = ReturnType<typeof createStorage>
 
 export {
   StorageTypes as Types,
