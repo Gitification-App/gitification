@@ -2,16 +2,21 @@ import type { OsType } from '@tauri-apps/plugin-os'
 import type { Update } from '@tauri-apps/plugin-updater'
 
 import type { Option } from '../../types'
+import type { Types as ApiTypes } from '../api'
+import type { GitificationStorage } from '../storage'
 import { useMediaQuery } from '@vueuse/core'
 import { computed, reactive, ref, shallowRef } from 'vue'
-import * as Gitification from '../index'
 
-export type GitificationState = ReturnType<typeof createState>
+export type GiState = ReturnType<typeof createState>
 
-export function createState() {
-  const threads = ref([] as Gitification.api.Types.Thread[])
+export type CreateStateOptions = {
+  storage: GitificationStorage
+}
+
+export function createState({ storage }: CreateStateOptions) {
+  const threads = ref([] as ApiTypes.Thread[])
   const threadLookup = computed(() => {
-    const lookup: Record<string, Gitification.api.Types.Thread> = {}
+    const lookup: Record<string, ApiTypes.Thread> = {}
     for (const thread of threads.value) {
       lookup[thread.id] = thread
     }
@@ -27,25 +32,23 @@ export function createState() {
   const osType = ref('Darwin' as OsType)
 
   const users = computed({
-    get: () => Gitification.storage.value.users,
-    set: (value) => {
-      Gitification.storage.value.users = value
-    },
+    get: () => storage.value.users,
+    set: (value) => storage.value.users = value,
   })
 
   const settings = computed({
-    get: () => Gitification.storage.value.settings,
-    set: (value) => void (Gitification.storage.value.settings = value),
+    get: () => storage.value.settings,
+    set: (value) => void (storage.value.settings = value),
   })
 
   const currentUser = computed({
     get() {
       return users.value
-        .find((value) => value.user.id === Gitification.storage.value.activeUserId)
+        .find((value) => value.user.id === storage.value.activeUserId)
         ?? null
     },
     set(user) {
-      Gitification.storage.value.activeUserId = user?.user.id ?? null
+      storage.value.activeUserId = user?.user.id ?? null
     },
   })
 
@@ -53,7 +56,7 @@ export function createState() {
 
   const theme = computed({
     get() {
-      let preference = Gitification.storage.value.settings.colorPreference
+      let preference = storage.value.settings.colorPreference
 
       if (preference === 'system') {
         preference = prefersDark.value ? 'dark' : 'light'
@@ -62,7 +65,7 @@ export function createState() {
       return preference
     },
     set(value: 'light' | 'dark' | 'system') {
-      Gitification.storage.value.settings.colorPreference = value
+      storage.value.settings.colorPreference = value
     },
   })
 

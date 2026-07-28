@@ -145,7 +145,7 @@ import * as UI from '../ui'
           <UI.Button
             variant="secondary"
             paddingVariant="md"
-            @click="Gitification.storage.resetSettings()"
+            @click="Gitification.actions.resetSettings()"
           >
             <template #leftIcon>
               <UI.Icons.Reload />

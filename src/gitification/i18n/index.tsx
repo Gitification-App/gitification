@@ -1,4 +1,4 @@
-import type * as Gitification from '../index'
+import type { Types as ApiTypes } from '../api'
 import { Fragment } from 'vue'
 
 const en = {
@@ -67,7 +67,7 @@ const en = {
     push: 'Push',
     security_advisory_credit: 'Security advisory credit',
     your_activity: 'Your activity',
-  } satisfies Record<Gitification.api.Types.NotificationReason, string>,
+  } satisfies Record<ApiTypes.NotificationReason, string>,
 }
 
 export default en

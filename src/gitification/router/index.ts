@@ -4,7 +4,11 @@ import { shallowRef } from 'vue'
 export const routes = ['home', 'landing', 'settings', 'about'] as const
 export type RouteName = typeof routes[number]
 
-export function createRouter(defaultPage: RouteName) {
+export type CreateRouterOptions = {
+  defaultPage: RouteName
+}
+
+export function createRouter({ defaultPage }: CreateRouterOptions) {
   const previous = shallowRef<Option<RouteName>>(null)
   const current = shallowRef<RouteName>(defaultPage)
 
@@ -29,4 +33,4 @@ export function createRouter(defaultPage: RouteName) {
   }
 }
 
-export type Router = ReturnType<typeof createRouter>
+export type GiRouter = ReturnType<typeof createRouter>

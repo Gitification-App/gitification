@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import type { Types as ApiTypes } from '../gitification/api'
 import { useEventListener } from '@vueuse/core'
-import { computed, onScopeDispose } from 'vue'
+import { computed, onMounted, onScopeDispose } from 'vue'
 import { useKey } from '../composables/useKey'
 import { useTauriEvent } from '../composables/useTauriEvent'
 import * as Gitification from '../gitification/index'
@@ -47,7 +48,7 @@ useEventListener(
   },
 )
 
-function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.MinimalRepository, threads: Gitification.api.Types.Thread[]) {
+function handleRepoClick(event: MouseEvent | null, repo: ApiTypes.MinimalRepository, threads: ApiTypes.Thread[]) {
   if (event?.ctrlKey || event?.metaKey) {
     for (const thread of threads) {
       Gitification.actions.selectThread(thread)
@@ -59,7 +60,7 @@ function handleRepoClick(event: MouseEvent | null, repo: Gitification.api.Types.
   Gitification.actions.openURL(`https://github.com/${repo.full_name}`)
 }
 
-function handleThreadShiftClick(thread: Gitification.api.Types.Thread) {
+function handleThreadShiftClick(thread: ApiTypes.Thread) {
   const index = flatThreads.value.findIndex((t) => t.id === thread.id)
 
   if (index === -1) {
@@ -89,7 +90,7 @@ function handleThreadShiftClick(thread: Gitification.api.Types.Thread) {
   }
 }
 
-async function handleThreadClick(event: MouseEvent | null, thread: Gitification.api.Types.Thread) {
+async function handleThreadClick(event: MouseEvent | null, thread: ApiTypes.Thread) {
   if (event?.shiftKey) {
     handleThreadShiftClick(thread)
     return
@@ -108,7 +109,7 @@ async function handleThreadClick(event: MouseEvent | null, thread: Gitification.
     Gitification.actions.clearThreadSelection()
   }
 
-  const data = await Gitification.utils.github.createThreadHtmlURL({
+  const data = await Gitification.api.createThreadHtmlURL({
     thread,
     user: Gitification.state.currentUser,
   })
@@ -121,7 +122,7 @@ async function handleThreadClick(event: MouseEvent | null, thread: Gitification.
   Gitification.actions.markThreadAsRead(thread)
 }
 
-function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
+function getThreadContextMenuItems(thread: ApiTypes.Thread) {
   type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]
 
   if (!Gitification.state.checkedThreadIds.has(thread.id)) {
@@ -150,7 +151,11 @@ function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
     },
     {
       text: 'Unsubscribe',
-      action: () => void 0,
+      action: () => {
+        for (const checkedThread of Gitification.state.checkedThreads) {
+          Gitification.actions.unsubscribeThread(checkedThread)
+        }
+      },
       icon: UI.Icons.NotificationOff01,
     },
   ]
@@ -162,7 +167,7 @@ function getThreadContextMenuItems(thread: Gitification.api.Types.Thread) {
   return items
 }
 
-function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository) {
+function getRepoContextMenuItems(repo: ApiTypes.MinimalRepository) {
   type Item = ReturnType<InstanceType<typeof UI.ContextMenu>['getItems']>[number]
 
   Gitification.actions.clearThreadSelection()
@@ -192,6 +197,10 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
       hotkey: String(index + 1),
     }))
 }
+
+onMounted(() => {
+  Gitification.actions.fetchThreads(true)
+})
 </script>
 
 <template>
@@ -234,6 +243,7 @@ function getRepoContextMenuItems(repo: Gitification.api.Types.MinimalRepository)
           class="mt-2"
           variant="secondary"
           paddingVariant="sm"
+          @click="Gitification.actions.fetchThreads(true)"
         >
           Retry
         </UI.Button>
